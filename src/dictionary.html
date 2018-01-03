@@ -1,0 +1,139 @@
+<script>
+    const { Main } = require('../dist/main.js');
+    let main = new Main();
+
+    Mousetrap.bind('ctrl+f', function () {
+        let word = document.getElementById('word');
+        word.focus();
+        word.value = '';
+    });
+
+    function checkSearch(input, ev) {
+        if (ev.code == 'Enter') {
+            getResult();
+            input.blur();
+        }
+    }
+    function getResult() {
+        let inputWord = document.getElementById('word').value;
+        main.getLanguage(inputWord).then(inputLanguage => {
+            let userLanguage = 'zh';
+            let wordIsEnglish = inputLanguage == 'en';
+            let source = wordIsEnglish ? 'en' : userLanguage;
+            let target = wordIsEnglish ? userLanguage : 'en';
+            main.translateWord(source, target, inputWord).then(resultTrans => {
+                let searchWord = inputWord;
+                if (!wordIsEnglish) {
+                    searchWord = resultTrans;
+                    resultTrans = inputWord;
+                }
+                //search dictionary
+                main.searchWord(searchWord).then(resultDict => {
+                    resultDict.word = searchWord;
+                    resultDict.trans = resultTrans;
+                    main.playSound(resultDict.mp3Url);
+                    // document.getElementById('result').innerHTML=resultDict.html;
+                    main.addWord(resultDict).then(ok => {
+                        resultDict.id = ok.id;
+                        updateHistory(() => {
+                            showTheWord(resultDict.id, resultDict.url);
+                        });
+                    });
+                    // let dictionary = document.querySelector('#dictionary');
+                    // dictionary.src = resultDict.url;
+                    // dictionary.executeJavaScript(`document.querySelector('.header').remove();
+                    //                               document.querySelector('.pagetitle').remove();
+                    //                               document.querySelector('.dictionary_intro').remove();
+                    //                               document.querySelectorAll('iframe').forEach(element=>{element.remove()});`
+                    //     , false, callback => { });
+
+                });
+            });
+
+        });
+    }
+    function showTheWord(wordId, wordUrl, isFromClick = false) {
+        if (!isFromClick) {
+            document.querySelector('#collapse' + wordId).classList.add('show');
+        }
+        document.querySelector('#web' + wordId).src = wordUrl;
+    }
+    function deleteTheWord(wordId) {
+        let ok = confirm('Are you sure?');
+        if (ok) {
+            main.deleteWord(wordId).then(result => {
+                updateHistory(() => { });
+            });
+        }
+    }
+    function updateHistory(resultAction) {
+        main.getAllWords().then(words => {
+            if (words == undefined || words.length == 0) {
+                return;
+            }
+            let history = document.querySelector('#wordsHistory');
+            history.innerHTML = '';
+            words.forEach(element => {
+                let item = `<div class="card">
+                                <div class="card-header alert alert-primary" role="tab" id="heading${element.id}">
+                                    <a >
+                                        ${element.word + ":" + element.trans}
+                                    </a>
+                                    <a class="badge badge-pill badge-danger float-right" onclick="deleteTheWord('${element.id}')">Del</a>
+                                    <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="badge badge-success float-right">Longmen Detail</a>
+                                </div>
+                                <div id="collapse${element.id}" class="collapse" role="tabpanel" aria-labelledby="heading${element.id}" data-parent="#wordsHistory">
+                                    <div class="card-body" style="overflow:hidden">
+                                        <webview id="web${element.id}" autosize="on" style="margin-top:-250px;height:600px;display:flex;"></webview>
+                                    </div>
+                                </div>
+                            </div>`;
+                let itemElement = createElementFromHtml(item);
+                history.appendChild(itemElement[0]);
+            });
+            resultAction();
+        });
+    }
+    updateHistory(() => { });
+</script>
+<div class="input-group sticky-top" style="margin-top:10px;">
+    <input type="text" class="form-control" id="word" onkeypress="checkSearch(this,event)" placeholder="Ctrl+F">
+    <button class="input-group-addon" onclick="getResult()">Search</button>
+</div>
+<div id="wordsHistory" role="tablist" style="margin-top:20px;">
+    <div class="card">
+        <div class="card-header" role="tab" id="headingOne">
+            <h5 class="mb-0">
+                <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Collapsible Group Item #1
+                </a>
+            </h5>
+        </div>
+
+        <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                heard of them accusamus labore sustainable VHS.
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header" role="tab" id="headingTwo">
+            <h5 class="mb-0">
+                <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Collapsible Group Item #2
+                </a>
+            </h5>
+        </div>
+        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+                heard of them accusamus labore sustainable VHS.
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <div id='google-result' class="alert alert-primary" style="margin-top:20px;">
+
+</div>
+<webview id="dictionary" autosize="on" style="height:100%;display:flex;"></webview> -->
+<!-- <div id='result' >
+</div> -->
