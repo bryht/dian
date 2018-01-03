@@ -10,17 +10,18 @@
   "license": "ISC",
   "devDependencies": {
     "@types/cheerio": "^0.22.5",
+    "@types/electron": "^1.6.10",
     "@types/electron-json-storage": "^4.0.0",
-    "electron": "^1.8.1",
-    "electron-json-storage": "^4.0.2"
+    "electron": "^1.8.1"
   },
   "dependencies": {
-    "@types/electron": "^1.6.10",
     "bootstrap": "^3.3.7",
     "cheerio": "^1.0.0-rc.2",
+    "electron-json-storage": "^4.0.2",
     "guesslanguage": "^0.2.0",
     "jquery": "^3.2.1",
     "node-google-translate-skidz": "^1.1.1",
+    "request": "^2.83.0",
     "update": "^0.7.4"
   }
 }

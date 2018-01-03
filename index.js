@@ -4,7 +4,8 @@ const {
     ipcMain,
     Menu,
     MenuItem,
-    webContents
+    webContents,
+    autoUpdater
 } = require('electron')
 
 const electron = require('electron')

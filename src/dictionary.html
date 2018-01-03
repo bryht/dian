@@ -68,7 +68,7 @@
     }
     function updateHistory(resultAction) {
         main.getAllWords().then(words => {
-            if (words == undefined || words.length == 0) {
+            if (words == undefined || words instanceof Array == false) {
                 return;
             }
             let history = document.querySelector('#wordsHistory');
