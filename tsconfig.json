@@ -4,7 +4,7 @@
     "module": "commonjs", /* Specify module code generation: 'none', commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
     "moduleResolution": "node",
     "sourceMap": true, /* Generates corresponding '.map' file. */
-    "outDir": "dist",
+    // "outDir": "dist",
     "baseUrl": ".",
     "paths": {
       "*": [
