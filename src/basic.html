@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>EngDict</title>
+    <title>Dict</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
         crossorigin="anonymous">
     <link rel="stylesheet" href="main.css">
@@ -39,9 +39,13 @@
 </head>
 
 <body>
-    Current version:
-    <span id="version">vX.Y.Z</span>
-    <div id="messages">11111111111</div>
+    <div id="infoAlert" class="alert alert-warning alert-dismissible fade show" style="display:none"  role="alert">
+        <strong>Info!</strong>
+        <span id="messages">Content</span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
     <div class="container" style="height:100%;">
         <div class="row" style="height:100%;">
             <!-- Modal -->
@@ -93,19 +97,13 @@
     </div>
 
     <script>
-
-        // Display the current version
-        let version = window.location.hash.substring(1);
-        document.getElementById('version').innerText = version;
         // Listen for messages
-        debugger;
         const { ipcRenderer } = require('electron');
         ipcRenderer.on('message', function (event, text) {
             var container = document.getElementById('messages');
-            var message = document.createElement('div');
-            message.innerHTML = text;
-            container.innerHTML = '';
-            container.appendChild(message);
+            container.innerHTML = text;
+            debugger;
+            document.querySelector('#infoAlert').style.display="block";
         });
         function deleteHistory() {
             let ok = confirm('Are you sure to delete all?');
