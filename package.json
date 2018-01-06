@@ -1,14 +1,32 @@
 {
   "name": "dict",
-  "version": "1.0.0",
-  "description": "a englisht dictionary app",
+  "version": "100.0.0",
+  "description": "a dictionary app",
+  "author": {
+    "name": "bryht",
+    "email": "bryht@live.com"
+  },
+  "license": "ISC",
   "scripts": {
-    "build": "tsc",
-    "start": "npm run build && electron ./index.js",
+    "publish": "build -p always",
+    "start": "electron ./index.js",
     "dist": "build"
   },
-  "author": "bryht",
-  "license": "ISC",
+  "build": {
+    "appId": "Dict",
+    "asar": true,
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "bryht",
+        "repo": "Dict"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
+  },
   "devDependencies": {
     "@types/cheerio": "^0.22.5",
     "@types/electron": "^1.6.10",
@@ -20,18 +38,15 @@
   "dependencies": {
     "bootstrap": "^3.3.7",
     "cheerio": "^1.0.0-rc.2",
+    "electron-gh-releases": "^2.0.4",
+    "electron-is-dev": "^0.3.0",
     "electron-json-storage": "^4.0.2",
+    "electron-log": "^2.2.13",
+    "electron-updater": "^2.18.2",
     "guesslanguage": "^0.2.0",
     "jquery": "^3.2.1",
     "node-google-translate-skidz": "^1.1.1",
     "request": "^2.83.0",
     "update": "^0.7.4"
-  },
-  "build": {
-    "appId": "Dict",
-    "win": {
-      "target": "nsis",
-      "icon": "build/icon.ico"
-    }
   }
 }

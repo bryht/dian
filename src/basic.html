@@ -33,15 +33,17 @@
         })
         Mousetrap.bind('right', function () {
 
-        })
+        });
 
     </script>
 </head>
 
 <body>
-
+    Current version:
+    <span id="version">vX.Y.Z</span>
+    <div id="messages">11111111111</div>
     <div class="container" style="height:100%;">
-        <div class="row"  style="height:100%;">
+        <div class="row" style="height:100%;">
             <!-- Modal -->
             <div class="modal fade" id="historyModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -73,15 +75,15 @@
             </div>
             <div class="w-150">
                 <div class="btn-group-vertical sticky-top" style="margin-top:20px;">
-                    <button type="button" id="btnDictionary" class="btn btn-info"  onclick="navigateDictionary()">
+                    <button type="button" id="btnDictionary" class="btn btn-info" onclick="navigateDictionary()">
                         Dictionary
                     </button>
                     <!-- <button id="btnTranslate" onclick="navigateTranslate()" type="button" class="btn btn-success">
                         Translate
                     </button>-->
-                    <button type="button" id="btnHistory" class="btn btn-secondary"  onclick="deleteHistory()">
-                       Delete History
-                    </button> 
+                    <button type="button" id="btnHistory" class="btn btn-secondary" onclick="deleteHistory()">
+                        Delete History
+                    </button>
                     <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#historyModal">
                         Setting
                     </button>
@@ -92,6 +94,19 @@
 
     <script>
 
+        // Display the current version
+        let version = window.location.hash.substring(1);
+        document.getElementById('version').innerText = version;
+        // Listen for messages
+        debugger;
+        const { ipcRenderer } = require('electron');
+        ipcRenderer.on('message', function (event, text) {
+            var container = document.getElementById('messages');
+            var message = document.createElement('div');
+            message.innerHTML = text;
+            container.innerHTML = '';
+            container.appendChild(message);
+        });
         function deleteHistory() {
             let ok = confirm('Are you sure to delete all?');
             if (ok) {
@@ -128,7 +143,7 @@
             return temp.children;
         }
         function createPageFromHtml(link) {
-            document.getElementById('content').innerHTML='';
+            document.getElementById('content').innerHTML = '';
             const fs = require('fs');
             var data = fs.readFileSync(link);
             var nodeList = createElementFromHtml(data);
@@ -139,11 +154,11 @@
                     script.appendChild(document.createTextNode(element.innerHTML));
                     document.getElementById('content').appendChild(script);
                 } else {
-                    let script=createElementFromHtml(element.outerHTML)[0];
+                    let script = createElementFromHtml(element.outerHTML)[0];
                     document.getElementById('content').appendChild(script);
                 }
             }
-        } 
+        }
         function navigateTranslate() {
             createPageFromHtml(`${__dirname}/translate.html`);
         }
