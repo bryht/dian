@@ -93,9 +93,9 @@ export class Main {
                     result.word = word;
                     result.important = important;
                     result.isInLongmen = $content != undefined;
-                    result.html = result.isInLongmen ? $content.html() : '';
+                    result.html = '';//result.isInLongmen ? $content.html() : '';
                     result.url = 'http://' + options.hostname + options.path;
-                    result.mp3Url=mp3Url;
+                    result.mp3Url = mp3Url;
                     resolve(result);
                 });
             });
@@ -107,8 +107,8 @@ export class Main {
 
     }
 
-    playSound(mp3Url:string){
-        let audio=new Audio(mp3Url);
+    playSound(mp3Url: string) {
+        let audio = new Audio(mp3Url);
         audio.play();
     }
     navigateTranslate() {
@@ -179,7 +179,7 @@ export class Main {
                 }
                 storage.set('words', wordsArray, error => {
                     if (error) throw error;
-                    resolve('ok');
+                    resolve(true);
                 });
             });
         })
@@ -208,5 +208,5 @@ class Word {
     isInLongmen: boolean;
     html: string;
     url: string;
-    mp3Url:string;
+    mp3Url: string;
 }

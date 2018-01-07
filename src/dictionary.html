@@ -62,24 +62,29 @@
         let ok = confirm('Are you sure?');
         if (ok) {
             main.deleteWord(wordId).then(result => {
-                updateHistory(() => { });
+              if (result) {
+                 let wordDiv=document.querySelector('#card'+wordId); 
+                 wordDiv.remove();
+              }  
             });
         }
     }
     function updateHistory(resultAction) {
         main.getAllWords().then(words => {
-            if (words == undefined || words instanceof Array == false) {
+            if (words == undefined ||
+                words instanceof Array == false ||
+                words.length == 0) {
                 return;
             }
             let history = document.querySelector('#wordsHistory');
             history.innerHTML = '';
             words.forEach(element => {
-                let item = `<div class="card">
+                let item = `<div class="card" id="card${element.id}">
                                 <div class="card-header alert alert-primary" role="tab" id="heading${element.id}">
                                     <a >
                                         ${element.word + ":" + element.trans}
                                     </a>
-                                    <a class="badge badge-pill badge-danger float-right" onclick="deleteTheWord('${element.id}')">Del</a>
+                                    <a class="badge badge-pill badge-danger float-right" onclick="deleteTheWord('${element.id}')">Delete</a>
                                     <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="badge badge-success float-right">Longmen Detail</a>
                                 </div>
                                 <div id="collapse${element.id}" class="collapse" role="tabpanel" aria-labelledby="heading${element.id}" data-parent="#wordsHistory">
@@ -101,35 +106,7 @@
     <button class="input-group-addon" onclick="getResult()">Search</button>
 </div>
 <div id="wordsHistory" role="tablist" style="margin-top:20px;">
-    <div class="card">
-        <div class="card-header" role="tab" id="headingOne">
-            <h5 class="mb-0">
-                <a data-toggle="collapse" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Collapsible Group Item #1
-                </a>
-            </h5>
-        </div>
-
-        <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
-            <div class="card-body">
-                heard of them accusamus labore sustainable VHS.
-            </div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-header" role="tab" id="headingTwo">
-            <h5 class="mb-0">
-                <a class="collapsed" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Collapsible Group Item #2
-                </a>
-            </h5>
-        </div>
-        <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo" data-parent="#accordion">
-            <div class="card-body">
-                heard of them accusamus labore sustainable VHS.
-            </div>
-        </div>
-    </div>
+    <p>Enter Ctrl+F to search word</p>
 </div>
 <!-- <div id='google-result' class="alert alert-primary" style="margin-top:20px;">
 

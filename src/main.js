@@ -80,7 +80,7 @@ class Main {
                     result.word = word;
                     result.important = important;
                     result.isInLongmen = $content != undefined;
-                    result.html = result.isInLongmen ? $content.html() : '';
+                    result.html = ''; //result.isInLongmen ? $content.html() : '';
                     result.url = 'http://' + options.hostname + options.path;
                     result.mp3Url = mp3Url;
                     resolve(result);
@@ -162,7 +162,7 @@ class Main {
                 storage.set('words', wordsArray, error => {
                     if (error)
                         throw error;
-                    resolve('ok');
+                    resolve(true);
                 });
             });
         });

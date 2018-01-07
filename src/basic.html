@@ -82,9 +82,6 @@
                     <button type="button" id="btnDictionary" class="btn btn-info" onclick="navigateDictionary()">
                         Dictionary
                     </button>
-                    <!-- <button id="btnTranslate" onclick="navigateTranslate()" type="button" class="btn btn-success">
-                        Translate
-                    </button>-->
                     <button type="button" id="btnHistory" class="btn btn-secondary" onclick="deleteHistory()">
                         Delete History
                     </button>
@@ -105,6 +102,7 @@
             debugger;
             document.querySelector('#infoAlert').style.display="block";
         });
+        // History control
         function deleteHistory() {
             let ok = confirm('Are you sure to delete all?');
             if (ok) {
@@ -134,7 +132,6 @@
                 });
             });
         }
-        // updateHistory();
         function createElementFromHtml(html) {
             let temp = document.createElement('temp');
             temp.innerHTML = html;
