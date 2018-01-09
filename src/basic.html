@@ -8,10 +8,13 @@
     <title>Dict</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
         crossorigin="anonymous">
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="basic.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.1/mousetrap.min.js"></script>
     <script>
+        const { ipcRenderer } = require('electron');
+        const { Main } = require('./main.js');
         window.jQuery = window.$ = require('jquery');
+        window.main = new Main();
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
         crossorigin="anonymous"></script>
@@ -22,11 +25,11 @@
         Mousetrap.bind('ctrl+h', function () {
             document.getElementById('btnHistory').click();
         });
-        Mousetrap.bind('ctrl+d', function () {
+        Mousetrap.bind('ctrl+t', function () {
             document.getElementById('btnDictionary').click();
         });
-        Mousetrap.bind('ctrl+t', function () {
-            document.getElementById('btnTranslate').click();
+        Mousetrap.bind('ctrl+s', function () {
+            document.getElementById('btnSetting').click();
         });
         Mousetrap.bind('j', function () {
             let word = document.getElementById('word');
@@ -39,7 +42,7 @@
 </head>
 
 <body>
-    <div id="infoAlert" class="alert alert-warning alert-dismissible fade show" style="display:none"  role="alert">
+    <div id="infoAlert" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
         <strong>Info!</strong>
         <span id="messages">Content</span>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -53,22 +56,32 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-body">
-                            <button class="btn btn-danger" onclick="deleteHistory()">DeleteAll</button>
-                            <button class="btn btn-info">ExportAll</button>
+                            <h2>Setting</h2>
                             <hr>
-                            <div id="words">
-                                <div class="alert alert-primary" role="alert">
-                                    bike:自行車
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="alert alert-danger" role="alert">
-                                    dictionary:字典
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
+                            <div class="form-group">
+                                <lable>Language you know:</label>
+                                    <select class="form-control" id="selectLanguageSource">
+                                        <option>1</option>
+                                        <option>2</option>
+                                    </select>
+                            </div>
+                            <div class="form-group">
+                                <lable>Language you need to learn:</label>
+                                    <select class="form-control" id="selectLanguageTarget">
+                                        <option>1</option>
+                                        <option>2</option>
+                                    </select>
+                            </div>
+                            <div class="form-group">
+                                <lable>Detail Dictionary:</label>
+                                    <select class="form-control" id="selectLanguageSource">
+                                        <option>1</option>
+                                        <option>2</option>
+                                    </select>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-success m-1">Save</button>
+                                <button class="btn btn-danger m-1" data-dismiss="modal">Cancle</button>
                             </div>
                         </div>
                     </div>
@@ -77,15 +90,15 @@
             <div id="content" class="col">
 
             </div>
-            <div class="w-150">
-                <div class="btn-group-vertical sticky-top" style="margin-top:20px;">
+            <div>
+                <div class="btn-group-vertical sticky-top mt-2">
                     <button type="button" id="btnDictionary" class="btn btn-info" onclick="navigateDictionary()">
                         Dictionary
                     </button>
-                    <button type="button" id="btnHistory" class="btn btn-secondary" onclick="deleteHistory()">
+                    <button type="button" id="btnDeleteHistory" class="btn btn-secondary" onclick="deleteHistory()">
                         Delete History
                     </button>
-                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#historyModal">
+                    <button type="button" id="btnSetting" class="btn btn-warning" data-toggle="modal" data-target="#historyModal">
                         Setting
                     </button>
                 </div>
@@ -95,12 +108,10 @@
 
     <script>
         // Listen for messages
-        const { ipcRenderer } = require('electron');
         ipcRenderer.on('message', function (event, text) {
             var container = document.getElementById('messages');
             container.innerHTML = text;
-            debugger;
-            document.querySelector('#infoAlert').style.display="block";
+            document.querySelector('#infoAlert').classList.remove('d-none');
         });
         // History control
         function deleteHistory() {
@@ -153,6 +164,9 @@
                     document.getElementById('content').appendChild(script);
                 }
             }
+        }
+        function pageInit() {
+            let languageSource=main.getConfig();
         }
         function navigateTranslate() {
             createPageFromHtml(`${__dirname}/translate.html`);

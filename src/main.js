@@ -4,6 +4,8 @@ const https = require("https");
 const cheerio = require("cheerio");
 const storage = require("electron-json-storage");
 const guessLanguage = require("guesslanguage");
+const config_1 = require("./config");
+const Word_1 = require("./Entities/Word");
 class Main {
     constructor(parameters) {
     }
@@ -50,7 +52,7 @@ class Main {
     searchWord(word) {
         //get the define
         let content = new Promise((resolve, reject) => {
-            let result = new Word();
+            let result = new Word_1.default();
             if (word.trim().indexOf(' ') > 0) {
                 resolve(result);
             }
@@ -168,19 +170,9 @@ class Main {
         });
         return promise;
     }
-}
-exports.Main = Main;
-// ipcRenderer.on('onKeyPress', (event, message) => {
-//     switch (message) {
-//         case 'Return':
-//             SearchClick();
-//             break;
-//         default:
-//             break;
-//     }
-// });
-class Word {
-    constructor() {
+    getConfig() {
+        return config_1.config;
     }
 }
+exports.Main = Main;
 //# sourceMappingURL=main.js.map

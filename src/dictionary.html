@@ -1,7 +1,4 @@
 <script>
-    const { Main } = require('./main.js');
-    let main = new Main();
-
     Mousetrap.bind('ctrl+f', function () {
         let word = document.getElementById('word');
         word.focus();
@@ -84,7 +81,7 @@
                                     <a >
                                         ${element.word + ":" + element.trans}
                                     </a>
-                                    <a class="badge badge-pill badge-danger float-right" onclick="deleteTheWord('${element.id}')">Delete</a>
+                                    <a class="badge badge-pill badge-danger float-right text-light" onclick="deleteTheWord('${element.id}')">Delete</a>
                                     <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="badge badge-success float-right">Longmen Detail</a>
                                 </div>
                                 <div id="collapse${element.id}" class="collapse" role="tabpanel" aria-labelledby="heading${element.id}" data-parent="#wordsHistory">
@@ -101,7 +98,7 @@
     }
     updateHistory(() => { });
 </script>
-<div class="input-group sticky-top" style="margin-top:10px;">
+<div class="input-group sticky-top mt-2">
     <input type="text" class="form-control" id="word" onkeypress="checkSearch(this,event)" placeholder="Ctrl+F">
     <button class="input-group-addon" onclick="getResult()">Search</button>
 </div>

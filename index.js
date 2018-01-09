@@ -4,12 +4,22 @@ const {
     ipcMain,
     Menu,
     MenuItem,
-    webContents
+    webContents,
+    crashReporter
 } = require('electron');
 const log = require('electron-log');
 const autoUpdater = require("electron-updater").autoUpdater;
 const electronIsDev = require("electron-is-dev");
 
+//Crash Reporter
+crashReporter.start({
+    productName: 'Dict',
+    companyName: 'bryht',
+    uploadToServer: false,
+    submitURL: 'localhost'
+});
+
+//Update Logging
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 
@@ -30,7 +40,7 @@ autoUpdater.on('error', (err) => {
     sendStatusToWindow('Error in auto-updater. ' + err);
 })
 autoUpdater.on('download-progress', (progressObj) => {
-    let log_message = "Speed: " +parseInt(progressObj.bytesPerSecond / (1204 * 8));
+    let log_message = "Speed: " + parseInt(progressObj.bytesPerSecond / (1204 * 8));
     log_message = log_message + 'KB/s  Progress:' + parseInt(progressObj.percent) + '%';
     sendStatusToWindow(log_message);
 })

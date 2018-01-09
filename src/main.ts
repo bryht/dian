@@ -5,7 +5,8 @@ import * as storage from 'electron-json-storage';
 import { ipcRenderer, webContents, remote } from 'electron';
 import { error, debug } from 'util';
 import * as guessLanguage from 'guesslanguage';
-
+import { config } from './config';
+import Word from './Entities/Word';
 export class Main {
     constructor(parameters) {
 
@@ -187,26 +188,8 @@ export class Main {
 
     }
 
-}
-// ipcRenderer.on('onKeyPress', (event, message) => {
-//     switch (message) {
-//         case 'Return':
-//             SearchClick();
-//             break;
-//         default:
-//             break;
-//     }
-// });
-class Word {
-    constructor() {
-
+    getConfig(){
+        return config;
     }
-    id: string;
-    word: string;
-    trans: string;
-    important: boolean;
-    isInLongmen: boolean;
-    html: string;
-    url: string;
-    mp3Url: string;
+
 }
