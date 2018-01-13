@@ -4,10 +4,18 @@ export default class Word {
     }
     id: string;
     word: string;
-    trans: string;
+    translation: string;
+    define: string;
+    type: string;
+    pronunciation: string;
+    sign: string;
+    example: string;
     important: boolean;
-    isInLongmen: boolean;
     html: string;
     url: string;
-    mp3Url: string;
+    soundUrl: string;
+    hasContent: boolean;
+    isInLongmen3000: boolean;
+    isPhrase: boolean;
+    dictionary: string;
 }

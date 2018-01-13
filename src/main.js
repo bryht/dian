@@ -4,7 +4,6 @@ const https = require("https");
 const cheerio = require("cheerio");
 const storage = require("electron-json-storage");
 const guessLanguage = require("guesslanguage");
-const config_1 = require("./config");
 const Word_1 = require("./Entities/Word");
 class Main {
     constructor(parameters) {
@@ -19,22 +18,6 @@ class Main {
             });
         });
         return promise;
-    }
-    searchClick() {
-        let word = document.getElementById('word');
-        this.translateWord('zh', 'en', word.value).then(result => {
-            let wordTranslateDiv = document.getElementById('google-result');
-            wordTranslateDiv.innerHTML = result;
-        });
-        // this.searchWord(word.value).then(result => {
-        //     let resultDiv = document.getElementById('result') as HTMLDivElement;
-        //     resultDiv.innerHTML = result;
-        // });
-        storage.get('words', function (error, data) {
-            if (error)
-                throw error;
-            console.log(data);
-        });
     }
     translateWord(source = 'cn', target = 'zh', word) {
         var translate = require('node-google-translate-skidz');
@@ -81,10 +64,10 @@ class Main {
                     let important = $body('.frequent') != undefined;
                     result.word = word;
                     result.important = important;
-                    result.isInLongmen = $content != undefined;
+                    result.hasContent = $content != undefined;
                     result.html = ''; //result.isInLongmen ? $content.html() : '';
                     result.url = 'http://' + options.hostname + options.path;
-                    result.mp3Url = mp3Url;
+                    result.soundUrl = mp3Url;
                     resolve(result);
                 });
             });
@@ -140,10 +123,12 @@ class Main {
         return words;
     }
     deleteAllWords() {
-        storage.remove('words', (error) => {
-            if (error)
-                throw error;
-            alert('delete finished!');
+        return new Promise((resovle, reject) => {
+            storage.remove('words', (error) => {
+                if (error)
+                    throw error;
+                resovle('ok');
+            });
         });
     }
     deleteWord(wordId) {
@@ -169,9 +154,6 @@ class Main {
             });
         });
         return promise;
-    }
-    getConfig() {
-        return config_1.config;
     }
 }
 exports.Main = Main;

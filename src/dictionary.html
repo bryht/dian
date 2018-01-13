@@ -1,53 +1,33 @@
 <script>
-    Mousetrap.bind('ctrl+f', function () {
-        let word = document.getElementById('word');
+    if (window.Dictionary == undefined) {
+        const { Dictionary } = require('./dictionary.js');
+        window.dictionary = new Dictionary();
+        window.dictionary.init();
+        updateHistory();
+    }
+    Mousetrap.bind(['command+f', 'ctrl+f'], function () {
+        let word = document.querySelector('#word');
         word.focus();
         word.value = '';
     });
-
     function checkSearch(input, ev) {
         if (ev.code == 'Enter') {
-            getResult();
+            search().then().catch(err => {
+                alert(err);
+            });
             input.blur();
         }
     }
-    function getResult() {
-        let inputWord = document.getElementById('word').value;
-        main.getLanguage(inputWord).then(inputLanguage => {
-            let userLanguage = 'zh';
-            let wordIsEnglish = inputLanguage == 'en';
-            let source = wordIsEnglish ? 'en' : userLanguage;
-            let target = wordIsEnglish ? userLanguage : 'en';
-            main.translateWord(source, target, inputWord).then(resultTrans => {
-                let searchWord = inputWord;
-                if (!wordIsEnglish) {
-                    searchWord = resultTrans;
-                    resultTrans = inputWord;
-                }
-                //search dictionary
-                main.searchWord(searchWord).then(resultDict => {
-                    resultDict.word = searchWord;
-                    resultDict.trans = resultTrans;
-                    main.playSound(resultDict.mp3Url);
-                    // document.getElementById('result').innerHTML=resultDict.html;
-                    main.addWord(resultDict).then(ok => {
-                        resultDict.id = ok.id;
-                        updateHistory(() => {
-                            showTheWord(resultDict.id, resultDict.url);
-                        });
-                    });
-                    // let dictionary = document.querySelector('#dictionary');
-                    // dictionary.src = resultDict.url;
-                    // dictionary.executeJavaScript(`document.querySelector('.header').remove();
-                    //                               document.querySelector('.pagetitle').remove();
-                    //                               document.querySelector('.dictionary_intro').remove();
-                    //                               document.querySelectorAll('iframe').forEach(element=>{element.remove()});`
-                    //     , false, callback => { });
-
-                });
-            });
-
-        });
+    async function search() {
+        let inputWord = document.querySelector('#word').value.trim();
+        let word = await eval(`dictionary.${dictionary.detail.function}('${inputWord}')`);
+        main.playSound(word.soundUrl);
+        let resultAddWord = await main.addWord(word);
+        word.id = resultAddWord.id;
+        let resultUpdateHistory = await updateHistory();
+        if (word.isPhrase == false) {
+            showTheWord(word.id, word.url);
+        }
     }
     function showTheWord(wordId, wordUrl, isFromClick = false) {
         if (!isFromClick) {
@@ -56,33 +36,33 @@
         document.querySelector('#web' + wordId).src = wordUrl;
     }
     function deleteTheWord(wordId) {
-        let ok = confirm('Are you sure?');
-        if (ok) {
-            main.deleteWord(wordId).then(result => {
-              if (result) {
-                 let wordDiv=document.querySelector('#card'+wordId); 
-                 wordDiv.remove();
-              }  
-            });
-        }
-    }
-    function updateHistory(resultAction) {
-        main.getAllWords().then(words => {
-            if (words == undefined ||
-                words instanceof Array == false ||
-                words.length == 0) {
-                return;
+        main.deleteWord(wordId).then(result => {
+            if (result) {
+                let wordDiv = document.querySelector('#card' + wordId);
+                wordDiv.remove();
             }
-            let history = document.querySelector('#wordsHistory');
-            history.innerHTML = '';
-            words.forEach(element => {
-                let item = `<div class="card" id="card${element.id}">
+        });
+    }
+    async function updateHistory() {
+        let words = await main.getAllWords();
+        let history = document.querySelector('#wordsHistory');
+        history.innerHTML = '';
+        if (words == undefined ||
+            words instanceof Array == false ||
+            words.length == 0) {
+            return;
+        }
+        words.forEach(element => {
+            let item = `<div class="card" id="card${element.id}">
                                 <div class="card-header alert alert-primary" role="tab" id="heading${element.id}">
                                     <a >
-                                        ${element.word + ":" + element.trans}
+                                        ${element.word + ":" + element.translation}
                                     </a>
                                     <a class="badge badge-pill badge-danger float-right text-light" onclick="deleteTheWord('${element.id}')">Delete</a>
-                                    <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="badge badge-success float-right">Longmen Detail</a>
+                                    <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="${element.isPhrase ? 'invisible' : 'visible'} badge badge-success float-right">${element.dictionary} Detail</a>
+                                    <a class="${element.sign == "" ? 'invisible' : 'visible'} badge badge-pill badge-warning float-right">
+                                        ${element.sign}
+                                    </a>
                                 </div>
                                 <div id="collapse${element.id}" class="collapse" role="tabpanel" aria-labelledby="heading${element.id}" data-parent="#wordsHistory">
                                     <div class="card-body" style="overflow:hidden">
@@ -90,24 +70,15 @@
                                     </div>
                                 </div>
                             </div>`;
-                let itemElement = createElementFromHtml(item);
-                history.appendChild(itemElement[0]);
-            });
-            resultAction();
+            let itemElement = createElementFromHtml(item);
+            history.appendChild(itemElement[0]);
         });
     }
-    updateHistory(() => { });
 </script>
 <div class="input-group sticky-top mt-2">
-    <input type="text" class="form-control" id="word" onkeypress="checkSearch(this,event)" placeholder="Ctrl+F">
+    <input type="text" class="form-control" id="word" onkeypress="checkSearch(this,event)" placeholder="Command/Ctrl+F">
     <button class="input-group-addon" onclick="getResult()">Search</button>
 </div>
 <div id="wordsHistory" role="tablist" style="margin-top:20px;">
     <p>Enter Ctrl+F to search word</p>
 </div>
-<!-- <div id='google-result' class="alert alert-primary" style="margin-top:20px;">
-
-</div>
-<webview id="dictionary" autosize="on" style="height:100%;display:flex;"></webview> -->
-<!-- <div id='result' >
-</div> -->

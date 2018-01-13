@@ -5,11 +5,10 @@ import * as storage from 'electron-json-storage';
 import { ipcRenderer, webContents, remote } from 'electron';
 import { error, debug } from 'util';
 import * as guessLanguage from 'guesslanguage';
-import { config } from './config';
+import { getConfig, setConfig, initConfig } from './config';
 import Word from './Entities/Word';
 export class Main {
     constructor(parameters) {
-
     }
     getLanguage(text: string) {
         let promise = new Promise<string>((resolve, reject) => {
@@ -21,28 +20,6 @@ export class Main {
             })
         });
         return promise;
-    }
-
-    searchClick() {
-        let word: HTMLInputElement = document.getElementById('word') as HTMLInputElement;
-
-        this.translateWord('zh', 'en', word.value).then(result => {
-            let wordTranslateDiv = document.getElementById('google-result') as HTMLDivElement;
-            wordTranslateDiv.innerHTML = result;
-
-
-        });
-        // this.searchWord(word.value).then(result => {
-        //     let resultDiv = document.getElementById('result') as HTMLDivElement;
-        //     resultDiv.innerHTML = result;
-        // });
-
-        storage.get('words', function (error, data) {
-            if (error) throw error;
-            console.log(data);
-        });
-
-
     }
 
     translateWord(source: string = 'cn', target: string = 'zh', word: string) {
@@ -93,10 +70,10 @@ export class Main {
                     let important = $body('.frequent') != undefined;
                     result.word = word;
                     result.important = important;
-                    result.isInLongmen = $content != undefined;
+                    result.hasContent = $content != undefined;
                     result.html = '';//result.isInLongmen ? $content.html() : '';
                     result.url = 'http://' + options.hostname + options.path;
-                    result.mp3Url = mp3Url;
+                    result.soundUrl = mp3Url;
                     resolve(result);
                 });
             });
@@ -157,9 +134,11 @@ export class Main {
     }
 
     deleteAllWords() {
-        storage.remove('words', (error) => {
-            if (error) throw error;
-            alert('delete finished!');
+        return new Promise((resovle,reject)=>{
+            storage.remove('words', (error) => {
+                if (error) throw error;
+                resovle('ok');
+            })
         })
     }
 
@@ -186,10 +165,6 @@ export class Main {
         })
         return promise;
 
-    }
-
-    getConfig(){
-        return config;
     }
 
 }
