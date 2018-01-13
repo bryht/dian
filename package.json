@@ -1,6 +1,6 @@
 {
   "name": "dict",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "a dictionary app",
   "author": {
     "name": "bryht",
@@ -10,7 +10,7 @@
   "scripts": {
     "publish": "build -p always",
     "start": "electron ./index.js",
-    "dist": "build"
+    "dist": "build --win"
   },
   "build": {
     "appId": "Dict",
@@ -25,6 +25,14 @@
     "win": {
       "target": "nsis",
       "icon": "build/icon.ico"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.ico",
+      "target": [
+        "zip",
+        "dmg"
+      ]
     }
   },
   "devDependencies": {
