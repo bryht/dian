@@ -77,7 +77,7 @@ class Main {
     }
     playSound(mp3Url) {
         let audio = new Audio(mp3Url);
-        audio.play();
+        audio.play().then(value => { }).catch(error => console.log(error));
     }
     navigateTranslate() {
         let path = `file://${__dirname}/../src/translate.html`;

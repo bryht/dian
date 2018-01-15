@@ -19,9 +19,9 @@
             const { Main } = require('./main.js');
             window.main = new Main();
         }
-        if (window.main == undefined) {
-            const { Main } = require('./main.js');
-            window.main = new Main();
+        if (window.basic==undefined) {
+            const {Basic} =require('./basic.js');
+            window.basic=new Basic();
         }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
@@ -221,7 +221,8 @@
             createPageFromHtml(`${__dirname}/dictionary.html`);
         }
         function exportWords() {
-            alert('Come soon~');
+            // alert('Come soon~');
+            basic.exportWords();
         }
         (function pageInit() {
             navigateDictionary();

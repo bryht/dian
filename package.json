@@ -10,7 +10,7 @@
   "scripts": {
     "publish": "build -p always",
     "start": "electron ./index.js",
-    "dist": "build --win"
+    "dist": "build --win --mac"
   },
   "build": {
     "appId": "Dict",
@@ -27,11 +27,9 @@
       "icon": "build/icon.ico"
     },
     "mac": {
-      "category": "public.app-category.productivity",
       "icon": "build/icon.ico",
       "target": [
-        "zip",
-        "dmg"
+        "zip"
       ]
     }
   },

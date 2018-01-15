@@ -87,7 +87,7 @@ export class Main {
 
     playSound(mp3Url: string) {
         let audio = new Audio(mp3Url);
-        audio.play();
+        audio.play().then(value => { }).catch(error => console.log(error));
     }
     navigateTranslate() {
         let path = `file://${__dirname}/../src/translate.html`;
@@ -134,7 +134,7 @@ export class Main {
     }
 
     deleteAllWords() {
-        return new Promise((resovle,reject)=>{
+        return new Promise((resovle, reject) => {
             storage.remove('words', (error) => {
                 if (error) throw error;
                 resovle('ok');
