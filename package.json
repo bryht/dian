@@ -8,9 +8,12 @@
   },
   "license": "ISC",
   "scripts": {
-    "publish": "build -p always",
-    "start": "electron ./index.js",
-    "dist": "build --win --mac"
+    "postinstall": "electron-builder install-app-deps",
+    "start": "yarn install && yarn compile && electron ./app",
+    "compile": "rimraf app/out && tsc",
+    "pack": "yarn compile && electron-builder --dir",
+    "dist": "yarn compile && electron-builder",
+    "release": "yarn compile && electron-builder"
   },
   "build": {
     "appId": "Dict",
@@ -22,14 +25,37 @@
         "repo": "Dict"
       }
     ],
+    "files": [
+      "out"
+    ],
     "win": {
-      "target": "nsis",
-      "icon": "build/icon.ico"
+      "target": "nsis"
     },
     "mac": {
-      "icon": "build/icon.ico",
       "target": [
+        "dmg",
         "zip"
+      ]
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "category": "Tools",
+      "target": [
+        "AppImage",
+        "deb"
       ]
     }
   },
