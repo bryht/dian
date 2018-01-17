@@ -8,9 +8,11 @@
   },
   "license": "ISC",
   "scripts": {
-    "postinstall": "electron-builder install-app-deps",
-    "start": "yarn install && yarn compile && electron ./app",
-    "compile": "rimraf app/out && tsc",
+    "start": "electron ./index.js",
+    "distall": "build --win --mac",
+    "distwin": "build --win",
+    "publish": "build -p always",
+    "compile": "tsc && npm install",
     "pack": "yarn compile && electron-builder --dir",
     "dist": "yarn compile && electron-builder",
     "release": "yarn compile && electron-builder"
@@ -24,9 +26,6 @@
         "owner": "bryht",
         "repo": "Dict"
       }
-    ],
-    "files": [
-      "out"
     ],
     "win": {
       "target": "nsis"
@@ -50,40 +49,31 @@
           "path": "/Applications"
         }
       ]
-    },
-    "linux": {
-      "category": "Tools",
-      "target": [
-        "AppImage",
-        "deb"
-      ]
     }
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.5",
+    "@types/debug": "^0.0.30",
     "@types/electron": "^1.6.10",
     "@types/electron-json-storage": "^4.0.0",
-    "@types/debug": "^0.0.30",
     "electron": "^1.8.1",
-    "electron-builder": "^19.52.1",
-    "electron-builder,squirrel-windows": "^19.52.0",
+    "electron-builder": "^19.54.0",
     "rimraf": "^2.6.2",
     "typescript": "^2.6.2"
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
     "cheerio": "^1.0.0-rc.2",
+    "electron-debug": "^1.5.0",
     "electron-gh-releases": "^2.0.4",
     "electron-is-dev": "^0.3.0",
     "electron-json-storage": "^4.0.2",
-    "electron-log": "^2.2.13",
-    "electron-updater": "^2.18.2",
-    "electron-debug": "^1.5.0",
+    "electron-log": "^2.2.14",
+    "electron-updater": "^2.19.1",
     "guesslanguage": "^0.2.0",
     "jquery": "^3.2.1",
     "node-google-translate-skidz": "^1.1.1",
     "request": "^2.83.0",
-    "update": "^0.7.4",
-    "keytar-prebuild": "^4.0.4"
+    "update": "^0.7.4"
   }
 }
