@@ -11,7 +11,7 @@
     "start": "electron ./index.js",
     "distall": "build --win --mac",
     "distwin": "build --win",
-    "publish": "build -p always",
+    "publish": "build --win --mac -p always",
     "compile": "tsc && npm install",
     "pack": "yarn compile && electron-builder --dir",
     "dist": "yarn compile && electron-builder",

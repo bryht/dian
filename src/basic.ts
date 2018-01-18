@@ -1,9 +1,23 @@
 import * as https from 'https';
 import * as fs from 'fs-extra';
 import * as readline from 'readline';
-import { remote } from 'electron';
+import { app, remote, crashReporter } from 'electron';
 import * as storage from 'electron-json-storage';
 import Word from './Entities/Word';
+import { EPROTO } from 'constants';
+import { electronIsDev } from 'electron-is-dev';
+
+
+//Crash Reporter
+if (electronIsDev) {
+    app.setPath('temp', 'C:/Users/liming/Desktop/DictLog/');
+    crashReporter.start({
+        productName: 'Dict',
+        companyName: 'bryht',
+        uploadToServer: true,
+        submitURL: 'localhost'
+    });
+}
 export class Basic {
 
     getAllWords() {
@@ -29,31 +43,35 @@ export class Basic {
                 resolve(result);
             });
         });
-
+        if (fileName == undefined) {
+            return 'file name is null';
+        }
         let folderName = fileName.split('.')[0] + "Audio";
         let words = await this.getAllWords();
-        let checkFolder=await fs.ensureDir(folderName);
+        let checkFolder = await fs.ensureDir(folderName);
         for (let index = 0; index < words.length; index++) {
             const element = words[index];
+            if (element.isPhrase) continue;
             let line = `${element.word},${element.type},${element.define},[${element.translation}]${element.pronunciation},${element.example}`; element.word + ',' + element.define;
-            fs.appendFile(fileName, line + '\n', error => {
-                if (error) {
-                    throw error;
-                }
-                console.log(line + '---Saved!');
-            });
-            this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
+            fs.appendFileSync(fileName, line + '\n');
+            await this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
         }
+        return 'ok';
     }
     saveMp3File(url: string, fileName: string) {
-        var file = fs.createWriteStream(fileName);
-        file.on('finish', function () {
-            file.close();  // close() is async, call cb after close completes.
+        return new Promise((resolve, reject) => {
+            var file = fs.createWriteStream(fileName, { autoClose: true });
+            var request = https.get(url, res => {
+                res.pipe(file);
+            });
+            request.on("error", error => {
+                console.log(error);
+                reject(error);
+            });
+            request.on("finish", () => {
+                resolve('ok');
+            });
         });
-        var request = https.get(url, res => {
-            res.pipe(file);
-        });
-
     }
 
 

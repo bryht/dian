@@ -12,12 +12,15 @@ const autoUpdater = require("electron-updater").autoUpdater;
 const electronIsDev = require("electron-is-dev");
 
 //Crash Reporter
-crashReporter.start({
-    productName: 'Dict',
-    companyName: 'bryht',
-    uploadToServer: false,
-    submitURL: 'localhost'
-});
+if (electronIsDev) {
+    app.setPath('temp', 'C:/Users/liming/Desktop/DictLog/');
+    crashReporter.start({
+        productName: 'Dict',
+        companyName: 'bryht',
+        uploadToServer: true,
+        submitURL: 'localhost'
+    });
+}
 
 //Update Logging
 autoUpdater.logger = log;
