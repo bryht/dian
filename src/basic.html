@@ -113,6 +113,9 @@
                     <button type="button" id="btnExport" class="btn btn-success" onclick="exportWords()">
                         Export To Memrise
                     </button>
+                    <button type="button" id="btnExportToMomo" class="btn btn-secondary" onclick="exportWordsToMomo()">
+                        Export To Momo
+                    </button>
                 </div>
             </div>
         </div>
@@ -227,6 +230,15 @@
             }).catch(error => {
                 console.log(error);
             });
+        }
+        function exportWordsToMomo() {
+            basic.exportWords('momo').then(result => {
+                console.log(result);
+                alert(result);
+            }).catch(error => {
+                console.log(error);
+            });
+
         }
         (function pageInit() {
             navigateDictionary();

@@ -32,7 +32,7 @@ export class Basic {
         return words;
     }
 
-    async exportWords() {
+    async exportWords(target: string = 'memrise') {
         let fileName = await new Promise<string>(resolve => {
             remote.dialog.showSaveDialog({
                 'title': 'SaveWords',
@@ -52,9 +52,18 @@ export class Basic {
         for (let index = 0; index < words.length; index++) {
             const element = words[index];
             if (element.isPhrase) continue;
-            let line = `${element.word},${element.type},${element.define},[${element.translation}]${element.pronunciation},${element.example}`; element.word + ',' + element.define;
-            fs.appendFileSync(fileName, line + '\n');
-            await this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
+            switch (target) {
+                case "memrise":
+                    let line = `${element.word},${element.type},${element.define},[${element.translation}]${element.pronunciation},${element.example}`; element.word + ',' + element.define;
+                    fs.appendFileSync(fileName, line + '\r\n');
+                    await this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
+                    break;
+                case "momo":
+                    fs.appendFileSync(fileName, element.word + '\r\n');
+                    break;
+                default:
+                    break;
+            }
         }
         return 'ok';
     }

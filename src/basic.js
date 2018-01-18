@@ -34,7 +34,7 @@ class Basic {
         });
         return words;
     }
-    exportWords() {
+    exportWords(target = 'memrise') {
         return __awaiter(this, void 0, void 0, function* () {
             let fileName = yield new Promise(resolve => {
                 electron_1.remote.dialog.showSaveDialog({
@@ -56,10 +56,19 @@ class Basic {
                 const element = words[index];
                 if (element.isPhrase)
                     continue;
-                let line = `${element.word},${element.type},${element.define},[${element.translation}]${element.pronunciation},${element.example}`;
-                element.word + ',' + element.define;
-                fs.appendFileSync(fileName, line + '\n');
-                yield this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
+                switch (target) {
+                    case "memrise":
+                        let line = `${element.word},${element.type},${element.define},[${element.translation}]${element.pronunciation},${element.example}`;
+                        element.word + ',' + element.define;
+                        fs.appendFileSync(fileName, line + '\r\n');
+                        yield this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
+                        break;
+                    case "momo":
+                        fs.appendFileSync(fileName, element.word + '\r\n');
+                        break;
+                    default:
+                        break;
+                }
             }
             return 'ok';
         });
