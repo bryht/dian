@@ -77,6 +77,9 @@ class Basic {
             });
         });
     }
+    openLink(url) {
+        electron_1.shell.openExternal(url);
+    }
 }
 exports.Basic = Basic;
 //# sourceMappingURL=basic.js.map

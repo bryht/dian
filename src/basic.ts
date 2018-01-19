@@ -1,7 +1,7 @@
 import * as https from 'https';
 import * as fs from 'fs-extra';
 import * as readline from 'readline';
-import { app, remote } from 'electron';
+import { app, remote, shell } from 'electron';
 import * as storage from 'electron-json-storage';
 import Word from './Entities/Word';
 
@@ -70,5 +70,8 @@ export class Basic {
         });
     }
 
+    openLink(url: string) {
+        shell.openExternal(url);
+    }
 
 }

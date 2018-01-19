@@ -131,7 +131,7 @@
                     <button type="button" id="btnSetting" class="btn btn-secondary" data-toggle="modal" data-target="#settingModal">
                         Setting
                     </button>
-                    <button type="button" id="btnHelp" class="btn btn-warning">
+                    <button type="button" id="btnHelp" class="btn btn-warning" onclick="howToUse()">
                         How To Use
                     </button>
                 </div>
@@ -236,6 +236,9 @@
                 console.log(error);
             });
 
+        }
+        function howToUse() {
+            basic.openLink('https://bryht.gitbooks.io/dict/how-to-use.html');
         }
         (function pageInit() {
             createPageFromHtml(`${__dirname}/dictionary.html`);
