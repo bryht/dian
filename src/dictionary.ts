@@ -78,8 +78,8 @@ export class Dictionary {
                         exp = $body('.cexa1g1[info=UK]').first().text().replace(/,/g, '.').replace(result.word, '[xxx]').trim();
                     }
                     let sign = $body('.FREQ').text();
-                    result.important = $body('.frequent') != undefined;
-                    result.hasContent = $content != undefined;
+                    result.important = $body('.frequent').html() != null;
+                    result.hasContent = $content.html() != null;
                     result.html = '';//result.isInLongmen ? $content.html() : '';
                     result.url = 'http://' + options.hostname + options.path;
                     result.soundUrl = mp3Url;

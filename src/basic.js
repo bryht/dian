@@ -12,17 +12,6 @@ const https = require("https");
 const fs = require("fs-extra");
 const electron_1 = require("electron");
 const storage = require("electron-json-storage");
-const electron_is_dev_1 = require("electron-is-dev");
-//Crash Reporter
-if (electron_is_dev_1.electronIsDev) {
-    electron_1.app.setPath('temp', 'C:/Users/liming/Desktop/DictLog/');
-    electron_1.crashReporter.start({
-        productName: 'Dict',
-        companyName: 'bryht',
-        uploadToServer: true,
-        submitURL: 'localhost'
-    });
-}
 class Basic {
     getAllWords() {
         let words = new Promise((resolve, reject) => {
@@ -39,7 +28,7 @@ class Basic {
             let fileName = yield new Promise(resolve => {
                 electron_1.remote.dialog.showSaveDialog({
                     'title': 'SaveWords',
-                    'defaultPath': 'wordlist-result',
+                    'defaultPath': 'wordlist' + Date.now(),
                     'filters': [{ 'name': 'txt', 'extensions': ['txt'] }],
                     'buttonLabel': 'SaveWords'
                 }, result => {
@@ -47,14 +36,14 @@ class Basic {
                 });
             });
             if (fileName == undefined) {
-                return 'file name is null';
+                return false;
             }
-            let folderName = fileName.split('.')[0] + "Audio";
+            let folderName = fileName.split('.')[0] + "audio";
             let words = yield this.getAllWords();
             let checkFolder = yield fs.ensureDir(folderName);
             for (let index = 0; index < words.length; index++) {
                 const element = words[index];
-                if (element.isPhrase)
+                if (element.hasContent == false || element.isPhrase)
                     continue;
                 switch (target) {
                     case "memrise":
@@ -62,15 +51,15 @@ class Basic {
                         element.word + ',' + element.define;
                         fs.appendFileSync(fileName, line + '\r\n');
                         yield this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
-                        break;
+                        return "Words have saved in " + fileName + "\n\t Audios have saved in " + folderName;
                     case "momo":
                         fs.appendFileSync(fileName, element.word + '\r\n');
-                        break;
+                        return "Words have saved in " + fileName;
                     default:
                         break;
                 }
             }
-            return 'ok';
+            return 'input wrong';
         });
     }
     saveMp3File(url, fileName) {

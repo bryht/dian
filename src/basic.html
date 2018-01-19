@@ -33,13 +33,13 @@
         Mousetrap.bind('ctrl+h', function () {
             document.getElementById('btnHistory').click();
         });
-        Mousetrap.bind('ctrl+t', function () {
-            document.getElementById('btnDictionary').click();
-        });
         Mousetrap.bind('ctrl+s', function () {
             document.getElementById('btnSetting').click();
         });
         Mousetrap.bind('j', function () {
+            let word = document.getElementById('word');
+        })
+        Mousetrap.bind('k', function () {
             let word = document.getElementById('word');
         })
         Mousetrap.bind('right', function () {
@@ -104,17 +104,35 @@
                         Dictionary
                     </button> -->
 
-                    <button type="button" id="btnDeleteHistory" class="btn btn-danger" onclick="deleteHistory()">
-                        Delete History
-                    </button>
-                    <button type="button" id="btnSetting" class="btn btn-warning" data-toggle="modal" data-target="#settingModal">
+                    <div class="btn-group" role="group">
+                        <button id="btnDelete" type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Delete
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnDelete">
+                            <button type="button" id="btnDeleteHistory" class="dropdown-item" onclick="deleteHistory()">
+                                All History
+                            </button>
+                        </div>
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button id="btnExport" type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                            aria-expanded="false">
+                            Export
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnExport">
+                            <button type="button" id="btnExport" class="dropdown-item" onclick="exportWordsToMemrise()">
+                                To Memrise
+                            </button>
+                            <button type="button" id="btnExportToMomo" class="dropdown-item" onclick="exportWordsToMomo()">
+                                To Momo
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" id="btnSetting" class="btn btn-secondary" data-toggle="modal" data-target="#settingModal">
                         Setting
                     </button>
-                    <button type="button" id="btnExport" class="btn btn-success" onclick="exportWords()">
-                        Export To Memrise
-                    </button>
-                    <button type="button" id="btnExportToMomo" class="btn btn-secondary" onclick="exportWordsToMomo()">
-                        Export To Momo
+                    <button type="button" id="btnHelp" class="btn btn-warning">
+                        How To Use
                     </button>
                 </div>
             </div>
@@ -142,23 +160,6 @@
                 main.deleteWord(word);
             }
         }
-        // function updateHistory() {
-        //     let div = document.getElementById('wordsHistory');
-        //     // div.innerHTML
-        //     div.innerHTML = '';
-        //     let words = main.getWords().then(value => {
-
-        //         if (value instanceof Array == false) return;
-        //         value.forEach(element => {
-        //             if (element.word) {
-        //                 let template = "<div class='alert alert-primary' role='alert'>" + element.word + ":" + element.trans + "<button type='button' onclick='deleteWord(" + element.word + ")' class='close' data-dismiss='alert' aria-label='Close'> <span aria-hidden='true'>&times;</span> </button> </div>";
-
-        //                 var wordnode = createElementFromHtml(template);
-        //                 div.appendChild(wordnode[0]);
-        //             }
-        //         });
-        //     });
-        // }
         function createElementFromHtml(html) {
             let temp = document.createElement('temp');
             temp.innerHTML = html;
@@ -217,31 +218,27 @@
                 }
             }
         }
-        function navigateTranslate() {
-            createPageFromHtml(`${__dirname}/translate.html`);
-        }
-        function navigateDictionary() {
-            createPageFromHtml(`${__dirname}/dictionary.html`);
-        }
-        function exportWords() {
+        function exportWordsToMemrise() {
             basic.exportWords().then(result => {
-                console.log(result);
-                alert(result);
+                if (result) {
+                    alert(result);
+                }
             }).catch(error => {
                 console.log(error);
             });
         }
         function exportWordsToMomo() {
             basic.exportWords('momo').then(result => {
-                console.log(result);
-                alert(result);
+                if (result) {
+                    alert(result);
+                }
             }).catch(error => {
                 console.log(error);
             });
 
         }
         (function pageInit() {
-            navigateDictionary();
+            createPageFromHtml(`${__dirname}/dictionary.html`);
             settingInit().then(() => { });
         })();
     </script>

@@ -1,23 +1,10 @@
 import * as https from 'https';
 import * as fs from 'fs-extra';
 import * as readline from 'readline';
-import { app, remote, crashReporter } from 'electron';
+import { app, remote } from 'electron';
 import * as storage from 'electron-json-storage';
 import Word from './Entities/Word';
-import { EPROTO } from 'constants';
-import { electronIsDev } from 'electron-is-dev';
 
-
-//Crash Reporter
-if (electronIsDev) {
-    app.setPath('temp', 'C:/Users/liming/Desktop/DictLog/');
-    crashReporter.start({
-        productName: 'Dict',
-        companyName: 'bryht',
-        uploadToServer: true,
-        submitURL: 'localhost'
-    });
-}
 export class Basic {
 
     getAllWords() {
@@ -36,7 +23,7 @@ export class Basic {
         let fileName = await new Promise<string>(resolve => {
             remote.dialog.showSaveDialog({
                 'title': 'SaveWords',
-                'defaultPath': 'wordlist-result',
+                'defaultPath': 'wordlist' + Date.now(),
                 'filters': [{ 'name': 'txt', 'extensions': ['txt'] }],
                 'buttonLabel': 'SaveWords'
             }, result => {
@@ -44,28 +31,28 @@ export class Basic {
             });
         });
         if (fileName == undefined) {
-            return 'file name is null';
+            return false;
         }
-        let folderName = fileName.split('.')[0] + "Audio";
+        let folderName = fileName.split('.')[0] + "audio";
         let words = await this.getAllWords();
         let checkFolder = await fs.ensureDir(folderName);
         for (let index = 0; index < words.length; index++) {
             const element = words[index];
-            if (element.isPhrase) continue;
+            if (element.hasContent == false || element.isPhrase) continue;
             switch (target) {
                 case "memrise":
                     let line = `${element.word},${element.type},${element.define},[${element.translation}]${element.pronunciation},${element.example}`; element.word + ',' + element.define;
                     fs.appendFileSync(fileName, line + '\r\n');
                     await this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
-                    break;
+                    return "Words have saved in " + fileName + "\n\t Audios have saved in " + folderName;
                 case "momo":
                     fs.appendFileSync(fileName, element.word + '\r\n');
-                    break;
+                    return "Words have saved in " + fileName;
                 default:
                     break;
             }
         }
-        return 'ok';
+        return 'input wrong';
     }
     saveMp3File(url: string, fileName: string) {
         return new Promise((resolve, reject) => {

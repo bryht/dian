@@ -21,7 +21,7 @@
     async function search() {
         let inputWord = document.querySelector('#word').value.trim();
         let word = await eval(`dictionary.${dictionary.detail.function}('${inputWord}')`);
-        main.playSound(word.soundUrl);
+        if (word.hasContent) main.playSound(word.soundUrl);
         try {
             let resultAddWord = await main.addWord(word);
             word.id = resultAddWord.id;
@@ -58,12 +58,12 @@
         }
         words.forEach(element => {
             let item = `<div class="card" id="card${element.id}">
-                                <div class="card-header alert alert-primary" role="tab" id="heading${element.id}">
+                                <div class="card-header alert alert-${element.isPhrase?"success":"primary"}" role="tab" id="heading${element.id}">
                                     <a >
-                                        ${element.word + ":" + element.translation}
+                                        ${element.word} ${element.isPhrase ? "<br/>" : ":"} ${element.translation}
                                     </a>
                                     <a class="badge badge-pill badge-danger float-right text-light" onclick="deleteTheWord('${element.id}')">Delete</a>
-                                    <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="${element.isPhrase ? 'invisible' : 'visible'} badge badge-success float-right">${element.dictionary} Detail</a>
+                                    <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="${element.hasContent ? 'visible' : 'invisible'} badge badge-info float-right">${element.dictionary} Detail</a>
                                     <a class="${element.sign == undefined || element.sign == "" ? 'invisible' : 'visible'} badge badge-pill badge-warning float-right">
                                         ${element.sign}
                                     </a>
