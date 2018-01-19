@@ -60,7 +60,7 @@ function createWindow() {
         height: _height,
         minWidth: 800,
         minHeight: 600,
-        icon: '../build/icon.ico'
+        icon: __dirname + '/build/icon.ico'
     })
     win.center();
     win.loadURL(`file://${__dirname}/src/basic.html`)

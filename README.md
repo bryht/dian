@@ -1,4 +1,4 @@
-# Dict
+# Dict [![Build Status](https://travis-ci.org/bryht/Dict.svg?branch=master)](https://travis-ci.org/bryht/Dict)
 ### This is a Dictionary application. ([Download](https://github.com/bryht/Dict/releases/latest))
 ***
 ##  Key command:

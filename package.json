@@ -1,6 +1,6 @@
 {
   "name": "dict",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "a dictionary app",
   "author": {
     "name": "bryht",
@@ -56,8 +56,8 @@
     "@types/debug": "^0.0.30",
     "@types/electron": "^1.6.10",
     "@types/electron-json-storage": "^4.0.0",
-    "electron": "^1.8.1",
-    "electron-builder": "^19.54.0",
+    "electron": "1.7.x",
+    "electron-builder": "^19.55.1",
     "typescript": "^2.6.2"
   },
   "dependencies": {
@@ -68,7 +68,7 @@
     "electron-is-dev": "^0.3.0",
     "electron-json-storage": "^4.0.2",
     "electron-log": "^2.2.14",
-    "electron-updater": "^2.19.1",
+    "electron-updater": "^2.20.0",
     "fs-extra": "^5.0.0",
     "guesslanguage": "^0.2.0",
     "jquery": "^3.2.1",

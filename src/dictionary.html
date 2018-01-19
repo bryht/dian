@@ -22,8 +22,12 @@
         let inputWord = document.querySelector('#word').value.trim();
         let word = await eval(`dictionary.${dictionary.detail.function}('${inputWord}')`);
         main.playSound(word.soundUrl);
-        let resultAddWord = await main.addWord(word);
-        word.id = resultAddWord.id;
+        try {
+            let resultAddWord = await main.addWord(word);
+            word.id = resultAddWord.id;
+        } catch (error) {
+            console.error(error);
+        }
         let resultUpdateHistory = await updateHistory();
         if (word.isPhrase == false) {
             showTheWord(word.id, word.url);

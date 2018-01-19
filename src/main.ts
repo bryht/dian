@@ -99,7 +99,10 @@ export class Main {
     addWord(word: Word) {
         let promise = new Promise((resolve, reject) => {
             storage.get('words', (error, words) => {
-                if (error) throw error;
+                if (error) {
+                    console.error(error);
+                    reject(error);
+                }
                 let wordsArray = new Array<Word>();
                 if (words instanceof Array) {
                     wordsArray = words as Array<Word>;
@@ -113,7 +116,10 @@ export class Main {
                 word.id = Date.now().toString();
                 wordsArray.unshift(word);
                 storage.set('words', wordsArray, error => {
-                    if (error) throw error;
+                    if (error) {
+                        console.error(error);
+                        reject(error);
+                    }
                     resolve(word);
                 });
             });
