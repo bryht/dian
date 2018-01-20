@@ -20,7 +20,7 @@
 ![alt](/build/imgs/2.png)
 ![alt](/build/imgs/3.png)
 ![alt](/build/imgs/4.png)
-> - ![alt](/build/imgs/5.png) **S3** stands for it is longmen Spoken 3000 words. **Longmen Detail** stands for it has Longmen Dictionary Detial, **Click** it then can show the detail.
+> - ![alt](/build/imgs/5.png) **S3** stands for it is longman Spoken 3000 words. **Longman Detail** stands for it has Longman Dictionary Detial, **Click** it then can show the detail.
 
 ## 3. Export the words.
 - You can export the words to Memrise and Momo for you to memorize them.

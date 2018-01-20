@@ -94,7 +94,7 @@ class Dictionary {
                         result.html = ''; //result.isInLongmen ? $content.html() : '';
                         result.url = 'http://' + options.hostname + options.path;
                         result.soundUrl = mp3Url;
-                        result.dictionary = "Longmen";
+                        result.dictionary = "Longman";
                         result.type = pos;
                         result.pronunciation = pronunciation;
                         result.define = define.trim();
