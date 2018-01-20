@@ -1,3 +1,9 @@
+# **Dict** ![](https://travis-ci.org/bryht/Dict.svg?branch=master)
+### This is a Dictionary application. ([**Download**](https://github.com/bryht/Dict/releases/latest))
+> `dict-setup-x.x.x.exe` is the Windows Version.
+
+> `dict-0.x.x-mac.zip` and `dict-0.x.x.dmg` are Mac Version (*Haven`t test yet*) 
+***
 # How to use it?
 ## 1. Set your language.
 - Open setting and choose your language you know, also your language you want to learn.
