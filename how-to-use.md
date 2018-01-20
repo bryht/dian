@@ -3,6 +3,7 @@
 > `dict-setup-x.x.x.exe` is the Windows Version.
 
 > `dict-0.x.x-mac.zip` and `dict-0.x.x.dmg` are Mac Version (*Haven`t test yet*) 
+
 ----------
 
 # How to use it?
