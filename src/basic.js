@@ -38,28 +38,30 @@ class Basic {
             if (fileName == undefined) {
                 return false;
             }
-            let folderName = fileName.split('.')[0] + "audio";
             let words = yield this.getAllWords();
-            let checkFolder = yield fs.ensureDir(folderName);
-            for (let index = 0; index < words.length; index++) {
-                const element = words[index];
-                if (element.hasContent == false || element.isPhrase)
-                    continue;
-                switch (target) {
-                    case "memrise":
+            switch (target) {
+                case "memrise":
+                    let folderName = fileName.split('.')[0] + "audio";
+                    let checkFolder = yield fs.ensureDir(folderName);
+                    for (let index = 0; index < words.length; index++) {
+                        const element = words[index];
+                        if (element.hasContent == false || element.isPhrase)
+                            continue;
                         let line = `${element.word},${element.type},${element.define},[${element.translation}]${element.pronunciation},${element.example}`;
                         element.word + ',' + element.define;
                         fs.appendFileSync(fileName, line + '\r\n');
                         yield this.saveMp3File(element.soundUrl, folderName + "\\" + element.word + ".mp3");
-                        return "Words have saved in " + fileName + "\n\t Audios have saved in " + folderName;
-                    case "momo":
+                    }
+                    return "Words have saved in " + fileName + "\n\t Audios have saved in " + folderName;
+                case "momo":
+                    for (let index = 0; index < words.length; index++) {
+                        const element = words[index];
+                        if (element.hasContent == false || element.isPhrase)
+                            continue;
                         fs.appendFileSync(fileName, element.word + '\r\n');
-                        return "Words have saved in " + fileName;
-                    default:
-                        break;
-                }
+                    }
+                    return "Words have saved in " + fileName;
             }
-            return 'input wrong';
         });
     }
     saveMp3File(url, fileName) {
