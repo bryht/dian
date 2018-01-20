@@ -1,4 +1,4 @@
-# **Dict** ![](https://travis-ci.org/bryht/Dict.svg?branch=master)
+# **Dict** [![Join the chat at https://gitter.im/bryhtDict/Lobby](https://badges.gitter.im/bryhtDict/Lobby.svg)](https://gitter.im/bryhtDict/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ### This is a Dictionary application. ([**Download**](https://github.com/bryht/Dict/releases/latest))
 > `dict-setup-x.x.x.exe` is the Windows Version.
 
