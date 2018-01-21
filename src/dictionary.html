@@ -1,4 +1,9 @@
 <script>
+    window.onfocus=function(){
+        let word = document.querySelector('#word');
+        word.focus();
+        word.value = '';
+    }
     if (window.Dictionary == undefined) {
         const { Dictionary } = require('./dictionary.js');
         window.dictionary = new Dictionary();

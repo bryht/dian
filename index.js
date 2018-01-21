@@ -1,3 +1,4 @@
+const electron = require('electron');
 const {
     app,
     BrowserWindow,
@@ -5,8 +6,10 @@ const {
     Menu,
     MenuItem,
     webContents,
+    Tray,
+    globalShortcut,
     crashReporter
-} = require('electron');
+} = electron;
 const log = require('electron-log');
 const autoUpdater = require("electron-updater").autoUpdater;
 const electronIsDev = require("electron-is-dev");
@@ -54,15 +57,14 @@ autoUpdater.on('update-downloaded', (info) => {
 
 let win;
 function createWindow() {
-    const _width = 1200, _height = 800
+    const _width = electronIsDev ? 1200 : 600, _height = 800
     win = new BrowserWindow({
         width: _width,
         height: _height,
-        minWidth: 800,
+        minWidth: 500,
         minHeight: 600,
         icon: __dirname + '/build/icon.ico'
     })
-    win.center();
     win.loadURL(`file://${__dirname}/src/basic.html`)
     win.on("closed", () => win = null)
     if (electronIsDev) {
@@ -71,8 +73,41 @@ function createWindow() {
     if (!electronIsDev) {
         autoUpdater.checkForUpdates();
     }
-}
+    var appIcon = new Tray(__dirname + '/build/icon.ico');
+    var contextMenu = Menu.buildFromTemplate([
+        {
+            label: 'Show App', click: function () {
+                win.show()
+            }
+        },
+        {
+            label: 'Quit', click: function () {
+                app.isQuiting = true
+                app.quit()
+            }
+        }
+    ])
+    let x = electron.screen.getPrimaryDisplay().workAreaSize.width - win.webContents.browserWindowOptions.width;
+    win.setPosition(x, 0);
 
+    appIcon.setContextMenu(contextMenu)
+    win.on('minimize', function (event) {
+        event.preventDefault();
+        win.hide();
+    });
+    win.on('close', function (event) {
+        if (!app.isQuiting) {
+            event.preventDefault();
+            win.hide();
+        }
+
+        return false;
+    });
+    globalShortcut.register('CommandOrControl+Shift+F', () => {
+        win.show();
+    });
+
+}
 app.on("ready", createWindow)
 app.on("window-all-closed", () => {
     app.quit()
