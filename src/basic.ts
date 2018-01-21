@@ -19,6 +19,10 @@ export class Basic {
         return words;
     }
 
+    miniMize(){
+        remote.BrowserWindow.getFocusedWindow().minimize();
+    }
+
     async exportWords(target: string = 'memrise') {
         let fileName = await new Promise<string>(resolve => {
             remote.dialog.showSaveDialog({

@@ -23,6 +23,9 @@ class Basic {
         });
         return words;
     }
+    miniMize() {
+        electron_1.remote.BrowserWindow.getFocusedWindow().minimize();
+    }
     exportWords(target = 'memrise') {
         return __awaiter(this, void 0, void 0, function* () {
             let fileName = yield new Promise(resolve => {
