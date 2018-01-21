@@ -14,16 +14,6 @@ const log = require('electron-log');
 const autoUpdater = require("electron-updater").autoUpdater;
 const electronIsDev = require("electron-is-dev");
 
-//Crash Reporter
-if (electronIsDev) {
-    app.setPath('temp', 'C:/Users/liming/Desktop/DictLog/');
-    crashReporter.start({
-        productName: 'Dict',
-        companyName: 'bryht',
-        uploadToServer: true,
-        submitURL: 'localhost'
-    });
-}
 
 //Update Logging
 autoUpdater.logger = log;
@@ -56,6 +46,7 @@ autoUpdater.on('update-downloaded', (info) => {
 });
 
 let win;
+var appIcon = null;
 function createWindow() {
     const _width = electronIsDev ? 1200 : 600, _height = 800
     win = new BrowserWindow({
@@ -73,7 +64,7 @@ function createWindow() {
     if (!electronIsDev) {
         autoUpdater.checkForUpdates();
     }
-    var appIcon = new Tray(__dirname + '/build/icon.ico');
+    appIcon = new Tray(__dirname + '/src/Images/icon.png');
     var contextMenu = Menu.buildFromTemplate([
         {
             label: 'Show App', click: function () {
@@ -94,14 +85,6 @@ function createWindow() {
     win.on('minimize', function (event) {
         event.preventDefault();
         win.hide();
-    });
-    win.on('close', function (event) {
-        if (!app.isQuiting) {
-            event.preventDefault();
-            win.hide();
-        }
-
-        return false;
     });
     globalShortcut.register('CommandOrControl+Shift+F', () => {
         win.show();
