@@ -13,3 +13,7 @@
 
 * ###  Check the log
 > C:\Users\\`UserName`\AppData\Roaming\dict\log.log
+
+* ### Thanks
+Got a lot of help from internet.
+Icon: https://goo.gl/roiFNg

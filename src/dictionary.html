@@ -21,6 +21,8 @@
                 alert(err);
             });
             input.blur();
+        }else if(ev.code=='Escape'){
+            input.blur();
         }
     }
     async function search() {
@@ -85,7 +87,7 @@
     }
 </script>
 <div class="input-group sticky-top mt-2">
-    <input type="text" class="form-control" id="word" onkeypress="checkSearch(this,event)" placeholder="Command/Ctrl+F">
+    <input type="text" class="form-control" id="word" onkeydown="checkSearch(this,event)" placeholder="Command/Ctrl+F">
     <button class="input-group-addon" onclick="search()">Search</button>
 </div>
 <div id="wordsHistory" role="tablist" style="margin-top:20px;">
