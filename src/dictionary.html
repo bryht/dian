@@ -1,5 +1,5 @@
 <script>
-    window.onfocus=function(){
+    window.onfocus = function () {
         let word = document.querySelector('#word');
         word.focus();
         word.value = '';
@@ -15,13 +15,31 @@
         word.focus();
         word.value = '';
     });
+    Mousetrap.bind('j', function () {
+        let webView = document.querySelector('div.collapse.show div webview');
+        if (webView != null) {
+            webView.executeJavaScript("document.querySelector('body').scrollTop+=20");
+        }
+    });
+    Mousetrap.bind('k', function () {
+        let webView = document.querySelector('div.collapse.show div webview');
+        if (webView != null) {
+            webView.executeJavaScript("document.querySelector('body').scrollTop-=20");
+        }
+    });
+    Mousetrap.bind('J', function () {
+        window.scrollTo(window.scrollX, window.scrollY + 20);
+    });
+    Mousetrap.bind('K', function () {
+        window.scrollTo(window.scrollX, window.scrollY - 20);
+    });
     function checkSearch(input, ev) {
         if (ev.code == 'Enter') {
             search().then().catch(err => {
                 alert(err);
             });
             input.blur();
-        }else if(ev.code=='Escape'){
+        } else if (ev.code == 'Escape') {
             input.blur();
         }
     }
@@ -65,7 +83,7 @@
         }
         words.forEach(element => {
             let item = `<div class="card" id="card${element.id}">
-                                <div class="card-header alert alert-${element.isPhrase?"success":"primary"}" role="tab" id="heading${element.id}">
+                                <div class="card-header alert alert-${element.isPhrase ? "success" : "primary"}" role="tab" id="heading${element.id}">
                                     <a >
                                         ${element.word} ${element.isPhrase ? "<br/>" : ":"} ${element.translation}
                                     </a>

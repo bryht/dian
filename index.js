@@ -65,6 +65,8 @@ function createWindow() {
         autoUpdater.checkForUpdates();
     }
     appIcon = new Tray(__dirname + '/src/Images/icon.png');
+    appIcon.setToolTip('This is Dict');
+    appIcon.addListener("click", () => win.show());
     var contextMenu = Menu.buildFromTemplate([
         {
             label: 'Show App', click: function () {
