@@ -106,7 +106,12 @@
 </script>
 <div class="input-group sticky-top mt-2">
     <input type="text" class="form-control" id="word" onkeydown="checkSearch(this,event)" placeholder="Command/Ctrl+F">
-    <button class="input-group-addon" onclick="search()">Search</button>
+    <div class="input-group-append">
+        <button class="btn btn-secondary" type="button" onclick="search()">Search</button>
+        <button class="btn btn-secondary active" type="button" data-toggle="collapse" data-target="#controlPanel">
+           <img src="./Images/settings.svg" alt="Setting">
+        </button>
+    </div>
 </div>
 <div id="wordsHistory" role="tablist" style="margin-top:20px;">
     <p>Enter Ctrl+F to search word</p>
