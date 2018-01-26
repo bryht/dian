@@ -15,16 +15,16 @@
 
 <a name="a1"></a>
 
-## 1. Set your language.
+## - Set your language.
 - Open setting and choose your language you know, also your language you want to learn.
 > Languages which you can learn.
 > - English for Chinese|Dutch `(developing)` |Indonesia `(developing)` 
 > - Dutch for English `(developing)` 
 ![alt](/build/imgs/1.png)
 
-<a name="a2></a>
+<a name="a2"></a>
 
-## 2. Search your word or phrase.
+## - Search your word or phrase.
 - You can use hotkey `(Ctrl+F)` to navigate to input blank.
 - Input word or phrase, it can recognize your language automatically.
 ![alt](/build/imgs/2.png)
@@ -32,9 +32,9 @@
 ![alt](/build/imgs/4.png)
 > - ![alt](/build/imgs/5.png) **S3** stands for it is longman Spoken 3000 words. **Longman Detail** stands for it has Longman Dictionary Detial, **Click** it then can show the detail.
 
-<a name="a3></a>
+<a name="a3"></a>
 
-## 3. Export the words.
+## - Export the words.
 - You can export the words to Memrise and Momo for you to memorize them.
 ![alt](/build/imgs/6.png)
 - Click **To Memrise** and export the files.
@@ -45,9 +45,9 @@
 
 >- Momo is same, just it only export the txt file.
 
-<a name="a4></a>
+<a name="a4"></a>
 
-## 4. Import [Memrise](https://www.memrise.com)
+## - Import [Memrise](https://www.memrise.com)
 - went to memrise create a new Course and a new level and Click **Bulk add words**
 > ![alt](/build/imgs/8.png)
 
