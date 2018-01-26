@@ -12,6 +12,7 @@ const https = require("https");
 const fs = require("fs-extra");
 const electron_1 = require("electron");
 const storage = require("electron-json-storage");
+const pdfkit = require("pdfkit");
 class Basic {
     getAllWords() {
         let words = new Promise((resolve, reject) => {
@@ -84,6 +85,30 @@ class Basic {
     }
     openLink(url) {
         electron_1.shell.openExternal(url);
+    }
+    exportMutiChoiceTest() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let fileName = yield new Promise(resolve => {
+                electron_1.remote.dialog.showSaveDialog({
+                    'title': 'MutipleChoice',
+                    'defaultPath': 'MultipleChoiceTest' + Date.now(),
+                    'filters': [{ 'name': 'pdf', 'extensions': ['pdf'] }],
+                    'buttonLabel': 'Save'
+                }, result => {
+                    resolve(result);
+                });
+            });
+            if (fileName == undefined) {
+                return false;
+            }
+            let textContent = "123";
+            let doc = new pdfkit();
+            doc.pipe(fs.createWriteStream(fileName));
+            doc.fontSize(25).text(textContent);
+            doc.end();
+        });
+    }
+    exportBlankTest() {
     }
 }
 exports.Basic = Basic;

@@ -4,7 +4,7 @@ import * as readline from 'readline';
 import { app, remote, shell } from 'electron';
 import * as storage from 'electron-json-storage';
 import Word from './Entities/Word';
-
+import * as pdfkit from 'pdfkit';
 export class Basic {
 
     getAllWords() {
@@ -19,7 +19,7 @@ export class Basic {
         return words;
     }
 
-    miniMize(){
+    miniMize() {
         remote.BrowserWindow.getFocusedWindow().minimize();
     }
 
@@ -79,4 +79,28 @@ export class Basic {
         shell.openExternal(url);
     }
 
+    async exportMutiChoiceTest() {
+        let fileName = await new Promise<string>(resolve => {
+            remote.dialog.showSaveDialog({
+                'title': 'MutipleChoice',
+                'defaultPath': 'MultipleChoiceTest' + Date.now(),
+                'filters': [{ 'name': 'pdf', 'extensions': ['pdf'] }],
+                'buttonLabel': 'Save'
+            }, result => {
+                resolve(result);
+            });
+        });
+        if (fileName == undefined) {
+            return false;
+        }
+        let textContent = "123";
+        let doc = new pdfkit();
+        doc.pipe(fs.createWriteStream(fileName));
+        doc.fontSize(25).text(textContent);
+        doc.end();
+        
+    }
+    exportBlankTest() {
+
+    }
 }
