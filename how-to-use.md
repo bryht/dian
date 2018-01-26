@@ -8,14 +8,14 @@
 
 # How to use it?
  
- - [ Set your language](#Set your language.)
+ - [ Set your language](#a1)
  - [ Search your word or phrase](#a2)
  - [ Export the words](#a3)
  - [ Import Memrise](#a4)
 
 <a name="a1"></a>
 
-##Set your language.
+## Set your language.
 - Open setting and choose your language you know, also your language you want to learn.
 > Languages which you can learn.
 > - English for Chinese|Dutch `(developing)` |Indonesia `(developing)` 
@@ -24,7 +24,7 @@
 
 <a name="a2"></a>
 
-## - Search your word or phrase.
+## Search your word or phrase.
 - You can use hotkey `(Ctrl+F)` to navigate to input blank.
 - Input word or phrase, it can recognize your language automatically.
 ![alt](/build/imgs/2.png)
@@ -34,7 +34,7 @@
 
 <a name="a3"></a>
 
-## - Export the words.
+## Export the words.
 - You can export the words to Memrise and Momo for you to memorize them.
 ![alt](/build/imgs/6.png)
 - Click **To Memrise** and export the files.
@@ -47,7 +47,7 @@
 
 <a name="a4"></a>
 
-## - Import [Memrise](https://www.memrise.com)
+## Import [Memrise](https://www.memrise.com)
 - went to memrise create a new Course and a new level and Click **Bulk add words**
 > ![alt](/build/imgs/8.png)
 
