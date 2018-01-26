@@ -8,14 +8,14 @@
 
 # How to use it?
  
- - [ Set your language](#a1)
+ - [ Set your language](##Set your language.)
  - [ Search your word or phrase](#a2)
  - [ Export the words](#a3)
  - [ Import Memrise](#a4)
 
 <a name="a1"></a>
 
-## - Set your language.
+##Set your language.
 - Open setting and choose your language you know, also your language you want to learn.
 > Languages which you can learn.
 > - English for Chinese|Dutch `(developing)` |Indonesia `(developing)` 
