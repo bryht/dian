@@ -8,7 +8,7 @@
 
 # How to use it?
  
- - [ Set your language](##Set your language.)
+ - [ Set your language](#Set your language.)
  - [ Search your word or phrase](#a2)
  - [ Export the words](#a3)
  - [ Import Memrise](#a4)
