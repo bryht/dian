@@ -44,7 +44,7 @@
         }
     }
     async function search() {
-        let inputWord = document.querySelector('#word').value.trim();
+        let inputWord = document.querySelector('#word').value.trim().toLowerCase();
         let word = await eval(`dictionary.${dictionary.detail.function}('${inputWord}')`);
         if (word.hasContent) main.playSound(word.soundUrl);
         try {
@@ -85,11 +85,11 @@
             let item = `<div class="card" id="card${element.id}">
                                 <div class="card-header alert alert-${element.isPhrase ? "success" : "primary"}" role="tab" id="heading${element.id}">
                                     <a >
-                                        ${element.word} ${element.isPhrase ? "<br/>" : ":"} ${element.translation}
+                                        ${element.word}${element.isPhrase ? "<br/>" : ":"} ${element.translation}
                                     </a>
-                                    <a class="badge badge-pill badge-danger float-right text-light" onclick="deleteTheWord('${element.id}')">Delete</a>
-                                    <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="${element.hasContent ? 'visible' : 'invisible'} badge badge-info float-right">${element.dictionary} Detail</a>
-                                    <a class="${element.sign == undefined || element.sign == "" ? 'invisible' : 'visible'} badge badge-pill badge-warning float-right">
+                                    <a class="badge badge-pill badge-danger float-right text-light ml-1" onclick="deleteTheWord('${element.id}')">Delete</a>
+                                    <a data-toggle="collapse" onclick="showTheWord('${element.id}','${element.url}',true)" href="#collapse${element.id}" aria-controls="collapse${element.id}" aria-expanded="false" class="${element.hasContent ? 'visible' : 'invisible'} badge badge-info float-right ml-1">See more</a>
+                                    <a class="${element.sign == undefined || element.sign == "" ? 'invisible' : 'visible'} badge badge-pill badge-warning float-right ml-1">
                                         ${element.sign}
                                     </a>
                                 </div>

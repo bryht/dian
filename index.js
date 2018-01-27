@@ -88,7 +88,7 @@ function createWindow() {
         event.preventDefault();
         win.hide();
     });
-    globalShortcut.register('CommandOrControl+Shift+F', () => {
+    globalShortcut.register('CommandOrControl+Shift+' +(electronIsDev ? 'D' : 'F'), () => {
         win.show();
     });
 

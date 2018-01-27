@@ -110,6 +110,12 @@
                                 Export
                             </button>
                             <div class="dropdown-menu" aria-labelledby="btnExport">
+                                <button type="button" class="dropdown-item" onclick="exportMutiChoiceTest()">
+                                    MutiChoice Test
+                                </button>
+                                <button type="button" class="dropdown-item" onclick="exportBlankTest()">
+                                    Blank Test
+                                </button>
                                 <button type="button" id="btnExport" class="dropdown-item" onclick="exportWordsToMemrise()">
                                     To Memrise
                                 </button>
@@ -263,13 +269,31 @@
             });
 
         }
+        function exportMutiChoiceTest() {
+            basic.exportMutiChoiceTest().then(result => {
+                if (result) {
+                    alert(result);
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        }
+        function exportBlankTest() {
+            
+            basic.exportBlankTest().then(result => {
+                if (result) {
+                    alert(result);
+                }
+            }).catch(error => {
+                console.log(error);
+            });
+        }
         function howToUse() {
             basic.openLink('https://bryht.gitbooks.io/dict/how-to-use.html');
         }
         (function pageInit() {
             createPageFromHtml(`${__dirname}/dictionary.html`);
             settingInit().then(() => { });
-            // basic.exportMutiChoiceTest();
         })();
     </script>
 </body>
