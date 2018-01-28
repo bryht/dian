@@ -11,48 +11,48 @@
 # How to use it?
  
  - [ Hot Keys](#a0)
- - [ Set your language](#a1)
  - [ Search your word or phrase](#a2)
+ - [ Set your language](#a1)
  - [ Export the words](#a3)
  - [ Import Memrise](#a4)
-t![](/assets/1.gif)
+
 <a name="a0"></a>
 ## Hot Keys.
 - `Ctrl+Shift+F` Open Dict Global
 - `Ctrl+F` Cursor to Search Input
 - `Esc` Minimise Dict
+- `Shift+j` Scroll Down
+- `Shift+k` Scroll Up
+- `j` Search Word Scroll Down
+- `k` Search Word Scroll Up
 
-<a name="a1"></a>
-
-## Set your language.
-- Open setting and choose your language you know, also your language you want to learn.
-> Languages which you can learn.
-> - English for Chinese|Dutch `(developing)` |Indonesia `(developing)` 
-> - Dutch for English `(developing)` 
-![alt](/build/imgs/1.png)
 
 <a name="a2"></a>
-
 ## Search your word or phrase.
 - You can use hotkey `(Ctrl+F)` to navigate to input blank.
 - Input word or phrase, it can recognize your language automatically.
-![alt](/build/imgs/2.png)
-![alt](/build/imgs/3.png)
-![alt](/build/imgs/4.png)
+- ![alt](/build/imgs/2.gif)
+
 > - ![alt](/build/imgs/5.png) **S3** stands for it is longman Spoken 3000 words. **Longman Detail** stands for it has Longman Dictionary Detial, **Click** it then can show the detail.
 
+<a name="a1"></a>
+## Set your language.
+- Open setting and choose your language you know, also your language you want to learn.
+- Languages which you can learn.
+  - English for Chinese|Dutch `(developing)` |Indonesia `(developing)` 
+  - Dutch for English `(developing)` 
+- ![alt](/build/imgs/1.gif)
+
+
 <a name="a3"></a>
-
 ## Export the words.
-- You can export the words to Memrise and Momo for you to memorize them.
-![alt](/build/imgs/6.png)
-- Click **To Memrise** and export the files.
-![alt](/build/imgs/7.png)
-- Then you can get txt file and the Audio files for import into  [Memrise](https://www.memrise.com/) 
+- You can export words to PDF as a test.
+- ![alt](/build/imgs/3.gif)
 
+- You can export words to Memrise for you to memorize them,it will export txt and audio folder.
 > ![alt](/build/imgs/9.png)
 
->- Momo is same, just it only export the txt file.
+- Momo is same, just it only export the txt file.
 
 <a name="a4"></a>
 
