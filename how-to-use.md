@@ -1,9 +1,11 @@
 # **Dict** [![Join the chat at https://gitter.im/bryhtDict/Lobby](https://badges.gitter.im/bryhtDict/Lobby.svg)](https://gitter.im/bryhtDict/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/bryht/6)
-### This is a Dictionary application. ([**Download**](https://github.com/bryht/Dict/releases/latest))
-> `dict-setup-x.x.x.exe` is the Windows Version.
+## This is a Dictionary application
+- It can search words, of course.
+- It can export words, Memrise App | txt | pdf test. :+1:
 
-> `dict-0.x.x-mac.zip` and `dict-0.x.x.dmg` are Mac Version
-
+[![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/latest/total.svg?style=for-the-badge)](https://github.com/bryht/Dict/releases)
+- `dict-setup-x.x.x.exe` is the Windows Version.
+- `dict-0.x.x-mac.zip` and `dict-0.x.x.dmg` are Mac Version
 ----------
 
 # How to use it?
@@ -12,6 +14,9 @@
  - [ Search your word or phrase](#a2)
  - [ Export the words](#a3)
  - [ Import Memrise](#a4)
+
+## Hot Keys.
+- <kbd>Ctrl+Shift+F</kbd> 
 
 <a name="a1"></a>
 
