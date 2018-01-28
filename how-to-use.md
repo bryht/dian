@@ -10,13 +10,17 @@
 
 # How to use it?
  
+ - [ Hot Keys](#a0)
  - [ Set your language](#a1)
  - [ Search your word or phrase](#a2)
  - [ Export the words](#a3)
  - [ Import Memrise](#a4)
-
+t![](/assets/1.gif)
+<a name="a0"></a>
 ## Hot Keys.
-- <kbd>Ctrl+Shift+F</kbd> 
+- `Ctrl+Shift+F` Open Dict Global
+- `Ctrl+F` Cursor to Search Input
+- `Esc` Minimise Dict
 
 <a name="a1"></a>
 
