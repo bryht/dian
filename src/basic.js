@@ -30,17 +30,8 @@ class Basic {
     }
     exportWords(target = 'memrise') {
         return __awaiter(this, void 0, void 0, function* () {
-            let fileName = yield new Promise(resolve => {
-                electron_1.remote.dialog.showSaveDialog({
-                    'title': 'SaveWords',
-                    'defaultPath': 'wordlist' + Date.now(),
-                    'filters': [{ 'name': 'txt', 'extensions': ['txt'] }],
-                    'buttonLabel': 'SaveWords'
-                }, result => {
-                    resolve(result);
-                });
-            });
-            if (fileName == undefined) {
+            let fileName = yield File_1.File.openFile('SaveWords', 'WordList', File_1.Filter.txt);
+            if (fileName == false) {
                 return false;
             }
             let words = yield this.getAllWords();
@@ -182,7 +173,7 @@ class Basic {
                 let randomInt = index;
                 for (let i = 0; i < 4; i++) {
                     if (i === answersArray[index].answer) {
-                        pdf.fontSize(12).text(answersNumToLetter[i] + "." + wordsHasContent[index].define);
+                        pdf.fontSize(12).text(answersNumToLetter[i] + "." + element.define);
                     }
                     else {
                         while (choices.includes(randomInt)) {

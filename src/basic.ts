@@ -26,17 +26,9 @@ export class Basic {
     }
 
     async exportWords(target: string = 'memrise') {
-        let fileName = await new Promise<string>(resolve => {
-            remote.dialog.showSaveDialog({
-                'title': 'SaveWords',
-                'defaultPath': 'wordlist' + Date.now(),
-                'filters': [{ 'name': 'txt', 'extensions': ['txt'] }],
-                'buttonLabel': 'SaveWords'
-            }, result => {
-                resolve(result);
-            });
-        });
-        if (fileName == undefined) {
+
+        let fileName = await File.openFile('SaveWords', 'WordList', Filter.txt);
+        if (fileName == false) {
             return false;
         }
         let words = await this.getAllWords();
@@ -174,7 +166,7 @@ export class Basic {
             let randomInt = index;
             for (let i = 0; i < 4; i++) {
                 if (i === answersArray[index].answer) {
-                    pdf.fontSize(12).text(answersNumToLetter[i] + "." + wordsHasContent[index].define);
+                    pdf.fontSize(12).text(answersNumToLetter[i] + "." + element.define);
                 } else {
                     while (choices.includes(randomInt)) {
                         randomInt = Math.floor(Math.random() * (wordsHasContent.length - 0.1));
