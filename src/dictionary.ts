@@ -40,9 +40,9 @@ export class Dictionary {
                 target: isTarget ? this.detail.source : this.detail.target,
             }, function (params) {
                 let result = new Word();
-                result.word = isTarget ? inputWord : params.translation;
+                result.word = (isTarget ? inputWord : <string>params.translation).toLowerCase();
                 result.translation = isTarget ? params.translation : inputWord;
-                result.isPhrase = result.word.indexOf(' ') > 0.
+                result.isPhrase = result.word.indexOf(' ') > 0;
                 resolve(result);
             });
         });

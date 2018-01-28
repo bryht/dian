@@ -44,7 +44,7 @@
         }
     }
     async function search() {
-        let inputWord = document.querySelector('#word').value.trim().toLowerCase();
+        let inputWord = document.querySelector('#word').value.trim();
         let word = await eval(`dictionary.${dictionary.detail.function}('${inputWord}')`);
         if (word.hasContent) main.playSound(word.soundUrl);
         try {
