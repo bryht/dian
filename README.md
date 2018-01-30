@@ -2,6 +2,7 @@
 ## This is a Dictionary application
 - It can search words, of course.
 - It can export words, Memrise App | txt | pdf test.
+- [How to use](how-to-use.md)
 
 [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/latest/total.svg?style=for-the-badge)](https://github.com/bryht/Dict/releases)
 
