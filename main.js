@@ -56,7 +56,16 @@ function createWindow() {
         minHeight: 600,
         icon: __dirname + '/build/icon.ico'
     })
-    win.loadURL(`file://${__dirname}/src/basic.html`)
+    // and load the index.html of the app.
+    if (electronIsDev) {
+        win.loadURL('http://localhost:4200/')
+    } else {
+        win.loadURL(url.format({
+            pathname: path.join(__dirname, '/dist/index.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
+    }
     win.on("closed", () => win = null)
     if (electronIsDev) {
         win.webContents.openDevTools();
@@ -64,7 +73,7 @@ function createWindow() {
     if (!electronIsDev) {
         autoUpdater.checkForUpdates();
     }
-    appIcon = new Tray(__dirname + '/src/Images/icon.png');
+    appIcon = new Tray(__dirname + '/src/assets/icon.png');
     appIcon.setToolTip('This is Dict');
     appIcon.addListener("click", () => win.show());
     var contextMenu = Menu.buildFromTemplate([
