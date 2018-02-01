@@ -8,14 +8,17 @@
   },
   "license": "ISC",
   "scripts": {
-    "start": "electron ./index.js",
+    "electron": "electron ./main.js",
+    "start": "webpack-dev-server --port=4200",
+    "build": "webpack",
+    "test": "karma start ./karma.conf.js",
+    "lint": "ng lint",
+    "e2e": "protractor ./protractor.conf.js",
+    "pree2e": "webdriver-manager update --standalone false --gecko false --quiet",
     "distall": "build --win --mac",
     "distwin": "build --win",
     "publish": "build --win --mac -p always",
-    "compile": "tsc && npm install",
-    "pack": "yarn compile && electron-builder --dir",
-    "dist": "yarn compile && electron-builder",
-    "release": "yarn compile && electron-builder"
+    "compile": "tsc && npm install"
   },
   "build": {
     "appId": "Dict",
