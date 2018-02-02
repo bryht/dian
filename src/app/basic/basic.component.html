@@ -1,3 +1,83 @@
-<p>
-  basic works!
-</p>
+<div id="infoAlert" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+  <strong>Info!</strong>
+  <span id="messages">Content</span>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="container">
+  <div class="row">
+    <!-- Modal -->
+    <div class="modal fade" id="settingModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <h2>Setting</h2>
+            <hr>
+            <div class="form-group">
+              <select class="form-control" id="selectLanguageSource">
+                <option>1</option>
+                <option>2</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <select class="form-control" id="selectLanguageTarget">
+                <option>1</option>
+                <option>2</option>
+              </select>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-success m-1" data-dismiss="modal">Save</button>
+              <button class="btn btn-danger m-1" data-dismiss="modal">Cancle</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="content" class="col">
+
+    </div>
+    <div class="wrapper">
+      <div class="navbar-collapse sticky-top mt-2">
+        <div class="btn-group-vertical">
+          <div class="btn-group" role="group">
+            <button  type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Delete
+            </button>
+            <div class="dropdown-menu">
+              <button type="button" class="dropdown-item">
+                All History
+              </button>
+            </div>
+          </div>
+          <div class="btn-group" role="group">
+            <button  type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="false">
+              Export
+            </button>
+            <div class="dropdown-menu">
+              <button (click)="exportMutiChoice()" type="button" class="dropdown-item">
+                MutiChoice Test
+              </button>
+              <button type="button" class="dropdown-item">
+                Blank Test
+              </button>
+              <button type="button" class="dropdown-item">
+                To Memrise
+              </button>
+              <button type="button" class="dropdown-item" >
+                To Momo
+              </button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#settingModal">
+            Setting
+          </button>
+          <button type="button" class="btn btn-warning">
+            How To Use
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
