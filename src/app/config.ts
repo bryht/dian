@@ -1,34 +1,35 @@
 import * as storage from 'electron-json-storage';
-import DefaultConfig from './Entities/DefaultConfig';
 import { error } from 'util';
+import DefaultConfig from './default-config.model';
+
 const configPara = {
-    "default": {
-        "languageSource": "zh",
-        "languageTarget": "en"
+    'default': {
+        'languageSource': 'zh',
+        'languageTarget': 'en'
     },
-    "languageSource": [
+    'languageSource': [
         {
-            "name": "English",
-            "value": "en"
+            'name': 'English',
+            'value': 'en'
         },
         {
-            "name": "中文",
-            "value": "zh"
+            'name': '中文',
+            'value': 'zh'
         }
     ],
-    "languageTarget": [
+    'languageTarget': [
         {
-            "name": "English",
-            "value": "en"
+            'name': 'English',
+            'value': 'en'
         }
     ],
-    "languageDetail": [
+    'languageDetail': [
         {
-            "source": "zh",
-            "target": "en",
-            "name": "Longmen",
-            "value": "longmen",
-            "function": "GetLongmenWord"
+            'source': 'zh',
+            'target': 'en',
+            'name': 'Longmen',
+            'value': 'longmen',
+            'function': 'GetLongmenWord'
         }
     ]
 }
@@ -52,7 +53,7 @@ async function setConfig(name, value) {
         storage.get('config', (error, result) => {
             if (error) throw error;
             resolve(result as DefaultConfig);
-        })
+        });
     });
     let config = await getConfigPromise;
     config[name] = value;

@@ -1,6 +1,13 @@
-import { Component, OnInit, NgModule } from '@angular/core';
-import { remote } from 'electron';
+import { OnInit, Component } from '@angular/core';
+import * as https from 'https';
+// import * as fs from 'fs-extra';
+import * as readline from 'readline';
+import * as storage from 'electron-json-storage';
+import * as pdfkit from 'pdfkit';
+import { remote, shell } from 'electron';
 import * as Mousetrap from 'mousetrap';
+import Word from '../word.model';
+import { File, Filter } from '../file.utility';
 
 @Component({
   selector: 'app-root',
@@ -8,14 +15,14 @@ import * as Mousetrap from 'mousetrap';
   styleUrls: ['./basic.component.css']
 })
 export class BasicComponent implements OnInit {
-
   constructor() { }
 
   ngOnInit() {
 
   }
-  exportMutiChoice() {
-    alert(1);
+
+  miniMize() {
+    remote.BrowserWindow.getFocusedWindow().minimize();
   }
 
 }

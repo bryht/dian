@@ -5,10 +5,9 @@ export enum Filter {
 }
 export class File {
     constructor(parameters) {
-
     }
     static async openFile(title: string, defaultPath: string, filter: Filter) {
-        let fileName = await new Promise<string>(resolve => {
+        const fileName = await new Promise<string>(resolve => {
             remote.dialog.showSaveDialog({
                 'title': title,
                 'defaultPath': defaultPath + '-' + Date.now(),
@@ -18,7 +17,7 @@ export class File {
                 resolve(result);
             });
         });
-        if (fileName == undefined) {
+        if (fileName === undefined) {
             return false;
         }
         return fileName;
