@@ -18,99 +18,99 @@ const { AngularCompilerPlugin } = require('@ngtools/webpack');
 const nodeModules = path.join(process.cwd(), 'node_modules');
 const realNodeModules = fs.realpathSync(nodeModules);
 const genDirNodeModules = path.join(process.cwd(), 'src', '$$_gendir', 'node_modules');
-const entryPoints = ["inline","polyfills","sw-register","styles","vendor","main"];
+const entryPoints = ["inline", "polyfills", "sw-register", "styles", "vendor", "main"];
 const minimizeCss = false;
 const baseHref = "";
 const deployUrl = "";
 const projectRoot = process.cwd();
 const maximumInlineSize = 10;
 const postcssPlugins = function (loader) {
-        // safe settings based on: https://github.com/ben-eb/cssnano/issues/358#issuecomment-283696193
-        const importantCommentRe = /@preserve|@licen[cs]e|[@#]\s*source(?:Mapping)?URL|^!/i;
-        const minimizeOptions = {
-            autoprefixer: false,
-            safe: true,
-            mergeLonghand: false,
-            discardComments: { remove: (comment) => !importantCommentRe.test(comment) }
-        };
-        return [
-            postcssImports({
-                resolve: (url, context) => {
-                    return new Promise((resolve, reject) => {
-                        if (url && url.startsWith('~')) {
-                            url = url.substr(1);
-                        }
-                        loader.resolve(context, url, (err, result) => {
-                            if (err) {
-                                reject(err);
-                                return;
-                            }
-                            resolve(result);
-                        });
-                    });
-                },
-                load: (filename) => {
-                    return new Promise((resolve, reject) => {
-                        loader.fs.readFile(filename, (err, data) => {
-                            if (err) {
-                                reject(err);
-                                return;
-                            }
-                            const content = data.toString();
-                            resolve(content);
-                        });
-                    });
-                }
-            }),
-            postcssUrl({
-                filter: ({ url }) => url.startsWith('~'),
-                url: ({ url }) => {
-                    const fullPath = path.join(projectRoot, 'node_modules', url.substr(1));
-                    return path.relative(loader.context, fullPath).replace(/\\/g, '/');
-                }
-            }),
-            postcssUrl([
-                {
-                    // Only convert root relative URLs, which CSS-Loader won't process into require().
-                    filter: ({ url }) => url.startsWith('/') && !url.startsWith('//'),
-                    url: ({ url }) => {
-                        if (deployUrl.match(/:\/\//) || deployUrl.startsWith('/')) {
-                            // If deployUrl is absolute or root relative, ignore baseHref & use deployUrl as is.
-                            return `${deployUrl.replace(/\/$/, '')}${url}`;
-                        }
-                        else if (baseHref.match(/:\/\//)) {
-                            // If baseHref contains a scheme, include it as is.
-                            return baseHref.replace(/\/$/, '') +
-                                `/${deployUrl}/${url}`.replace(/\/\/+/g, '/');
-                        }
-                        else {
-                            // Join together base-href, deploy-url and the original URL.
-                            // Also dedupe multiple slashes into single ones.
-                            return `/${baseHref}/${deployUrl}/${url}`.replace(/\/\/+/g, '/');
-                        }
-                    }
-                },
-                {
-                    // TODO: inline .cur if not supporting IE (use browserslist to check)
-                    filter: (asset) => {
-                        return maximumInlineSize > 0 && !asset.hash && !asset.absolutePath.endsWith('.cur');
-                    },
-                    url: 'inline',
-                    // NOTE: maxSize is in KB
-                    maxSize: maximumInlineSize,
-                    fallback: 'rebase',
-                },
-                { url: 'rebase' },
-            ]),
-            autoprefixer({ grid: true }),
-        ].concat(minimizeCss ? [cssnano(minimizeOptions)] : []);
-    };
+  // safe settings based on: https://github.com/ben-eb/cssnano/issues/358#issuecomment-283696193
+  const importantCommentRe = /@preserve|@licen[cs]e|[@#]\s*source(?:Mapping)?URL|^!/i;
+  const minimizeOptions = {
+    autoprefixer: false,
+    safe: true,
+    mergeLonghand: false,
+    discardComments: { remove: (comment) => !importantCommentRe.test(comment) }
+  };
+  return [
+    postcssImports({
+      resolve: (url, context) => {
+        return new Promise((resolve, reject) => {
+          if (url && url.startsWith('~')) {
+            url = url.substr(1);
+          }
+          loader.resolve(context, url, (err, result) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+            resolve(result);
+          });
+        });
+      },
+      load: (filename) => {
+        return new Promise((resolve, reject) => {
+          loader.fs.readFile(filename, (err, data) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+            const content = data.toString();
+            resolve(content);
+          });
+        });
+      }
+    }),
+    postcssUrl({
+      filter: ({ url }) => url.startsWith('~'),
+      url: ({ url }) => {
+        const fullPath = path.join(projectRoot, 'node_modules', url.substr(1));
+        return path.relative(loader.context, fullPath).replace(/\\/g, '/');
+      }
+    }),
+    postcssUrl([
+      {
+        // Only convert root relative URLs, which CSS-Loader won't process into require().
+        filter: ({ url }) => url.startsWith('/') && !url.startsWith('//'),
+        url: ({ url }) => {
+          if (deployUrl.match(/:\/\//) || deployUrl.startsWith('/')) {
+            // If deployUrl is absolute or root relative, ignore baseHref & use deployUrl as is.
+            return `${deployUrl.replace(/\/$/, '')}${url}`;
+          }
+          else if (baseHref.match(/:\/\//)) {
+            // If baseHref contains a scheme, include it as is.
+            return baseHref.replace(/\/$/, '') +
+              `/${deployUrl}/${url}`.replace(/\/\/+/g, '/');
+          }
+          else {
+            // Join together base-href, deploy-url and the original URL.
+            // Also dedupe multiple slashes into single ones.
+            return `/${baseHref}/${deployUrl}/${url}`.replace(/\/\/+/g, '/');
+          }
+        }
+      },
+      {
+        // TODO: inline .cur if not supporting IE (use browserslist to check)
+        filter: (asset) => {
+          return maximumInlineSize > 0 && !asset.hash && !asset.absolutePath.endsWith('.cur');
+        },
+        url: 'inline',
+        // NOTE: maxSize is in KB
+        maxSize: maximumInlineSize,
+        fallback: 'rebase',
+      },
+      { url: 'rebase' },
+    ]),
+    autoprefixer({ grid: true }),
+  ].concat(minimizeCss ? [cssnano(minimizeOptions)] : []);
+};
 
 
 
 
 module.exports = {
-  "target":"electron-renderer",
+  "target": "electron-renderer",
   "resolve": {
     "extensions": [
       ".ts",
@@ -434,13 +434,13 @@ module.exports = {
         }
       }
     ], {
-      "ignore": [
-        ".gitkeep",
-        "**/.DS_Store",
-        "**/Thumbs.db"
-      ],
-      "debug": "warning"
-    }),
+        "ignore": [
+          ".gitkeep",
+          "**/.DS_Store",
+          "**/Thumbs.db"
+        ],
+        "debug": "warning"
+      }),
     new ProgressPlugin(),
     new CircularDependencyPlugin({
       "exclude": /(\\|\/)node_modules(\\|\/)/,
@@ -467,15 +467,15 @@ module.exports = {
         let leftIndex = entryPoints.indexOf(left.names[0]);
         let rightindex = entryPoints.indexOf(right.names[0]);
         if (leftIndex > rightindex) {
-            return 1;
+          return 1;
         }
         else if (leftIndex < rightindex) {
-            return -1;
+          return -1;
         }
         else {
-            return 0;
+          return 0;
         }
-    }
+      }
     }),
     new BaseHrefWebpackPlugin({}),
     new CommonsChunkPlugin({
@@ -489,11 +489,11 @@ module.exports = {
         "vendor"
       ],
       "minChunks": (module) => {
-                return module.resource
-                    && (module.resource.startsWith(nodeModules)
-                        || module.resource.startsWith(genDirNodeModules)
-                        || module.resource.startsWith(realNodeModules));
-            },
+        return module.resource
+          && (module.resource.startsWith(nodeModules)
+            || module.resource.startsWith(genDirNodeModules)
+            || module.resource.startsWith(realNodeModules));
+      },
       "chunks": [
         "main"
       ]

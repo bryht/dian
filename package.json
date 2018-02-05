@@ -72,6 +72,7 @@
     "@types/node": "~6.0.60",
     "@types/pdfkit": "^0.7.36",
     "autoprefixer": "^7.2.3",
+    "brfs": "^1.4.4",
     "circular-dependency-plugin": "^4.2.1",
     "codelyzer": "^4.0.1",
     "copy-webpack-plugin": "^4.1.1",

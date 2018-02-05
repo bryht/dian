@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { BasicComponent } from './basic/basic.component';
 import 'bootstrap';
@@ -14,7 +15,7 @@ import { WordService } from './word.service';
   ],
   schemas: [NO_ERRORS_SCHEMA],
   imports: [
-    BrowserModule
+    BrowserModule, FormsModule
   ],
   providers: [
     WordService

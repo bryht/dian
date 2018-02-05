@@ -1,4 +1,6 @@
 const electron = require('electron');
+const url = require('url');
+const path=require('path');
 const {
     app,
     BrowserWindow,
@@ -7,8 +9,7 @@ const {
     MenuItem,
     webContents,
     Tray,
-    globalShortcut,
-    crashReporter
+    globalShortcut
 } = electron;
 const log = require('electron-log');
 const autoUpdater = require("electron-updater").autoUpdater;
@@ -97,7 +98,7 @@ function createWindow() {
         event.preventDefault();
         win.hide();
     });
-    globalShortcut.register('CommandOrControl+Shift+' +(electronIsDev ? 'D' : 'F'), () => {
+    globalShortcut.register('CommandOrControl+Shift+' + (electronIsDev ? 'D' : 'F'), () => {
         win.show();
     });
 

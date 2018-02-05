@@ -8,6 +8,7 @@ import { remote, shell } from 'electron';
 import * as Mousetrap from 'mousetrap';
 import Word from '../word.model';
 import { File, Filter } from '../file.utility';
+import { setConfig, initConfig, configPara } from '../config';
 
 @Component({
   selector: 'app-root',
@@ -15,14 +16,27 @@ import { File, Filter } from '../file.utility';
   styleUrls: ['./basic.component.css']
 })
 export class BasicComponent implements OnInit {
+  sourceList;
+  sourceCurrent;
+  targetList;
+  targetCurrent;
   constructor() { }
 
-  ngOnInit() {
-
+  async ngOnInit() {
+    await initConfig();
+    this.sourceList = configPara.languageSource;
+    this.sourceCurrent = configPara.default.source;
+    this.targetList = configPara.languageTarget;
+    this.targetCurrent = configPara.default.target;
+    Mousetrap.bind('esc', () => { this.miniMize(); });
   }
 
   miniMize() {
     remote.BrowserWindow.getFocusedWindow().minimize();
   }
 
+  async settingSave() {
+    await setConfig('source', this.sourceCurrent);
+    await setConfig('target', this.targetCurrent);
+  }
 }
