@@ -9,7 +9,7 @@ import * as Mousetrap from 'mousetrap';
 import Word from '../word.model';
 import { File, Filter } from '../file.utility';
 import { setConfig, initConfig, configPara } from '../config';
-
+import { ipcRenderer } from 'electron';
 @Component({
   selector: 'app-root',
   templateUrl: './basic.component.html',
@@ -29,6 +29,15 @@ export class BasicComponent implements OnInit {
     this.targetList = configPara.languageTarget;
     this.targetCurrent = configPara.default.target;
     Mousetrap.bind('esc', () => { this.miniMize(); });
+    ipcRenderer.on('message', function (event, text) {
+      if (text === 'downloaded') {
+        document.querySelector('#infoAlert').classList.remove('d-none');
+      }
+    });
+  }
+
+  update() {
+    ipcRenderer.send('message', 'update');
   }
 
   miniMize() {

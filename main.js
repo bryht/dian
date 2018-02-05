@@ -1,6 +1,6 @@
 const electron = require('electron');
 const url = require('url');
-const path=require('path');
+const path = require('path');
 const {
     app,
     BrowserWindow,
@@ -42,9 +42,14 @@ autoUpdater.on('download-progress', (progressObj) => {
     sendStatusToWindow(log_message);
 })
 autoUpdater.on('update-downloaded', (info) => {
-    sendStatusToWindow('Update downloaded');
-    autoUpdater.quitAndInstall();
+    sendStatusToWindow('downloaded');
 });
+
+ipcMain.on('message', (event, info) => {
+    if (info === 'update') {
+        autoUpdater.quitAndInstall();
+    }
+})
 
 let win;
 var appIcon = null;

@@ -1,9 +1,10 @@
 <!-- Alert -->
 <div id="infoAlert" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
   <strong>Info!</strong>
-  <span id="messages">Content</span>
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
+  <span id="messages">You have new update downloaded, do you want to update?</span>
+  <button type="button" class="btn-primary" (click)="update()">Update</button>
+  <button type="button" class="btn-warning" data-dismiss="alert" aria-label="Close">
+    Cancel
   </button>
 </div>
 <!-- Modal -->
