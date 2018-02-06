@@ -1,5 +1,5 @@
 <!-- Alert -->
-<div id="infoAlert" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+<div id="infoAlert" class="alert alert-warning alert-dismissible d-none" role="alert">
   <strong>Info!</strong>
   <span id="messages">You have new update downloaded, do you want to update?</span>
   <button type="button" class="btn-primary" (click)="update()">Update</button>
@@ -24,6 +24,12 @@
           <label>Language you learn:</label>
           <select [(ngModel)]="targetCurrent" class="form-control">
             <option *ngFor="let element of targetList" [value]="element.value">{{element.name}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Auto play word Sound?</label>
+          <select [(ngModel)]="soundCurrent" class="form-control">
+            <option *ngFor="let element of soundList" [value]="element.value">{{element.name}}</option>
           </select>
         </div>
         <div class="d-flex justify-content-end">

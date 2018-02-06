@@ -62,6 +62,7 @@
     "@angular/compiler-cli": "^5.2.0",
     "@angular/language-service": "^5.2.0",
     "@ngtools/webpack": "1.9.6",
+    "@types/bootstrap": "^3.3.37",
     "@types/cheerio": "^0.22.5",
     "@types/debug": "^0.0.30",
     "@types/electron": "^1.6.10",

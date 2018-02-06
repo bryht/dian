@@ -20,6 +20,8 @@ export class BasicComponent implements OnInit {
   sourceCurrent;
   targetList;
   targetCurrent;
+  soundList;
+  soundCurrent;
   constructor() { }
 
   async ngOnInit() {
@@ -28,6 +30,8 @@ export class BasicComponent implements OnInit {
     this.sourceCurrent = configPara.default.source;
     this.targetList = configPara.languageTarget;
     this.targetCurrent = configPara.default.target;
+    this.soundList = configPara.playSoundOptions;
+    this.soundCurrent = configPara.default.playSound;
     Mousetrap.bind('esc', () => { this.miniMize(); });
     ipcRenderer.on('message', function (event, text) {
       if (text === 'downloaded') {
@@ -47,5 +51,6 @@ export class BasicComponent implements OnInit {
   async settingSave() {
     await setConfig('source', this.sourceCurrent);
     await setConfig('target', this.targetCurrent);
+    await setConfig('playSound', this.soundCurrent);
   }
 }

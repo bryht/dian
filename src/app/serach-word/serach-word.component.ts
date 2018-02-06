@@ -4,7 +4,7 @@ import Word from '../word.model';
 import * as Mousetrap from 'mousetrap';
 import { WebviewTag, webviewTag } from 'electron';
 import { fail } from 'assert';
-import { initConfig, getConfig, getDetail } from '../config';
+import { initConfig, getConfig, getDetail, configPara } from '../config';
 
 @Component({
   selector: 'app-serach-word',
@@ -16,6 +16,10 @@ export class SerachWordComponent implements OnInit {
   words: Array<Word>;
   constructor(private wordService: WordService) { }
   async ngOnInit() {
+    window.onfocus = function () {
+      const word = <HTMLInputElement>document.querySelector('#word');
+      word.focus();
+    };
     this.getWords();
 
     Mousetrap.bind(['command+f', 'ctrl+f'], function () {
@@ -57,7 +61,7 @@ export class SerachWordComponent implements OnInit {
   async searchWord(value: string, event: any) {
     const inputWord = value.trim();
     let word = await this.wordService.getLongmanWord(inputWord);
-    if (word.soundUrl) {
+    if (word.soundUrl && configPara.default.playSound === 'true') {
       this.wordService.playSound(word.soundUrl);
     }
     word = this.wordService.insertWord(word, this.words);
@@ -65,8 +69,13 @@ export class SerachWordComponent implements OnInit {
     if (word.isPhrase === false) {
       // document.querySelector('#web' + word.id).setAttribute('src', word.url);
       document.getElementById('web' + word.id).setAttribute('src', word.url);
+      const showList = document.querySelectorAll('.show');
+      for (let index = 0; index < showList.length; index++) {
+        const element = showList[index];
+        element.classList.remove('show');
+      }
       document.querySelector('#collapse' + word.id).classList.add('show');
     }
-    event.target.blur();
+    event.target.blur()
   }
 }

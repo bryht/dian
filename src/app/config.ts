@@ -7,8 +7,19 @@ const configPara = {
         'target': 'en',
         'name': 'Longman',
         'value': 'longman',
-        'function': 'getLongmanWord'
+        'function': 'getLongmanWord',
+        'playSound': 'true'
     },
+    'playSoundOptions': [
+        {
+            'name': 'play',
+            'value': 'true'
+        },
+        {
+            'name': 'do not play',
+            'value': 'false'
+        }
+    ],
     'languageSource': [
         {
             'name': '中文',
@@ -52,27 +63,28 @@ const configPara = {
     ]
 };
 
+const configName = 'config2';
 async function initConfig() {
     const hasKeyPromise = new Promise<boolean>(resolve => {
-        storage.has('configDefault', (errorMsg, result) => {
+        storage.has(configName, (errorMsg, result) => {
             if (errorMsg) { throw errorMsg; }
             resolve(result);
         });
     });
     const hasKey = await hasKeyPromise;
     if (hasKey === false) {
-        storage.set('configDefault', configPara.default, (errorMsg) => { if (errorMsg) { throw errorMsg; } });
+        storage.set(configName, configPara.default, (errorMsg) => { if (errorMsg) { throw errorMsg; } });
     } else {
         await getConfig();
     }
 }
 async function setConfig(name, value) {
     configPara.default[name] = value;
-    storage.set('configDefault', configPara.default, errorMsg => { if (errorMsg) { throw errorMsg; } });
+    storage.set(configName, configPara.default, errorMsg => { if (errorMsg) { throw errorMsg; } });
 }
 async function getConfig() {
     const getConfigPromise = new Promise<typeof configPara.default>(resolve => {
-        storage.get('configDefault', (errorMsg, result) => {
+        storage.get(configName, (errorMsg, result) => {
             if (errorMsg) { throw errorMsg; }
             resolve(result as typeof configPara.default);
         });

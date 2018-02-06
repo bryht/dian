@@ -1,5 +1,5 @@
 <div class="input-group sticky-top mt-2">
-    <input type="text" id="word" #wordInput class="form-control" (keyup.esc)="wordInput.blur()" (keyup.enter)="searchWord(wordInput.value,$event)" placeholder="Command/Ctrl+F">
+    <input type="text" id="word" #wordInput class="form-control" (keyup.esc)="wordInput.blur()" (keydown.enter)="searchWord(wordInput.value,$event)" placeholder="Command/Ctrl+F">
     <div class="input-group-append">
         <button class="btn btn-secondary" type="button" (click)="searchWord(wordInput.value,$event)">Search</button>
         <button class="btn btn-secondary active" type="button" data-toggle="collapse" data-target="#settingPanel">
@@ -7,7 +7,7 @@
         </button>
     </div>
 </div>
-<div id="wordHistory" role="tablist" class="mt-2">
+<div id="wordHistory" class="mt-2">
     <div class="card" *ngFor="let element of words" id="card{{element.id}}">
         <div class="card-header alert alert-{{element.isPhrase ? 'success' : 'primary'}}" role="tab" id="heading{{element.id}}">
             <a [innerHTML]="element.word+(element.isPhrase?'<br>':':')+element.translation">
@@ -17,7 +17,7 @@
                 aria-expanded="false" class="{{element.hasContent ? 'visible' : 'invisible'}} badge badge-info float-right ml-1">See more</a>
             <a class="{{(element.sign == undefined || element.sign == '') ? 'invisible' : 'visible'}} badge badge-pill badge-warning float-right ml-1">{{element.sign}}</a>
         </div>
-        <div id="collapse{{element.id}}" class="collapse" role="tabpanel" attr.aria-labelledby="heading{{element.id}}" data-parent="#wordHistory">
+        <div id="collapse{{element.id}}" class="collapse" aria-labelledby="heading{{element.id}}" data-parent="#wordHistory">
             <div class="card-body" style="overflow:hidden">
                 <webview id="web{{element.id}}" autosize="on" style="margin-top:-250px;height:600px;display:flex;"></webview>
             </div>
