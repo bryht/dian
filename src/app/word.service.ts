@@ -6,6 +6,7 @@ import Word from './word.model';
 import { guessLanguage } from 'guesslanguage';
 import * as translate from 'node-google-translate-skidz';
 import { configPara } from './config';
+import { isArray } from 'util';
 @Injectable()
 export class WordService {
 
@@ -15,7 +16,12 @@ export class WordService {
     const words = new Promise<Array<Word>>((resolve, reject) => {
       storage.get('words', function (error, data) {
         if (error) { reject(error); }
-        resolve(data as Array<Word>);
+        if (isArray(data)) {
+          resolve(data as Array<Word>);
+        } else {
+          resolve(new Array<Word>);
+        }
+
       });
     });
     return words;

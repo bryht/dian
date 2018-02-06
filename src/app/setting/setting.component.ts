@@ -155,8 +155,10 @@ export class SettingComponent implements OnInit {
   //   pdf.end();
   // }
   async deleteAllHistory() {
+    
     const ok = await this.wordService.deleteAllWords();
     if (ok === 'ok') {
+      window.location.reload();
       // TODO: fresh history list
     }
   }
