@@ -19,7 +19,7 @@ export class WordService {
         if (isArray(data)) {
           resolve(data as Array<Word>);
         } else {
-          resolve(new Array<Word>);
+          resolve(new Array<Word>());
         }
 
       });
