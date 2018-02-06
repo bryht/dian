@@ -16,12 +16,12 @@ export class SerachWordComponent implements OnInit {
   words: Array<Word>;
   constructor(private wordService: WordService) { }
   async ngOnInit() {
+    this.getWords();
     window.onfocus = function () {
       const word = <HTMLInputElement>document.querySelector('#word');
       word.focus();
+      word.value = '';
     };
-    this.getWords();
-
     Mousetrap.bind(['command+f', 'ctrl+f'], function () {
       const word = <HTMLInputElement>document.querySelector('#word');
       word.focus();
