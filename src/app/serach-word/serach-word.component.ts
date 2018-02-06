@@ -51,8 +51,12 @@ export class SerachWordComponent implements OnInit {
     this.words = await this.wordService.getAllWords();
   }
   deleteWord(id: string) {
-    this.wordService.deleteWord(id, this.words);
-    this.wordService.updateWords(this.words);
+    const card = document.querySelector('#card' + id);
+    card.addEventListener('animationend', (e) => {
+      this.wordService.deleteWord(id, this.words);
+      this.wordService.updateWords(this.words);
+    });
+    card.classList.add('word-delete');
   }
 
   showWord(id: string, url: string) {
@@ -76,6 +80,6 @@ export class SerachWordComponent implements OnInit {
       }
       document.querySelector('#collapse' + word.id).classList.add('show');
     }
-    event.target.blur()
+    event.target.blur();
   }
 }
