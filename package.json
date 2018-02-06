@@ -58,10 +58,10 @@
   },
   "devDependencies": {
     "@angular-devkit/core": "~0.0.29",
-    "@angular/cli": "1.6.6",
+    "@angular/cli": "^1.6.7",
     "@angular/compiler-cli": "^5.2.0",
     "@angular/language-service": "^5.2.0",
-    "@ngtools/webpack": "1.9.6",
+    "@ngtools/webpack": "^1.9.7",
     "@types/bootstrap": "^3.3.37",
     "@types/cheerio": "^0.22.5",
     "@types/debug": "^0.0.30",
@@ -108,8 +108,8 @@
     "typescript": "^2.6.2",
     "uglifyjs-webpack-plugin": "^1.1.5",
     "url-loader": "^0.6.2",
-    "webpack": "~3.10.0",
-    "webpack-dev-server": "~2.11.0"
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1"
   },
   "dependencies": {
     "@angular/animations": "^5.2.0",
