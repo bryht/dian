@@ -40,7 +40,7 @@
 ## Set your language.
 - Open setting and choose your language you know, also your language you want to learn.
 - Languages which you can learn.
-  - English for Chinese|Dutch `(developing)` |Indonesia `(developing)` 
+  - English for 中文|한국어|日本語|Ελληνικά| 
   - Dutch for English `(developing)` 
 - ![alt](/build/imgs/1.gif)
 
