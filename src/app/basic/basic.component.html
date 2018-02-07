@@ -1,0 +1,54 @@
+<!-- Alert -->
+<div id="infoAlert" class="alert alert-warning alert-dismissible d-none" role="alert">
+  <strong>Info!</strong>
+  <span id="messages">You have new update downloaded, do you want to update?</span>
+  <button type="button" class="btn-primary" (click)="update()">Update</button>
+  <button type="button" class="btn-warning" data-dismiss="alert" aria-label="Close">
+    Later
+  </button>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="settingModal" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <h2>Setting</h2>
+        <hr>
+        <div class="form-group">
+          <label>Language you know:</label>
+          <select [(ngModel)]="sourceCurrent" class="form-control">
+            <option *ngFor="let element of sourceList" [value]="element.value">{{element.name}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Language you learn:</label>
+          <select [(ngModel)]="targetCurrent" class="form-control">
+            <option *ngFor="let element of targetList" [value]="element.value">{{element.name}}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Auto play word Sound?</label>
+          <select [(ngModel)]="soundCurrent" class="form-control">
+            <option *ngFor="let element of soundList" [value]="element.value">{{element.name}}</option>
+          </select>
+        </div>
+        <div class="d-flex justify-content-end">
+          <button class="btn btn-success m-1" (click)="settingSave()" data-dismiss="modal">Save</button>
+          <button class="btn btn-danger m-1" data-dismiss="modal">Cancle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div id="content" class="col">
+      <app-serach-word></app-serach-word>
+    </div>
+    <div class="wrapper">
+      <div id="settingPanel" class="collapse navbar-collapse sticky-top mt-2">
+        <app-setting></app-setting>
+      </div>
+    </div>
+  </div>
+</div>

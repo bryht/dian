@@ -10,7 +10,7 @@
           "name": "Dict",
           //"preLaunchTask": "npm build",
           "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-          "program": "${workspaceFolder}/index.js"
+          "program": "${workspaceFolder}/main.js"
           // "protocol": "legacy"
       }
   ]

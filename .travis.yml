@@ -21,6 +21,7 @@ before_script:
   - git lfs pull
 
 script:
+  - npm run build
   - npm run publish
 
 before_cache:
