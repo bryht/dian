@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import * as pdfkit from 'pdfkit';
 import { shell, ipcRenderer } from 'electron';
 import * as fs from 'fs-extra';
@@ -6,12 +6,15 @@ import * as readline from 'readline';
 import * as https from 'https';
 import { File, Filter } from '../file.utility';
 import { WordService } from '../word.service';
+import { SerachWordComponent } from '../serach-word/serach-word.component';
 @Component({
   selector: 'app-setting',
   templateUrl: './setting.component.html',
   styleUrls: ['./setting.component.css']
 })
+
 export class SettingComponent implements OnInit {
+  @Input() searchWordComponent: SerachWordComponent;
 
   constructor(private wordService: WordService) { }
 
@@ -23,6 +26,9 @@ export class SettingComponent implements OnInit {
     shell.openExternal(url);
   }
 
+  saveToArchive() {
+
+  }
   saveMp3File(url: string, fileName: string) {
     return new Promise((resolve, reject) => {
       const file = fs.createWriteStream(fileName, { autoClose: true });
@@ -50,7 +56,7 @@ export class SettingComponent implements OnInit {
 
     const ok = await this.wordService.deleteAllWords();
     if (ok === 'ok') {
-      window.location.reload();
+      this.searchWordComponent.words = new Array();
     }
   }
   async exportWords(target: string = 'memrise') {

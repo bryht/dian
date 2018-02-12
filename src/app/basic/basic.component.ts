@@ -48,6 +48,9 @@ export class BasicComponent implements OnInit {
     remote.BrowserWindow.getFocusedWindow().minimize();
   }
 
+  toggleSetting(){
+    document.querySelector('.wrapper').classList.toggle('toggled');
+  }
   async settingSave() {
     await setConfig('source', this.sourceCurrent);
     await setConfig('target', this.targetCurrent);

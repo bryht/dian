@@ -40,15 +40,11 @@
     </div>
   </div>
 </div>
-<div class="container">
-  <div class="row">
-    <div id="content" class="col">
-      <app-serach-word></app-serach-word>
-    </div>
-    <div class="wrapper">
-      <div id="settingPanel" class="collapse navbar-collapse sticky-top mt-2">
-        <app-setting></app-setting>
-      </div>
-    </div>
+<div class="wrapper sticky-top">
+  <div class="content">
+    <app-serach-word [basicComponent]="this" #searchWord></app-serach-word>
+  </div>
+  <div id="sidebar" class="sidebar">
+    <app-setting #setting [searchWordComponent]="searchWord"></app-setting>
   </div>
 </div>

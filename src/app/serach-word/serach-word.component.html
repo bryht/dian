@@ -2,7 +2,7 @@
     <input type="text" id="word" #wordInput class="form-control" (keyup.esc)="wordInput.blur()" (keydown.enter)="searchWord(wordInput.value,$event)" placeholder="Command/Ctrl+F">
     <div class="input-group-append">
         <button class="btn btn-secondary" type="button" (click)="searchWord(wordInput.value,$event)">Search</button>
-        <button class="btn btn-secondary active" type="button" data-toggle="collapse" data-target="#settingPanel">
+        <button class="btn btn-secondary active" type="button" (click)="openSetting()">
             <img src="{{settingImage}}" alt="Setting">
         </button>
     </div>

@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { WordService } from '../word.service';
 import Word from '../word.model';
 import * as Mousetrap from 'mousetrap';
 import { WebviewTag, webviewTag } from 'electron';
 import { fail } from 'assert';
 import { initConfig, getConfig, getDetail, configPara } from '../config';
+import { BasicComponent } from '../basic/basic.component';
 
 @Component({
   selector: 'app-serach-word',
@@ -12,6 +13,7 @@ import { initConfig, getConfig, getDetail, configPara } from '../config';
   styleUrls: ['./serach-word.component.css']
 })
 export class SerachWordComponent implements OnInit {
+  @Input() basicComponent: BasicComponent;
   settingImage = require('assets/settings.svg');
   words: Array<Word>;
   constructor(private wordService: WordService) { }
@@ -47,6 +49,9 @@ export class SerachWordComponent implements OnInit {
     });
   }
 
+  openSetting() {
+    this.basicComponent.toggleSetting();
+  }
   async getWords() {
     this.words = await this.wordService.getAllWords();
   }
