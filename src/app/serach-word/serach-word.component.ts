@@ -51,6 +51,7 @@ export class SerachWordComponent implements OnInit {
 
   openSetting() {
     this.basicComponent.toggleSetting();
+    window.scroll(0, 0);
   }
   async getWords() {
     this.words = await this.wordService.getAllWords();

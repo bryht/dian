@@ -90,6 +90,17 @@ export class SettingComponent implements OnInit {
         const messageMomo = 'Words have saved in ' + fileName;
         alert(messageMomo);
         break;
+      case 'quizlet':
+        for (let index = 0; index < words.length; index++) {
+          const element = words[index];
+          const word = element.word.replace(',', '.');
+          const translation = element.translation.trim().replace(',', '.');
+          const define = element.define === undefined ? '' : element.define.replace(',', '.');
+          const line = `${word},(${translation})${define}`;
+          fs.appendFileSync(fileName, line + '\r\n');
+        }
+        alert('Words have saved in ' + fileName);
+        break;
     }
   }
 }
