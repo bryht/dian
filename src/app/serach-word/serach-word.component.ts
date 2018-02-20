@@ -6,6 +6,7 @@ import { WebviewTag, webviewTag } from 'electron';
 import { fail } from 'assert';
 import { initConfig, getConfig, getDetail, configPara } from '../config';
 import { BasicComponent } from '../basic/basic.component';
+import { WSAEINVALIDPROVIDER } from 'constants';
 
 @Component({
   selector: 'app-serach-word',
@@ -30,13 +31,13 @@ export class SerachWordComponent implements OnInit {
       word.value = '';
     });
     Mousetrap.bind('j', function () {
-      const webView = <WebviewTag>document.querySelector('div.collapse.show div webview');
+      const webView = <WebviewTag>document.querySelector('div.collapse.show webview');
       if (webView != null) {
         webView.executeJavaScript('document.querySelector("body").scrollTop+=20', false);
       }
     });
     Mousetrap.bind('k', function () {
-      const webView = <WebviewTag>document.querySelector('div.collapse.show div webview');
+      const webView = <WebviewTag>document.querySelector('div.collapse.show webview');
       if (webView != null) {
         webView.executeJavaScript('document.querySelector("body").scrollTop-=20', false);
       }
@@ -66,7 +67,20 @@ export class SerachWordComponent implements OnInit {
   }
 
   showWord(id: string, url: string) {
-    document.getElementById('web' + id).setAttribute('src', url);
+    const viewViewList = document.getElementsByTagName('webview');
+    for (let index = 0; index < viewViewList.length; index++) {
+      const element = viewViewList[index];
+      element.remove();
+    }
+    const cardBody = document.getElementById('collapse' + id);
+    const webView = document.createElement('webview');
+    webView.id = 'web' + id;
+    webView.autosize = 'on';
+    webView.style.marginTop = '-250px';
+    webView.style.height = '600px';
+    webView.style.display = 'flex';
+    webView.src = url;
+    cardBody.appendChild(webView);
   }
   async searchWord(value: string, event: any) {
     const inputWord = value.trim();
@@ -78,13 +92,14 @@ export class SerachWordComponent implements OnInit {
     await this.wordService.updateWords(this.words);
     if (word.isPhrase === false) {
       // document.querySelector('#web' + word.id).setAttribute('src', word.url);
-      document.getElementById('web' + word.id).setAttribute('src', word.url);
+      // document.getElementById('web' + word.id).setAttribute('src', word.url);
       const showList = document.querySelectorAll('.show');
       for (let index = 0; index < showList.length; index++) {
         const element = showList[index];
         element.classList.remove('show');
       }
       document.querySelector('#collapse' + word.id).classList.add('show');
+      this.showWord(word.id, word.url);
     }
     event.target.blur();
   }

@@ -17,10 +17,10 @@
                 aria-expanded="false" class="{{element.hasContent ? 'visible' : 'invisible'}} badge badge-info float-right ml-1">See more</a>
             <a class="{{(element.sign == undefined || element.sign == '') ? 'invisible' : 'visible'}} badge badge-pill badge-warning float-right ml-1">{{element.sign}}</a>
         </div>
-        <div id="collapse{{element.id}}" class="collapse" aria-labelledby="heading{{element.id}}" data-parent="#wordHistory">
-            <div class="card-body" style="overflow:hidden">
-                <webview id="web{{element.id}}" autosize="on" style="margin-top:-250px;height:600px;display:flex;"></webview>
-            </div>
+        <div id="collapse{{element.id}}" class="collapse card-body" style="overflow:hidden" aria-labelledby="heading{{element.id}}" data-parent="#wordHistory">
+            <!-- <div class="card-body" style="overflow:hidden"> -->
+                <!-- <webview id="web{{element.id}}" autosize="on" style="margin-top:-250px;height:600px;display:flex;"></webview> -->
+            <!-- </div> -->
         </div>
     </div>
 </div>
