@@ -5,7 +5,7 @@
 - Using Angular5 & TypeScript Electron Bootstrap4.0 Electron-Builder ... 
 - [How to use](how-to-use.md)
 
-  [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/latest/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
+  [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
 
 ***
 ##  Commands
