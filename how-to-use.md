@@ -3,7 +3,7 @@
 - It can search words, of course.
 - It can export words, Memrise App | txt | pdf test. :+1:
 
-    [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/latest/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
+    [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
 
 - `dict-setup-x.x.x.exe` is Windows Version.
 - `dict-0.x.x-mac.zip` and `dict-0.x.x.dmg` is Mac Version
