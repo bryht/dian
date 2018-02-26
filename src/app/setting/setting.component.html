@@ -1,4 +1,4 @@
-<div class="btn-group-vertical">
+<div class="btn-group-vertical sticky-top">
   <div class="btn-group" role="group">
     <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Delete
@@ -15,13 +15,16 @@
     </button>
     <div class="dropdown-menu">
       <button type="button" (click)="exportMutiChoiceTest()" class="dropdown-item">
-      MutiChoice Test
+        MutiChoice Test
       </button>
       <button type="button" (click)="exportBlankTest()" class="dropdown-item">
         Blank Test
       </button>
       <button type="button" (click)="exportWords()" class="dropdown-item">
         To Memrise
+      </button>
+      <button type="button" (click)="exportWords('quizlet')" class="dropdown-item">
+        To Quizlet
       </button>
       <button type="button" (click)="exportWords('momo')" class="dropdown-item">
         To Momo
@@ -31,7 +34,27 @@
   <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#settingModal">
     Setting
   </button>
+  <!-- <button (click)="saveToArchive()" type="button" class="btn btn-primary">
+    Archive
+  </button> -->
   <button (click)="openLink()" type="button" class="btn btn-warning">
     How To Use
   </button>
+  <hr>
+  <!-- <div id="archive1" class="badge badge-primary collopse mt-1">
+    <p>
+      Archive:2018-02-12
+    </p>
+    <button type="button" class="close" data-toggle="collapse" data-target="#archive1">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div id="archive1" class="badge badge-primary collopse mt-1">
+    <p>
+      Archive:2018-02-12
+    </p>
+    <button type="button" class="close" data-toggle="collapse" data-target="#archive1">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div> -->
 </div>
