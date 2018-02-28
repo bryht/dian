@@ -41,7 +41,7 @@ export class WordService {
     return new Promise<Word>((resolve, reject) => {
       translate({
         text: inputWord,
-        source: isTarget ? configPara.default.target : configPara.default.source, //translation is opposite with setting
+        source: isTarget ? configPara.default.target : configPara.default.source, // translation is opposite with setting
         target: isTarget ? configPara.default.source : configPara.default.target,
       }, function (params) {
         const result = new Word();
