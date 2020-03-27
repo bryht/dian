@@ -77,7 +77,7 @@ export class WordService {
           const pos = '[' + $body('.POS').first().text().trim() + ']'; // none. verb.
           const pronunciation = '[' + $body('.PRON').first().text().replace(/,/g, '-').trim() + ']';
           const define = $body('#' + result.word + '__1 .DEF').text().replace(/,/g, '.');
-          const mp3Url = 'https://www.ldoceonline.com/' + $body('.brefile').first().attr('data-src-mp3');
+          const mp3Url = $body('.brefile').first().attr('data-src-mp3');
           let exp = $body('#' + result.word + '__1 .EXAMPLE').first().text().replace(/,/g, '.').replace(result.word, '[xxx]').trim();
           if (exp.length === 0) {
             exp = $body('.cexa1g1[info=UK]').first().text().replace(/,/g, '.').replace(result.word, '[xxx]').trim();

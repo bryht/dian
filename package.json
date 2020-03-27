@@ -12,10 +12,6 @@
     "electron": "electron .",
     "start": "webpack-dev-server --port=4200",
     "build": "webpack",
-    "test": "karma start ./karma.conf.js",
-    "lint": "ng lint",
-    "e2e": "protractor ./protractor.conf.js",
-    "pree2e": "webdriver-manager update --standalone false --gecko false --quiet",
     "distall": "build --win --mac",
     "distwin": "build --win",
     "publish": "build --win --mac -p always",
@@ -109,7 +105,7 @@
     "uglifyjs-webpack-plugin": "^1.1.5",
     "url-loader": "^0.6.2",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^3.1.11"
+    "webpack-dev-server": "^2.11.1"
   },
   "dependencies": {
     "@angular/animations": "^5.2.0",
