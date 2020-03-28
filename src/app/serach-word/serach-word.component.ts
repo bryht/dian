@@ -7,6 +7,8 @@ import { fail } from 'assert';
 import { initConfig, getConfig, getDetail, configPara } from '../config';
 import { BasicComponent } from '../basic/basic.component';
 import { WSAEINVALIDPROVIDER } from 'constants';
+import SuggestionWord from './search-word.model';
+import WordFrequency from './wordsfrequency';
 
 @Component({
   selector: 'app-serach-word',
@@ -17,6 +19,7 @@ export class SerachWordComponent implements OnInit {
   @Input() basicComponent: BasicComponent;
   settingImage = require('assets/settings.svg');
   words: Array<Word>;
+  wordsSuggestion: Array<SuggestionWord>;
   constructor(private wordService: WordService) { }
   async ngOnInit() {
     this.getWords();
@@ -76,7 +79,7 @@ export class SerachWordComponent implements OnInit {
     const webView = document.createElement('webview');
     webView.id = 'web' + id;
     webView.autosize = 'on';
-    webView.style.marginTop = '-250px';
+    webView.style.marginTop = '-100px';
     webView.style.height = '600px';
     webView.style.display = 'flex';
     webView.src = url;
@@ -102,5 +105,32 @@ export class SerachWordComponent implements OnInit {
       this.showWord(word.id, word.url);
     }
     event.target.blur();
+    this.wordsSuggestion = [];
+  }
+
+  wordInputChange(value: string, event: any) {
+    if (value.length > 0) {
+      var suggestions = WordFrequency.filter(p => p.indexOf(value) > -1).slice(0, 5);
+      this.wordsSuggestion = suggestions.map(p => ({ word: p, isSelected: false }));
+    } else {
+      this.wordsSuggestion = [];
+    }
+  }
+
+  wordInputSelect(value: string, event: any) {
+    var selected = this.wordsSuggestion.filter(p => p.isSelected);
+    var selectedIndex = 0;
+    if (selected[0]) {
+      selected[0].isSelected = false;
+      var selectedIndex = this.wordsSuggestion.indexOf(selected[0]);
+      if (selectedIndex < this.wordsSuggestion.length - 1) {
+        selectedIndex++;
+      } else if (selectedIndex == this.wordsSuggestion.length - 1) {
+        selectedIndex = 0;
+      }
+    }
+    this.wordsSuggestion[selectedIndex].isSelected = true;
+
+    (document.getElementById('word') as HTMLInputElement).value = this.wordsSuggestion[selectedIndex].word;
   }
 }
