@@ -30,7 +30,7 @@ steps:
 
 - task: CopyFiles@2
   inputs:
-    contents: '*\release\*'
+    contents: 'release\*'
     # flattenFolders: true
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
