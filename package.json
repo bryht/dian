@@ -15,6 +15,13 @@
       "build/**/*",
       "main.ts"
     ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "bryht",
+        "repo": "dict"
+      }
+    ],
     "extends": null,
     "directories": {
       "buildResources": "assets",
@@ -54,15 +61,13 @@
     "@types/react-dom": "^16.9.0",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^4.1.1",
-    "electron-squirrel-startup": "^1.0.0",
     "electron-updater": "^4.2.5",
     "fs-extra": "^9.0.0",
     "pdfkit": "^0.11.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
-    "typescript": "~3.7.2",
-    "update-electron-app": "^1.5.0"
+    "typescript": "~3.7.2"
   },
   "devDependencies": {
     "electron-builder": "^22.4.1",

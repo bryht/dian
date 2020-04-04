@@ -18,10 +18,14 @@ const electronIsDev = require("electron-is-dev");
 //Update Logging
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
-
+// autoUpdater.setFeedURL({
+//     "provider": "github",
+//     "owner": "bryht",
+//     "repo": "dict"
+// });
 function sendStatusToWindow(text) {
     log.info(text);
-    win.webContents.send('message', text);
+    // win.webContents.send('message', text);
 }
 autoUpdater.on('checking-for-update', () => {
     sendStatusToWindow('Checking for update...');
@@ -41,9 +45,10 @@ autoUpdater.on('download-progress', (progressObj) => {
     sendStatusToWindow(log_message);
 })
 autoUpdater.on('update-downloaded', (info) => {
-    sendStatusToWindow('downloaded');
+    sendStatusToWindow('update');
 });
 
+autoUpdater.checkForUpdates();
 ipcMain.on('message', (event, info, data) => {
     switch (info) {
         case 'update':
