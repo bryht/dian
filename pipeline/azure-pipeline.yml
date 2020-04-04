@@ -23,13 +23,14 @@ steps:
       npm install
       npm run build
       npm run package
+      rm -r .\node_modules\
       rm -r .\release\win-unpacked\
   displayName: 'Build file'
 
 
 - task: CopyFiles@2
   inputs:
-    contents: '**\release**'
+    contents: '*\release\*'
     # flattenFolders: true
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
