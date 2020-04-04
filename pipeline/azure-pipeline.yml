@@ -16,10 +16,13 @@ variables:
   IncrementReleaseTagNumber: $[counter(variables['InitialReleaseTagNumber'], 0)]  
 steps:
 
-- script: |
-   npm install
-   npm run build
-   npm run package
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      npm install
+      npm run build
+      npm run package
   displayName: 'Build file'
 
 
