@@ -20,7 +20,7 @@
         "provider": "github",
         "owner": "bryht",
         "repo": "dict"
-      }
+      } 
     ],
     "extends": null,
     "directories": {

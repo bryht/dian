@@ -18,11 +18,6 @@ const electronIsDev = require("electron-is-dev");
 //Update Logging
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
-// autoUpdater.setFeedURL({
-//     "provider": "github",
-//     "owner": "bryht",
-//     "repo": "dict"
-// });
 function sendStatusToWindow(text) {
     log.info(text);
     // win.webContents.send('message', text);
