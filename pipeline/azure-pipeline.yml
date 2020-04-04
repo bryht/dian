@@ -26,9 +26,9 @@ steps:
 - task: CopyFiles@2
   inputs:
     contents: |
-      release\**\*.exe
-      release\**\.yml
-      release\**\.zip
+      release/*.exe
+      release/*.yml
+      release/*.zip
     # flattenFolders: true
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
