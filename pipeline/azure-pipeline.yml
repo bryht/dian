@@ -26,15 +26,15 @@ steps:
 - task: CopyFiles@2
   inputs:
     contents: |
-      release\*.exe
-      release\*.yml
-      release\*.zip
+      release\**\*.exe
+      release\**\.yml
+      release\**\.zip
     # flattenFolders: true
     targetFolder: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
 
 - task: GitHubRelease@1
-  # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   inputs:
     gitHubConnection: 'bryht'
     repositoryName: '$(Build.Repository.Name)'
