@@ -23,8 +23,6 @@ steps:
       npm install
       npm run build
       npm run package
-      rm -r .\node_modules\
-      rm -r .\release\win-unpacked\
   displayName: 'Build file'
 
 
