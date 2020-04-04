@@ -20,13 +20,6 @@
       "buildResources": "assets",
       "output": "release"
     },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "bryht",
-        "repo": "Dict"
-      }
-    ],
     "win": {
       "target": "nsis"
     },
