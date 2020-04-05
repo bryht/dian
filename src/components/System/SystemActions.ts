@@ -26,10 +26,11 @@ export class SystemActions {
             SystemActions.SaveUserSuccess(currentUser));
     }
 
-    static RemoveCurrentUser(): StorageAction<void, SystemActionType> {
-        return new StorageAction('user', StorageType.Remove, null,
-            SystemActions.GoLogin());
+    static ToggleSetting(): StatesAction<SystemActionType> {
+        return {
+            type: SystemActionType.ToggleSetting,
+            payload: null
+        }
     }
-
 
 }
