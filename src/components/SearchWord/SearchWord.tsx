@@ -1,17 +1,56 @@
 import * as React from 'react';
 import settingImage from 'assets/settings.svg';
 import { BasicProps } from 'core/RootComponent/BasicProps';
-import { BasicState } from 'core/RootComponent/BasicState';
 import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
 import { SystemActions } from 'components/System/SystemActions';
 import { connect } from 'react-redux';
+import { WordService, configPara } from 'utils/WordService';
+import Word from 'core/Models/Word';
+import { BasicState } from 'core/RootComponent/BasicState';
 export interface ISearchWordProps extends BasicProps {
 }
 
-class SearchWord extends RootComponent<ISearchWordProps, BasicState> {
+export interface ISearchWordStates extends BasicState {
+  words: Array<Word>;
+  wordsSuggestion: Array<string>;
+}
 
+class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
+
+  constructor(params: Readonly<ISearchWordProps>) {
+    super(params);
+    this.state = {
+      words: [],
+      wordsSuggestion: []
+    }
+  }
   toggleSetting() {
     this.invokeDispatch(SystemActions.ToggleSetting());
+  }
+
+  async searchWord(value: string, event: any) {
+    const { words } = this.state;
+    const inputWord = value.trim();
+    const wordService = new WordService();
+    let word = await wordService.getLongmanWord(inputWord);
+    if (word.soundUrl && configPara.default.playSound === 'true') {
+      wordService.playSound(word.soundUrl);
+    }
+    word = wordService.insertWord(word, words);
+    await wordService.updateWords(words);
+    if (word.isPhrase === false) {
+      // document.querySelector('#web' + word.id).setAttribute('src', word.url);
+      // document.getElementById('web' + word.id).setAttribute('src', word.url);
+      const showList = document.querySelectorAll('.show');
+      for (let index = 0; index < showList.length; index++) {
+        const element = showList[index];
+        element.classList.remove('show');
+      }
+      // document.querySelector('#collapse' + word.id).classList.add('show');
+      // this.showWord(word.id, word.url);
+    }
+    event.target.blur();
+    this.setState({ wordsSuggestion: [] });
   }
 
   public render() {
@@ -34,6 +73,7 @@ class SearchWord extends RootComponent<ISearchWordProps, BasicState> {
         </div>
 
         <div id="wordHistory" className="mt-2">
+
           <div className="card" id="cardid">
             <div className="card-header alert alert-{{element.isPhrase ? 'success' : 'primary'}}" role="tab"
               id="heading{{element.id}}">

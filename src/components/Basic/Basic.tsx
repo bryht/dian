@@ -2,9 +2,7 @@ import * as React from 'react';
 import { mapRootStateToProps, RootComponent } from 'core/RootComponent/RootComponent';
 import { RootState } from 'redux/Store';
 import { BasicProps } from 'core/RootComponent/BasicProps';
-import { BasicState } from 'core/RootComponent/BasicState';
 import { connect } from 'react-redux';
-import Log from 'utils/Log';
 
 export interface IBasicProps extends BasicProps {
     searching: any;
@@ -13,11 +11,10 @@ export interface IBasicProps extends BasicProps {
 
 }
 
-class Basic extends RootComponent<IBasicProps, BasicState> {
+class Basic extends RootComponent<IBasicProps, any> {
 
     public render() {
         const { isSettingOpened } = this.props;
-        Log.Debug(isSettingOpened);
         return (
             <>
                 <div id="infoAlert" className="alert alert-warning alert-dismissible d-none" role="alert">
@@ -76,5 +73,5 @@ class Basic extends RootComponent<IBasicProps, BasicState> {
 const mapStateToProps = (state: RootState) => ({
     isSettingOpened: state.system.isSettingOpened,
     ...mapRootStateToProps(state),
-});
+})
 export default connect(mapStateToProps)(Basic)

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
 
 export interface ISettingsProps {
@@ -8,11 +9,11 @@ export default class Settings extends React.Component<ISettingsProps> {
     return (
       <>
         <div className="btn-group-vertical sticky-top">
-          <div className="btn-group" role="group">
-            <button type="button" className="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <div className="dropdown show">
+            <button id="dropdownMenuLink" type="button" className="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Delete
             </button>
-            <div className="dropdown-menu">
+            <div className="dropdown-menu" aria-labelledby="dropdownMenuLink">
               <button type="button" className="dropdown-item">
                 All History
               </button>
@@ -47,6 +48,7 @@ export default class Settings extends React.Component<ISettingsProps> {
         <button type="button" className="btn btn-warning" >
           How To Use
         </button >
+       
       </>
     );
   }
