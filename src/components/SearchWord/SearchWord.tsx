@@ -4,7 +4,7 @@ import { BasicProps } from 'core/RootComponent/BasicProps';
 import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
 import { SystemActions } from 'components/System/SystemActions';
 import { connect } from 'react-redux';
-import { WordService, configPara } from 'utils/WordService';
+import { WordService } from 'utils/WordService';
 import Word from 'core/Models/Word';
 import { BasicState } from 'core/RootComponent/BasicState';
 export interface ISearchWordProps extends BasicProps {
@@ -28,28 +28,33 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     this.invokeDispatch(SystemActions.ToggleSetting());
   }
 
-  async searchWord(value: string, event: any) {
-    const { words } = this.state;
-    const inputWord = value.trim();
+  async searchWord() {
+    // const { words } = this.state;
+    // const inputWord = value.trim();
     const wordService = new WordService();
-    let word = await wordService.getLongmanWord(inputWord);
-    if (word.soundUrl && configPara.default.playSound === 'true') {
-      wordService.playSound(word.soundUrl);
-    }
-    word = wordService.insertWord(word, words);
-    await wordService.updateWords(words);
-    if (word.isPhrase === false) {
-      // document.querySelector('#web' + word.id).setAttribute('src', word.url);
-      // document.getElementById('web' + word.id).setAttribute('src', word.url);
-      const showList = document.querySelectorAll('.show');
-      for (let index = 0; index < showList.length; index++) {
-        const element = showList[index];
-        element.classList.remove('show');
-      }
-      // document.querySelector('#collapse' + word.id).classList.add('show');
-      // this.showWord(word.id, word.url);
-    }
-    event.target.blur();
+
+    let words= await wordService.getAllWords();
+    words.forEach(element => {
+      console.log(element.id);
+    });
+    // let word = await wordService.getLongmanWord(inputWord);
+    // if (word.soundUrl && configPara.default.playSound === 'true') {
+    //   wordService.playSound(word.soundUrl);
+    // }
+    // word = wordService.insertWord(word, words);
+    // await wordService.updateWords(words);
+    // if (word.isPhrase === false) {
+    //   // document.querySelector('#web' + word.id).setAttribute('src', word.url);
+    //   // document.getElementById('web' + word.id).setAttribute('src', word.url);
+    //   const showList = document.querySelectorAll('.show');
+    //   for (let index = 0; index < showList.length; index++) {
+    //     const element = showList[index];
+    //     element.classList.remove('show');
+    //   }
+    //   // document.querySelector('#collapse' + word.id).classList.add('show');
+    //   // this.showWord(word.id, word.url);
+    // }
+    // event.target.blur();
     this.setState({ wordsSuggestion: [] });
   }
 
@@ -59,7 +64,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
         <div className="input-group sticky-top mt-2">
           <input type="text" id="word" className="form-control" placeholder="Command/Ctrl+F" />
           <div className="input-group-append">
-            <button className="btn btn-secondary" type="button" >Search</button>
+            <button className="btn btn-secondary" type="button" onClick={e=>this.searchWord()} >Search</button>
             <button className="btn btn-secondary active" type="button" onClick={e => this.toggleSetting()} >
               <img src={settingImage} alt="Setting" />
             </button>

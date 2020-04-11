@@ -65,7 +65,7 @@
     "bootstrap": "^4.4.1",
     "cheerio": "^1.0.0-rc.3",
     "electron-is-dev": "^1.1.0",
-    "electron-json-storage": "^4.1.8",
+    "electron-json-storage": "4.1.5",
     "electron-log": "^4.1.1",
     "electron-updater": "^4.2.5",
     "fs-extra": "^9.0.0",
@@ -86,11 +86,13 @@
     "redux-logger": "^3.0.6",
     "@types/redux-logger": "^3.0.7",
     "electron-builder": "^22.4.1",
-    "electron": "^8.2.0"
+    "electron-reload": "^1.5.0",
+    "electron": "^8.2.0",
+    "concurrently": "^5.1.0",
+    "wait-on": "^4.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "electron": "npx electron .",
+    "start": "concurrently \"react-scripts start\" \"wait-on http://localhost:3000  && electron .\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

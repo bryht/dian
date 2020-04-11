@@ -69,11 +69,21 @@ function createWindow() {
         height: _height,
         minWidth: 500,
         minHeight: 600,
-        icon: __dirname + '/assets/icon.ico'
+        icon: __dirname + '/assets/icon.ico',
+        webPreferences:{
+           nodeIntegration:true
+        },
+        titleBarStyle: "hidden"
     })
     // and load the index.html of the app.
     if (electronIsDev) {
         win.loadURL('http://localhost:3000/')
+        // 'node_modules/.bin/electronPath'
+        require('electron-reload')(__dirname, {
+            electron: path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron'),
+            forceHardReset: true,
+            hardResetMethod: 'exit'
+        });
     } else {
         win.loadURL(url.format({
             pathname: path.join(__dirname, '/build/index.html'),
