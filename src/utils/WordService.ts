@@ -5,6 +5,7 @@ import { isArray } from 'util';
 import Word from 'core/Models/Word';
 import { configPara } from './ConfigPara';
 import Log from './Log';
+import Guid from './Guid';
 const translate = window.require('node-google-translate-skidz');
 const storage = window.require('electron-json-storage');
 
@@ -93,6 +94,7 @@ export class WordService {
           result.define = define.trim();
           result.sign = sign;
           result.example = exp.trim();
+          result.id = Guid.newGuid();
           resolve(result);
         });
       });
@@ -116,26 +118,26 @@ export class WordService {
     });
     return promise;
   }
-  public insertWord(word: Word, wordsArray: Array<Word>) {
-    for (let index = 0; index < wordsArray.length; index++) {
-      const element = wordsArray[index];
-      if (element.word === word.word) {
-        wordsArray.splice(index, 1);
-      }
-    }
-    word.id = Date.now().toString();
-    wordsArray.unshift(word);
-    return word;
-  }
-  public deleteWord(id: string, wordsArray: Array<Word>) {
-    for (let index = 0; index < wordsArray.length; index++) {
-      const element = wordsArray[index];
-      if (element.id === id) {
-        wordsArray.splice(index, 1);
-      }
-    }
-    return id;
-  }
+  // public insertWord(word: Word, wordsArray: Array<Word>) {
+  //   for (let index = 0; index < wordsArray.length; index++) {
+  //     const element = wordsArray[index];
+  //     if (element.word === word.word) {
+  //       wordsArray.splice(index, 1);
+  //     }
+  //   }
+  //   word.id = Date.now().toString();
+  //   wordsArray.unshift(word);
+  //   return word;
+  // }
+  // public deleteWord(id: string, wordsArray: Array<Word>) {
+  //   for (let index = 0; index < wordsArray.length; index++) {
+  //     const element = wordsArray[index];
+  //     if (element.id === id) {
+  //       wordsArray.splice(index, 1);
+  //     }
+  //   }
+  //   return id;
+  // }
   public deleteAllWords() {
     return new Promise((resolve, reject) => {
       storage.remove('words', (errorMsg: any) => {

@@ -49,22 +49,9 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     if (word.soundUrl && configPara.default.playSound === 'true') {
       await this.wordService.playSound(word.soundUrl);
     }
-
-    word = this.wordService.insertWord(word, words);
-
+    words.unshift(word);
     await this.wordService.updateWords(words);
-    if (word.isPhrase === false) {
-      // document.querySelector('#web' + word.id).setAttribute('src', word.url);
-      // document.getElementById('web' + word.id).setAttribute('src', word.url);
-      // const showList = document.querySelectorAll('.show');
-      // for (let index = 0; index < showList.length; index++) {
-      //   const element = showList[index];
-      //   element.classList.remove('show');
-      // }
-      // document.querySelector('#collapse' + word.id).classList.add('show');
-      // this.showWord(word.id, word.url);
-    }
-    // event.target.blur();
+      // event.target.blur();
     this.setState({ wordsSuggestion: [], words, inputValue: '' });
     // this.showWord(word.id,word.url);
   }
@@ -78,13 +65,17 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     this.setState({ words: result });
   }
 
-  deleteWord(id: string) {
+  async deleteWord(id: string) {
     // const card = document.querySelector('#card' + id);
     // card.addEventListener('animationend', (e) => {
     //   this.wordService.deleteWord(id, this.words);
     //   this.wordService.updateWords(this.words);
     // });
     // card.classList.add('word-delete');
+    const { words } = this.state;
+    var result = words.filter(p => p.id !== id);
+    await this.wordService.updateWords(result);
+    this.setState({ words: result });
   }
 
 
