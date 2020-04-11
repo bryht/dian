@@ -11,7 +11,7 @@ const {
     Tray,
     globalShortcut,
     dialog
-} = electron;
+} = require('electron');
 const log = require('electron-log');
 const autoUpdater = require("electron-updater").autoUpdater;
 const electronIsDev = require("electron-is-dev");
@@ -71,14 +71,14 @@ function createWindow() {
         minHeight: 600,
         icon: __dirname + '/assets/icon.ico',
         webPreferences:{
-           nodeIntegration:true
-        },
-        titleBarStyle: "hidden"
+           nodeIntegration:true,
+           webviewTag:true
+        }
     })
     // and load the index.html of the app.
     if (electronIsDev) {
         win.loadURL('http://localhost:3000/')
-        // 'node_modules/.bin/electronPath'
+        win.webContents.openDevTools();
         require('electron-reload')(__dirname, {
             electron: path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron'),
             forceHardReset: true,
@@ -89,12 +89,10 @@ function createWindow() {
             pathname: path.join(__dirname, '/build/index.html'),
             protocol: 'file:',
             slashes: true
-        }))
+        }));
+        win.setMenuBarVisibility(false)
     }
     win.on("closed", () => win = null)
-    if (electronIsDev) {
-        win.webContents.openDevTools();
-    }
 
     appIcon = new Tray(__dirname + '/build/icon.png');
     appIcon.setToolTip('This is Dict');

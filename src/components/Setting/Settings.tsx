@@ -48,7 +48,7 @@ export default class Settings extends React.Component<ISettingsProps> {
         <button type="button" className="btn btn-warning" >
           How To Use
         </button >
-       
+
       </>
     );
   }

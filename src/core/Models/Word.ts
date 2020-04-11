@@ -10,9 +10,10 @@ export default class Word {
   important!: boolean;
   html!: string;
   url!: string;
-  soundUrl!: string|undefined;
+  soundUrl!: string | undefined;
   hasContent!: boolean;
   isInLongmen3000!: boolean;
   isPhrase!: boolean;
   dictionary!: string;
+  isShow: boolean = false;
 }

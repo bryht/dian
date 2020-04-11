@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
 import settingImage from 'assets/settings.svg';
 import { BasicProps } from 'core/RootComponent/BasicProps';
@@ -7,64 +8,93 @@ import { connect } from 'react-redux';
 import { WordService } from 'utils/WordService';
 import Word from 'core/Models/Word';
 import { BasicState } from 'core/RootComponent/BasicState';
+import Log from 'utils/Log';
+import { configPara } from 'utils/ConfigPara';
 export interface ISearchWordProps extends BasicProps {
 }
 
 export interface ISearchWordStates extends BasicState {
   words: Array<Word>;
   wordsSuggestion: Array<string>;
+  inputValue: string;
+
 }
 
 class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
+  wordService: WordService;
 
   constructor(params: Readonly<ISearchWordProps>) {
     super(params);
+    this.wordService = new WordService();
     this.state = {
+      inputValue: '',
       words: [],
       wordsSuggestion: []
     }
+
   }
   toggleSetting() {
     this.invokeDispatch(SystemActions.ToggleSetting());
   }
 
-  async searchWord() {
-    // const { words } = this.state;
-    // const inputWord = value.trim();
-    const wordService = new WordService();
-
-    let words= await wordService.getAllWords();
-    words.forEach(element => {
-      console.log(element.id);
-    });
-    // let word = await wordService.getLongmanWord(inputWord);
-    // if (word.soundUrl && configPara.default.playSound === 'true') {
-    //   wordService.playSound(word.soundUrl);
-    // }
-    // word = wordService.insertWord(word, words);
-    // await wordService.updateWords(words);
-    // if (word.isPhrase === false) {
-    //   // document.querySelector('#web' + word.id).setAttribute('src', word.url);
-    //   // document.getElementById('web' + word.id).setAttribute('src', word.url);
-    //   const showList = document.querySelectorAll('.show');
-    //   for (let index = 0; index < showList.length; index++) {
-    //     const element = showList[index];
-    //     element.classList.remove('show');
-    //   }
-    //   // document.querySelector('#collapse' + word.id).classList.add('show');
-    //   // this.showWord(word.id, word.url);
-    // }
-    // event.target.blur();
-    this.setState({ wordsSuggestion: [] });
+  async componentDidMount() {
+    let words = await this.wordService.getAllWords();
+    this.setState({ words: words });
   }
+
+  async searchWord() {
+    const { words, inputValue } = this.state;
+    Log.Info(inputValue);
+    let word = await this.wordService.getLongmanWord(inputValue);
+    if (word.soundUrl && configPara.default.playSound === 'true') {
+      await this.wordService.playSound(word.soundUrl);
+    }
+
+    word = this.wordService.insertWord(word, words);
+
+    await this.wordService.updateWords(words);
+    if (word.isPhrase === false) {
+      // document.querySelector('#web' + word.id).setAttribute('src', word.url);
+      // document.getElementById('web' + word.id).setAttribute('src', word.url);
+      // const showList = document.querySelectorAll('.show');
+      // for (let index = 0; index < showList.length; index++) {
+      //   const element = showList[index];
+      //   element.classList.remove('show');
+      // }
+      // document.querySelector('#collapse' + word.id).classList.add('show');
+      // this.showWord(word.id, word.url);
+    }
+    // event.target.blur();
+    this.setState({ wordsSuggestion: [], words, inputValue: '' });
+    // this.showWord(word.id,word.url);
+  }
+
+  showWord(id: string) {
+    const { words } = this.state;
+    var result = words.map(p => {
+      p.isShow = p.id === id;
+      return p;
+    })
+    this.setState({ words: result });
+  }
+
+  deleteWord(id: string) {
+    // const card = document.querySelector('#card' + id);
+    // card.addEventListener('animationend', (e) => {
+    //   this.wordService.deleteWord(id, this.words);
+    //   this.wordService.updateWords(this.words);
+    // });
+    // card.classList.add('word-delete');
+  }
+
 
   public render() {
     return (
       <>
         <div className="input-group sticky-top mt-2">
-          <input type="text" id="word" className="form-control" placeholder="Command/Ctrl+F" />
+          <input type="text" id="word" className="form-control" value={this.state.inputValue} onKeyDown={e => { if (e.keyCode === 13) { this.searchWord() } }} onChange={e => this.setState({ inputValue: e.currentTarget.value })} placeholder="Command/Ctrl+F" />
           <div className="input-group-append">
-            <button className="btn btn-secondary" type="button" onClick={e=>this.searchWord()} >Search</button>
+            <button className="btn btn-secondary" type="button" onClick={e => this.searchWord()} >Search</button>
             <button className="btn btn-secondary active" type="button" onClick={e => this.toggleSetting()} >
               <img src={settingImage} alt="Setting" />
             </button>
@@ -78,20 +108,30 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
         </div>
 
         <div id="wordHistory" className="mt-2">
+          {
+            this.state.words.map(
+              element => (
+                <div className="card" key={element.id} id={'card' + element.id}>
+                  <div className={"card-header alert alert-" + (element.isPhrase ? "success" : "primary")} role="tab" id={'heading' + element.id}>
+                    <>{[element.word, (element.isPhrase ? <br key={element.id} /> : ':'), element.translation]}</>
+                    <a className="badge badge-pill badge-danger float-right text-light ml-1" onClick={e => this.deleteWord(element.id)}>Delete</a>
+                    {element.hasContent ?
+                      (<a data-toggle="collapse" href={"#collapse" + element.id} aria-controls={"collapse" + element.id} aria-expanded="true" className="badge badge-info float-right ml-1" onClick={e => this.showWord(element.id)}>See more</a>)
+                      : ""}
+                    {element.sign ? (<a className="badge badge-pill badge-warning float-right ml-1">{element.sign}</a>) : ""}
+                  </div>
+                  <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
+                    <div className="card-body" style={{ overflow: 'hidden' }}>
+                      {element.isShow ?
+                        (<webview id={element.id} src={element.url} autosize={"true"} style={{ marginTop: '-250px', height: '600px', display: 'flex' }}></webview>) : ""}
 
-          <div className="card" id="cardid">
-            <div className="card-header alert alert-{{element.isPhrase ? 'success' : 'primary'}}" role="tab"
-              id="heading{{element.id}}">
-              {/* <a href="#" className="badge badge-pill badge-danger float-right text-light ml-1" >Delete</a>
-              <a data-toggle="collapse" aria-expanded="false" className="visible badge badge-info float-right ml-1">See more</a>
-              <a className="visible badge badge-pill badge-warning float-right ml-1">aaa</a> */}
-            </div>
-            <div id="collapse{{element.id}}" className="collapse card-body" style={{ overflow: 'hidden' }}
-              aria-labelledby="heading{{element.id}}" data-parent="#wordHistory">
-
-            </div>
-          </div >
-        </div >
+                    </div>
+                  </div>
+                </div>
+              )
+            )
+          }
+        </div>
       </>
     );
   }
