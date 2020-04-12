@@ -10,12 +10,15 @@ import Word from 'core/Models/Word';
 import { BasicState } from 'core/RootComponent/BasicState';
 import Log from 'utils/Log';
 import { configPara } from 'utils/ConfigPara';
+import suggestion from "./SearchWordSuggestions";
+import './SearchWord.scss'
+import SuggestionWord from 'core/Models/SuggestionWord';
 export interface ISearchWordProps extends BasicProps {
 }
 
 export interface ISearchWordStates extends BasicState {
   words: Array<Word>;
-  wordsSuggestion: Array<string>;
+  wordsSuggestion: Array<SuggestionWord>;
   inputValue: string;
 
 }
@@ -42,6 +45,14 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     this.setState({ words: words });
   }
 
+  searchWordChanged(e: HTMLInputElement) {
+    var wordsSuggestion = suggestion.filter(p => p.indexOf(e.value) > -1 && e.value)
+      .slice(0, 5)
+      .map((p:string) =>({ word: p, isSelected: false }));
+
+    this.setState({ inputValue: e.value, wordsSuggestion })
+  }
+
   async searchWord() {
     const { words, inputValue } = this.state;
     Log.Info(inputValue);
@@ -51,31 +62,33 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     }
     words.unshift(word);
     await this.wordService.updateWords(words);
-      // event.target.blur();
+    // event.target.blur();
     this.setState({ wordsSuggestion: [], words, inputValue: '' });
     // this.showWord(word.id,word.url);
+
+
+    this.showWord(word.id);
   }
 
   showWord(id: string) {
     const { words } = this.state;
     var result = words.map(p => {
-      p.isShow = p.id === id;
+      p.isShow = p.id === id && p.hasContent;
       return p;
     })
     this.setState({ words: result });
   }
 
-  async deleteWord(id: string) {
-    // const card = document.querySelector('#card' + id);
-    // card.addEventListener('animationend', (e) => {
-    //   this.wordService.deleteWord(id, this.words);
-    //   this.wordService.updateWords(this.words);
-    // });
-    // card.classList.add('word-delete');
+  deleteWord(id: string, card: HTMLElement | undefined | null) {
     const { words } = this.state;
-    var result = words.filter(p => p.id !== id);
-    await this.wordService.updateWords(result);
-    this.setState({ words: result });
+    if (card) {
+      card.classList.add("word-delete");
+      card.addEventListener('animationend', async t => {
+        var result = words.filter(p => p.id !== id);
+        await this.wordService.updateWords(result);
+        this.setState({ words: result });
+      });
+    }
   }
 
 
@@ -83,7 +96,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     return (
       <>
         <div className="input-group sticky-top mt-2">
-          <input type="text" id="word" className="form-control" value={this.state.inputValue} onKeyDown={e => { if (e.keyCode === 13) { this.searchWord() } }} onChange={e => this.setState({ inputValue: e.currentTarget.value })} placeholder="Command/Ctrl+F" />
+          <input type="text" id="word" className="form-control" value={this.state.inputValue} onKeyDown={e => { if (e.keyCode === 13) { this.searchWord() } }} onChange={e => this.searchWordChanged(e.target)} placeholder="Command/Ctrl+F" />
           <div className="input-group-append">
             <button className="btn btn-secondary" type="button" onClick={e => this.searchWord()} >Search</button>
             <button className="btn btn-secondary active" type="button" onClick={e => this.toggleSetting()} >
@@ -94,7 +107,11 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
 
         <div>
           <ul id="suggestion" className="list-group">
-            <li className="list-group-item"></li>
+            {
+              this.state.wordsSuggestion.map(item => (
+                <li className="list-group-item">{item.word}</li>
+              ))
+            }
           </ul>
         </div>
 
@@ -105,7 +122,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
                 <div className="card" key={element.id} id={'card' + element.id}>
                   <div className={"card-header alert alert-" + (element.isPhrase ? "success" : "primary")} role="tab" id={'heading' + element.id}>
                     <>{[element.word, (element.isPhrase ? <br key={element.id} /> : ':'), element.translation]}</>
-                    <a className="badge badge-pill badge-danger float-right text-light ml-1" onClick={e => this.deleteWord(element.id)}>Delete</a>
+                    <a className="badge badge-pill badge-danger float-right text-light ml-1" onClick={e => this.deleteWord(element.id, document.getElementById('card' + element.id))}>Delete</a>
                     {element.hasContent ?
                       (<a data-toggle="collapse" href={"#collapse" + element.id} aria-controls={"collapse" + element.id} aria-expanded="true" className="badge badge-info float-right ml-1" onClick={e => this.showWord(element.id)}>See more</a>)
                       : ""}
@@ -114,8 +131,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
                   <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
                     <div className="card-body" style={{ overflow: 'hidden' }}>
                       {element.isShow ?
-                        (<webview id={element.id} src={element.url} autosize={"true"} style={{ marginTop: '-250px', height: '600px', display: 'flex' }}></webview>) : ""}
-
+                        (<webview id={element.id} src={element.url} style={{ marginTop: '-100px', height: '600px', display: 'flex' }}></webview>) : ""}
                     </div>
                   </div>
                 </div>

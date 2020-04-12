@@ -6,6 +6,7 @@ import HomePage from 'pages/Home/HomePage';
 import store from './redux/Store';
 import { Provider } from 'react-redux';
 import 'bootstrap/js/dist/dropdown';
+import 'bootstrap/js/dist/collapse';
 
 ReactDOM.render(
   <Provider store={store()}>
