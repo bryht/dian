@@ -22,7 +22,7 @@ class Settings extends RootComponent<ISettingsProps, any>  {
 
   }
   openLink() {
-    const url = 'https://bryht.gitbooks.io/dict/how-to-use.html';
+    const url = 'https://github.com/bryht/dict/blob/master/how-to-use.md';
     shell.openExternal(url);
   }
   saveMp3File(url: string, fileName: string) {
