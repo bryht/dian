@@ -14,7 +14,6 @@
 /dist
 /out
 /release
-# misc
 .DS_Store
 .env.local
 .env.development.local
