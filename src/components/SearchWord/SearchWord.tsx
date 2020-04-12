@@ -13,6 +13,7 @@ import { configPara } from 'utils/ConfigPara';
 import suggestion from "./SearchWordSuggestions";
 import './SearchWord.scss'
 import SuggestionWord from 'core/Models/SuggestionWord';
+import { RootState } from 'redux/Store';
 export interface ISearchWordProps extends BasicProps {
   historyDeletedFlag: string;
 }
@@ -179,7 +180,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     );
   }
 }
-export function mapStateToProps(state: RootStates) {
+export function mapStateToProps(state: RootState) {
   return {
     historyDeletedFlag: state.system.historyDeletedFlag,
     ...mapRootStateToProps(state)
