@@ -83,9 +83,13 @@ export class WordService {
             exp = $body('.cexa1g1[info=UK]').first().text().replace(/,/g, '.').replace(result.word, '[xxx]').trim();
           }
           const sign = $body('.FREQ').text();
+          var header = $body('.header').html() ?? '';
+          var footer = $body('.footer').html() ?? '';
+          
           result.important = $body('.frequent').html() != null;
           result.hasContent = $content.html() != null;
-          result.html = ''; // result.isInLongmen ? $content.html() : '';
+          const html = result.hasContent?$body.html().replace("href=\"/dictionary", "href=\"https://www.ldoceonline.com/dictionary").replace(header, '').replace(footer, ''):'';
+          result.html = html;
           result.url = 'http://' + options.hostname + options.path;
           result.soundUrl = mp3Url;
           result.dictionary = 'Longman';
@@ -101,9 +105,13 @@ export class WordService {
       req.end();
     });
   }
-  public playSound(mp3Url: string): Promise<void> {
-    const audio = new Audio(mp3Url);
-    return audio.play();
+  public async playSound(mp3Url: string) {
+    try {
+      const audio = new Audio(mp3Url);
+      await audio.play();
+    } catch (error) {
+      Log.Warning(error)
+    }
   }
 
   public updateWords(words: Array<Word>) {

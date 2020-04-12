@@ -3,6 +3,9 @@ import { mapRootStateToProps, RootComponent } from 'core/RootComponent/RootCompo
 import { RootState } from 'redux/Store';
 import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
+import Mousetrap from 'mousetrap';
+import Log from 'utils/Log';
+const { remote, shell}= window.require('electron');
 
 export interface IBasicProps extends BasicProps {
     searching: any;
@@ -13,6 +16,37 @@ export interface IBasicProps extends BasicProps {
 
 class Basic extends RootComponent<IBasicProps, any> {
 
+    miniMize() {
+        remote.BrowserWindow.getFocusedWindow().minimize();
+    }
+    componentDidMount() {
+
+        const word = document.querySelector('#word') as HTMLInputElement;
+        word.focus();
+        word.value = '';
+        Mousetrap.bind('esc', () => { this.miniMize(); });
+
+        Mousetrap.bind(['command+f', 'ctrl+f'], e => {
+            const word = document.querySelector('#word') as HTMLInputElement;
+            word.focus();
+            word.value = '';
+        })
+        Mousetrap.bind('j', function () {
+            const word = document.querySelector('#wordShowing') as HTMLDivElement;
+            if (word) word.scrollTop += 20;
+        });
+        Mousetrap.bind('k', function () {
+            const word = document.querySelector('#wordShowing') as HTMLDivElement;
+            if (word) word.scrollTop -= 20;
+        });
+
+        Mousetrap.bind('J', function () {
+            window.scrollTo(window.scrollX, window.scrollY + 20);
+        });
+        Mousetrap.bind('K', function () {
+            window.scrollTo(window.scrollX, window.scrollY - 20);
+        });
+    }
     public render() {
         const { isSettingOpened } = this.props;
         return (

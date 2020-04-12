@@ -25,10 +25,11 @@ export interface ISearchWordStates extends BasicState {
 
 class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
   wordService: WordService;
-
+  inputTextBox: any;
   constructor(params: Readonly<ISearchWordProps>) {
     super(params);
     this.wordService = new WordService();
+    this.inputTextBox = React.createRef();
     this.state = {
       inputValue: '',
       words: [],
@@ -48,8 +49,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
   searchWordChanged(e: HTMLInputElement) {
     var wordsSuggestion = suggestion.filter(p => p.indexOf(e.value) > -1 && e.value)
       .slice(0, 5)
-      .map((p:string) =>({ word: p, isSelected: false }));
-
+      .map((p: string) => ({ word: p, isSelected: false }));
     this.setState({ inputValue: e.value, wordsSuggestion })
   }
 
@@ -57,15 +57,16 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     const { words, inputValue } = this.state;
     Log.Info(inputValue);
     let word = await this.wordService.getLongmanWord(inputValue);
-    if (word.soundUrl && configPara.default.playSound === 'true') {
+    if (word.soundUrl !== undefined && configPara.default.playSound === 'true') {
       await this.wordService.playSound(word.soundUrl);
     }
-    var exist=words.find(p=>p.word===word.word);
-    if(exist)words.splice(words.indexOf(exist));
+    var exist = words.find(p => p.word === word.word);
+    if (exist) words.splice(words.indexOf(exist), 1);
     words.unshift(word);
     await this.wordService.updateWords(words);
     this.setState({ wordsSuggestion: [], words, inputValue: '' });
     this.showWord(word.id);
+    this.inputTextBox.current.blur();
   }
 
   showWord(id: string) {
@@ -94,7 +95,10 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     return (
       <>
         <div className="input-group sticky-top mt-2">
-          <input type="text" id="word" className="form-control" value={this.state.inputValue} onKeyDown={e => { if (e.keyCode === 13) { this.searchWord() } }} onChange={e => this.searchWordChanged(e.target)} placeholder="Command/Ctrl+F" />
+          <input type="text" id="word" ref={this.inputTextBox} className="form-control" value={this.state.inputValue}
+            onKeyDown={e => { if (e.keyCode === 13) { this.searchWord() } }}
+            onKeyUp={e => { if (e.keyCode === 27) { e.currentTarget.blur() } }}
+            onChange={e => this.searchWordChanged(e.target)} placeholder="Command/Ctrl+F" />
           <div className="input-group-append">
             <button className="btn btn-secondary" type="button" onClick={e => this.searchWord()} >Search</button>
             <button className="btn btn-secondary active" type="button" onClick={e => this.toggleSetting()} >
@@ -107,7 +111,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
           <ul id="suggestion" className="list-group">
             {
               this.state.wordsSuggestion.map(item => (
-                <li className="list-group-item">{item.word}</li>
+                <li className="list-group-item" key={item.word}>{item.word}</li>
               ))
             }
           </ul>
@@ -117,7 +121,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
           {
             this.state.words.map(
               element => (
-                <div className="card" key={element.id} id={'card' + element.id}>
+                <div className="card" key={element.id} id={'card' + element.id} >
                   <div className={"card-header alert alert-" + (element.isPhrase ? "success" : "primary")} role="tab" id={'heading' + element.id}>
                     <>{[element.word, (element.isPhrase ? <br key={element.id} /> : ':'), element.translation]}</>
                     <a className="badge badge-pill badge-danger float-right text-light ml-1" onClick={e => this.deleteWord(element.id, document.getElementById('card' + element.id))}>Delete</a>
@@ -126,10 +130,14 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
                       : ""}
                     {element.sign ? (<a className="badge badge-pill badge-warning float-right ml-1">{element.sign}</a>) : ""}
                   </div>
-                  <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
-                    <div className="card-body" style={{ overflow: 'hidden' }}>
+                  <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} style={{ padding: '0' }} jjjjjjj aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
+                    <div className="card-body" style={{ overflow: 'hidden', padding: '0', margin: '0' }}>
                       {element.isShow ?
-                        (<webview id={element.id} src={element.url} style={{ marginTop: '-100px', height: '600px', display: 'flex' }}></webview>) : ""}
+                        (<div id="wordShowing" style={{ height: '500px', overflow: 'scroll' }} >
+                          <div dangerouslySetInnerHTML={{ __html: element.html }} style={{ pointerEvents: 'none' }} />
+                        </div>)
+                        : ""}
+
                     </div>
                   </div>
                 </div>
