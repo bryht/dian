@@ -1,0 +1,10 @@
+{
+    "welcome": {
+        "en-GB": "Welcome",
+        "zh-CN": "欢迎"
+    },
+    "this_is_a_test": {
+        "en-GB": "This is a test",
+        "nl-NL": "这是个测试"
+    }
+}

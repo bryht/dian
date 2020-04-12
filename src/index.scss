@@ -1,0 +1,58 @@
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.wrapper {
+  margin: 2px;
+}
+
+.content {
+  width: 100%;
+  padding: 5px;
+  padding-right: 0px;
+  transition: all 0.5s ease;
+}
+
+.wrapper.toggled .content {
+  padding-right: 150px;
+  transition: all 0.5s ease;
+}
+
+@keyframes sidebar-in {
+  0% {
+    right: -150px;
+  }
+  100% {
+    right: 0px;
+  }
+}
+
+@keyframes sidebar-out {
+  0% {
+    right: 0px;
+  }
+  100% {
+    right: -150px;
+  }
+}
+
+.sidebar {
+  padding: 10px;
+  position:absolute;
+  display: none;
+  width: 150px;
+  top: 0px;
+  right: -150px;
+  animation-name: sidebar-out;
+  animation-duration: 0.5s;
+}
+
+.wrapper.toggled .sidebar {
+  display: block;
+  right: 0px;
+  animation-name: sidebar-in;
+  animation-duration: 0.5s;
+}
