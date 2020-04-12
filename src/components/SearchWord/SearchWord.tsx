@@ -13,7 +13,6 @@ import { configPara } from 'utils/ConfigPara';
 import suggestion from "./SearchWordSuggestions";
 import './SearchWord.scss'
 import SuggestionWord from 'core/Models/SuggestionWord';
-import { RootState } from 'redux/Store';
 export interface ISearchWordProps extends BasicProps {
   historyDeletedFlag: string;
 }
@@ -58,6 +57,24 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
       .slice(0, 5)
       .map((p: string) => ({ word: p, isSelected: false }));
     this.setState({ inputValue: e.value, wordsSuggestion })
+  }
+
+  searchWordSelectChanged() {
+    const { wordsSuggestion } = this.state;
+    var selected = wordsSuggestion.filter(p => p.isSelected);
+    var selectedIndex = 0;
+    if (selected[0]) {
+      selected[0].isSelected = false;
+      selectedIndex = wordsSuggestion.indexOf(selected[0]);
+      if (selectedIndex < wordsSuggestion.length - 1) {
+        selectedIndex++;
+      } else if (selectedIndex === wordsSuggestion.length - 1) {
+        selectedIndex = 0;
+      }
+    }
+    wordsSuggestion[selectedIndex].isSelected = true;
+
+    this.setState({ inputValue: wordsSuggestion[selectedIndex].word, wordsSuggestion });
   }
 
   async searchWord() {
@@ -109,7 +126,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
       <>
         <div className="input-group sticky-top mt-2">
           <input type="text" id="word" ref={this.inputTextBox} className="form-control" value={this.state.inputValue}
-            onKeyDown={e => { if (e.keyCode === 13) { this.searchWord() } }}
+            onKeyDown={e => { if (e.keyCode === 13) { this.searchWord() } if (e.keyCode === 40) { this.searchWordSelectChanged() } }}
             onKeyUp={e => { if (e.keyCode === 27) { e.currentTarget.blur() } }}
             onChange={e => this.searchWordChanged(e.target)} placeholder="Command/Ctrl+F" />
           <div className="input-group-append">
@@ -124,7 +141,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
           <ul id="suggestion" className="list-group">
             {
               this.state.wordsSuggestion.map(item => (
-                <li className="list-group-item" key={item.word}>{item.word}</li>
+                <li className={"list-group-item "+(item.isSelected?"active":"")} key={item.word}>{item.word}</li>
               ))
             }
           </ul>
