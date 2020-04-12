@@ -2,19 +2,17 @@
 ## This is a Dictionary application
 - It can search words, of course.
 - It can export words, Memrise App | txt | pdf test.
-- Using React & TypeScript Electron Bootstrap4.0 Electron-Builder ... 
+- Using React & TypeScript Electron Bootstrap Electron-Builder ... 
 - [How to use](how-to-use.md)
 
   [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
 
 ***
 ##  Commands
-- Install ```npm install```
-- Build code ```npm run build``` 
-- Build install package ```npm run package``` 
-- Set GH_TOKEN ```[Environment]::SetEnvironmentVariable("GH_TOKEN","xxxx","User")```
-- Check the log ```C:\Users\\`UserName`\AppData\Roaming\dict\log.log```
-- Publish to Github ```npm run publish```
+- Install package ```npm install```
+- Build  and initial assets ```npm run build``` 
+- dev ```npm start``` 
+- package ```npm run package``` 
 
 ***
 ## Thanks
