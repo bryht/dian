@@ -7,7 +7,7 @@ import { SystemActions } from 'components/System/SystemActions';
 import { connect } from 'react-redux';
 import { WordService } from 'utils/WordService';
 import Word from 'core/Models/Word';
-import { RootStates } from 'core/RootComponent/RootStates';
+import { BasicState } from 'core/RootComponent/BasicState';
 import Log from 'utils/Log';
 import { configPara } from 'utils/ConfigPara';
 import suggestion from "./SearchWordSuggestions";
@@ -17,7 +17,7 @@ export interface ISearchWordProps extends BasicProps {
   historyDeletedFlag: string;
 }
 
-export interface ISearchWordStates extends RootStates {
+export interface ISearchWordStates extends BasicState {
   words: Array<Word>;
   wordsSuggestion: Array<SuggestionWord>;
   inputValue: string;
