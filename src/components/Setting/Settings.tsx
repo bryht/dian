@@ -56,14 +56,13 @@ class Settings extends RootComponent<ISettingsProps, any>  {
     switch (target) {
       case 'memrise':
         const folderName = fileName.split('.')[0] + 'audio';
-        const checkFolder = await fs.ensureDir(folderName);
         for (let index = 0; index < words.length; index++) {
           const element = words[index];
           if (element.hasContent === false || element.isPhrase) { continue; }
           const line = `${element.word},${element.type},${element.define},
           [${element.translation}]${element.pronunciation},${element.example}`;
           fs.appendFileSync(fileName, line + '\r\n');
-          await this.saveMp3File(element.soundUrl, folderName + '\\' + element.word + '.mp3');
+          await this.saveMp3File(element.soundUrl??'', folderName + '\\' + element.word + '.mp3');
         }
         const message = 'Words have saved in ' + fileName + '\n\t Audios have saved in ' + folderName;
         alert(message);

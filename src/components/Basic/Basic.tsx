@@ -13,8 +13,6 @@ export interface IBasicProps extends BasicProps {
     searching: any;
     setting: any;
     isSettingOpened?: boolean;
-    historyDeleted: () => void;
-
 
 }
 export interface IBasicStates extends BasicState {
