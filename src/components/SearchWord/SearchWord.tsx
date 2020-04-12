@@ -60,13 +60,11 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     if (word.soundUrl && configPara.default.playSound === 'true') {
       await this.wordService.playSound(word.soundUrl);
     }
+    var exist=words.find(p=>p.word===word.word);
+    if(exist)words.splice(words.indexOf(exist));
     words.unshift(word);
     await this.wordService.updateWords(words);
-    // event.target.blur();
     this.setState({ wordsSuggestion: [], words, inputValue: '' });
-    // this.showWord(word.id,word.url);
-
-
     this.showWord(word.id);
   }
 
