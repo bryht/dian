@@ -1,6 +1,7 @@
 import { UserEntity } from "core/Models/UserEntity";
+import Guid from "utils/Guid";
 export class SystemStates {
     currentUser: UserEntity | null = null;
     isSettingOpened: boolean = false;
-    historyDeleted: () => void = () => { };
+    historyDeletedFlag: string = Guid.newGuid();
 }

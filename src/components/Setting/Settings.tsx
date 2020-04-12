@@ -2,15 +2,19 @@
 import * as React from 'react';
 import * as https from 'https';
 import { WordService } from 'utils/WordService';
-import { Filter,File } from 'utils/File';
+import { Filter, File } from 'utils/File';
+import { SystemActions } from 'components/System/SystemActions';
+import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
+import { BasicProps } from 'core/RootComponent/BasicProps';
+import { connect } from 'react-redux';
 const { shell } = window.require('electron');
 const fs = window.require('fs-extra');
 const pdfkit = window.require('pdfkit');
 
-export interface ISettingsProps {
+export interface ISettingsProps extends BasicProps {
 }
 
-export default class Settings extends React.Component<ISettingsProps> {
+class Settings extends RootComponent<ISettingsProps, any>  {
   wordService: WordService;
   constructor(params: Readonly<ISettingsProps>) {
     super(params);
@@ -36,12 +40,11 @@ export default class Settings extends React.Component<ISettingsProps> {
       });
     });
   }
-  
-  async deleteAllHistory() {
 
+  async deleteAllHistory() {
     const ok = await this.wordService.deleteAllWords();
     if (ok === 'ok') {
-      // this.searchWordComponent.words = new Array();
+      this.invokeDispatch(SystemActions.DeleteAllHistory());
     }
   }
   async exportWords(target: string = 'memrise') {
@@ -99,47 +102,47 @@ export default class Settings extends React.Component<ISettingsProps> {
     const pdf = new pdfkit();
     pdf.pipe(fs.createWriteStream(fileName));
     const wordsHasContent = words.filter((value, index, array) => {
-        return value.hasContent && value.example.length;
+      return value.hasContent && value.example.length;
     });
     // write the title
     pdf.fontSize(20).text('Blank Filling Questions', { align: 'center' });
     // write blank words
     pdf.fontSize(15).text('Words you can fill:', { underline: true });
     const wordsHasContentSort = wordsHasContent.map((value, index, array) => {
-        return value.word;
+      return value.word;
     }).sort();
     const wordsBlanks = wordsHasContentSort.join(',   ');
     pdf.fontSize(15).text(wordsBlanks).moveDown();
     // write the questions
     pdf.fontSize(15).text('Questions:', { underline: true });
     for (let index = 0; index < wordsHasContent.length; index++) {
-        const element = wordsHasContent[index];
-        const sentence = element.example.split(' ').filter((value, i, array) => {
-            if (value.includes('[xxx]')) {
-                return value;
-            }
-        });
-        const word = sentence.length === 1 ? sentence[0] : '[xxx]';
-        const textContent = (index + 1) + '. ' + element.example.replace(word, '______');
-        pdf.fontSize(15).text(textContent);
+      const element = wordsHasContent[index];
+      const sentence = element.example.split(' ').filter((value, i, array) => {
+        if (value.includes('[xxx]')) {
+          return value;
+        }
+      });
+      const word = sentence.length === 1 ? sentence[0] : '[xxx]';
+      const textContent = (index + 1) + '. ' + element.example.replace(word, '______');
+      pdf.fontSize(15).text(textContent);
     }
     // draw the line
     pdf.fontSize(15).moveDown()
-        .moveTo(0, pdf.y)
-        .lineTo(pdf.page.width, pdf.y)
-        .fillAndStroke().moveDown();
+      .moveTo(0, pdf.y)
+      .lineTo(pdf.page.width, pdf.y)
+      .fillAndStroke().moveDown();
     // write the answers
     pdf.fontSize(15).text('Answers:');
     const wordsWithAnswers = wordsHasContent.map((word, index, array) => {
-        const answerWords = word.example.split(' ').filter((value, i, list) => {
-            if (value.includes('[xxx]')) {
-                return value;
-            }
-        });
-        return (index + 1) + ':' +
-            (answerWords.length === 1 ?
-                answerWords[0].replace('[xxx]', word.word) :
-                word.word);
+      const answerWords = word.example.split(' ').filter((value, i, list) => {
+        if (value.includes('[xxx]')) {
+          return value;
+        }
+      });
+      return (index + 1) + ':' +
+        (answerWords.length === 1 ?
+          answerWords[0].replace('[xxx]', word.word) :
+          word.word);
     });
     const answers = wordsWithAnswers.join(',   ');
     pdf.fontSize(15).text(answers);
@@ -147,9 +150,9 @@ export default class Settings extends React.Component<ISettingsProps> {
 
 
 
-  
-  
-  
+
+
+
   }
 
   async exportMutiChoiceTest() {
@@ -160,12 +163,12 @@ export default class Settings extends React.Component<ISettingsProps> {
       return false;
     }
     if (fileName === undefined) {
-        return false;
+      return false;
     }
     const pdf = new pdfkit();
     pdf.pipe(fs.createWriteStream(fileName));
     const wordsHasContent = words.filter((value, index, array) => {
-        return value.hasContent && value.example.length;
+      return value.hasContent && value.example.length;
     });
     // write the title
     pdf.fontSize(20).text('Mutiple Choice Questions', { align: 'center' });
@@ -173,44 +176,44 @@ export default class Settings extends React.Component<ISettingsProps> {
     const answersNumToLetter = ['A', 'B', 'C', 'D'];
     const answersArray = [];
     for (let index = 0; index < wordsHasContent.length; index++) {
-        const randomInt = Math.floor(Math.random() * 3.9);
-        answersArray[index] = { answer: randomInt };
+      const randomInt = Math.floor(Math.random() * 3.9);
+      answersArray[index] = { answer: randomInt };
     }
     const answers = answersArray.map((value, index, array) => {
-        return index + 1 + ',' + answersNumToLetter[value.answer];
+      return index + 1 + ',' + answersNumToLetter[value.answer];
     }).join(';    ');
     pdf.fontSize(12).text('Questions:', { underline: true });
     for (let index = 0; index < wordsHasContent.length; index++) {
-        const element = wordsHasContent[index];
-        pdf.text((index + 1) + '.' + element.word + ':', { stroke: true });
-        const choices = [];
-        choices.push(index);
-        let randomInt = index;
-        for (let i = 0; i < 4; i++) {
-            if (i === answersArray[index].answer) {
-                pdf.fontSize(12).text(answersNumToLetter[i] + '.' + element.define);
-            } else {
-                while (choices.includes(randomInt)) {
-                    randomInt = Math.floor(Math.random() * (wordsHasContent.length - 0.1));
-                    if (choices.includes(randomInt) === false) {
-                        choices.push(randomInt);
-                        break;
-                    }
-                }
-                pdf.fontSize(12).text(answersNumToLetter[i] + '.' + wordsHasContent[randomInt].define);
+      const element = wordsHasContent[index];
+      pdf.text((index + 1) + '.' + element.word + ':', { stroke: true });
+      const choices = [];
+      choices.push(index);
+      let randomInt = index;
+      for (let i = 0; i < 4; i++) {
+        if (i === answersArray[index].answer) {
+          pdf.fontSize(12).text(answersNumToLetter[i] + '.' + element.define);
+        } else {
+          while (choices.includes(randomInt)) {
+            randomInt = Math.floor(Math.random() * (wordsHasContent.length - 0.1));
+            if (choices.includes(randomInt) === false) {
+              choices.push(randomInt);
+              break;
             }
+          }
+          pdf.fontSize(12).text(answersNumToLetter[i] + '.' + wordsHasContent[randomInt].define);
         }
+      }
     }
     // draw the line
     pdf.fontSize(15).moveDown()
-        .moveTo(0, pdf.y)
-        .lineTo(pdf.page.width, pdf.y)
-        .fillAndStroke().moveDown();
+      .moveTo(0, pdf.y)
+      .lineTo(pdf.page.width, pdf.y)
+      .fillAndStroke().moveDown();
     // write the answers.
     pdf.fontSize(12).text('Answers:');
     pdf.fontSize(12).text(answers);
     pdf.end();
-}
+  }
   public render() {
     return (
       <div className="btn-group-vertical">
@@ -249,10 +252,12 @@ export default class Settings extends React.Component<ISettingsProps> {
         <button type="button" className="btn btn-secondary" data-toggle="modal" data-target="#settingModal">
           Setting
         </button>
-        <button type="button" className="btn btn-warning" onClick={e=>this.openLink()}>
+        <button type="button" className="btn btn-warning" onClick={e => this.openLink()}>
           How To Use
         </button >
       </div>
     );
   }
 }
+
+export default connect(mapRootStateToProps)(Settings);

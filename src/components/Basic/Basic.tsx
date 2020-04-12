@@ -13,6 +13,8 @@ export interface IBasicProps extends BasicProps {
     searching: any;
     setting: any;
     isSettingOpened?: boolean;
+    historyDeleted: () => void;
+
 
 }
 export interface IBasicStates extends BasicState {
@@ -26,7 +28,9 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
         }
     }
 
+
     async componentDidMount() {
+        
         var config = await getConfig()
         Log.Info(config);
         this.setState({ config })
@@ -59,9 +63,6 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
     }
     miniMize() {
         remote.BrowserWindow.getFocusedWindow().minimize();
-    }
-    toggleSetting() {
-        document.querySelector('.wrapper')?.classList.toggle('toggled');
     }
     async settingSave(type: string, value: string) {
         Log.Info(this.state.config.default);

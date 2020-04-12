@@ -7,20 +7,22 @@ import { SystemActions } from 'components/System/SystemActions';
 import { connect } from 'react-redux';
 import { WordService } from 'utils/WordService';
 import Word from 'core/Models/Word';
-import { BasicState } from 'core/RootComponent/BasicState';
+import { RootStates } from 'core/RootComponent/RootStates';
 import Log from 'utils/Log';
 import { configPara } from 'utils/ConfigPara';
 import suggestion from "./SearchWordSuggestions";
 import './SearchWord.scss'
 import SuggestionWord from 'core/Models/SuggestionWord';
+import { RootState } from 'redux/Store';
 export interface ISearchWordProps extends BasicProps {
+  historyDeletedFlag: string;
 }
 
-export interface ISearchWordStates extends BasicState {
+export interface ISearchWordStates extends RootStates {
   words: Array<Word>;
   wordsSuggestion: Array<SuggestionWord>;
   inputValue: string;
-
+  historyDeletedFlag: string;
 }
 
 class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
@@ -33,7 +35,8 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     this.state = {
       inputValue: '',
       words: [],
-      wordsSuggestion: []
+      wordsSuggestion: [],
+      historyDeletedFlag: this.props.historyDeletedFlag
     }
 
   }
@@ -42,8 +45,12 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
   }
 
   async componentDidMount() {
+    await this.refreshHistory();
+  }
+
+  async refreshHistory() {
     let words = await this.wordService.getAllWords();
-    this.setState({ words: words });
+    this.setState({ words: words, historyDeletedFlag: this.props.historyDeletedFlag });
   }
 
   searchWordChanged(e: HTMLInputElement) {
@@ -90,8 +97,14 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     }
   }
 
+  componentDidUpdate() {
+    if (this.props.historyDeletedFlag !== this.state.historyDeletedFlag) {
+      this.refreshHistory();
+    }
+  }
 
   public render() {
+
     return (
       <>
         <div className="input-group sticky-top mt-2">
@@ -149,5 +162,10 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     );
   }
 }
-
-export default connect(mapRootStateToProps)(SearchWord);
+export function mapStateToProps(state: RootStates) {
+  return {
+    historyDeletedFlag: state.system.historyDeletedFlag,
+    ...mapRootStateToProps(state)
+  }
+}
+export default connect(mapStateToProps)(SearchWord);

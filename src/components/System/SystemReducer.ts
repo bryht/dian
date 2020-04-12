@@ -4,6 +4,7 @@ import { Reducer } from 'redux';
 import { StatesAction } from "redux/Actions/StatesAction";
 import { SystemActionType } from "./SystemActionType";
 import { SystemStates } from "./SystemStates";
+import Guid from "utils/Guid";
 
 export const systemReducer: Reducer<SystemStates, StatesAction<SystemActionType>> = (state = new SystemStates(), action) => {
     switch (action.type) {
@@ -13,8 +14,8 @@ export const systemReducer: Reducer<SystemStates, StatesAction<SystemActionType>
             return { ...state, currentUser: null }
         case SystemActionType.ToggleSetting:
             return { ...state, isSettingOpened: !state.isSettingOpened }
-            case SystemActionType.DeleteAllHistory:
-                return { ...state, historyDeleted:action.payload.historyDeleted }
+        case SystemActionType.DeleteAllHistory:
+            return { ...state, historyDeletedFlag: Guid.newGuid() }
     }
     return state;
 };
