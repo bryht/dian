@@ -33,4 +33,11 @@ export class SystemActions {
         }
     }
 
+    static DeleteAllHistory(): StatesAction<SystemActionType> {
+        return {
+            type: SystemActionType.DeleteAllHistory,
+            payload: null
+        }
+    }
+
 }

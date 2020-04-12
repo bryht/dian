@@ -5,7 +5,9 @@ import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
 import Log from 'utils/Log';
-const { remote, shell}= window.require('electron');
+import { configPara, getConfig, setConfig } from 'utils/ConfigPara';
+import { BasicState } from 'core/RootComponent/BasicState';
+const { remote } = window.require('electron');
 
 export interface IBasicProps extends BasicProps {
     searching: any;
@@ -13,13 +15,21 @@ export interface IBasicProps extends BasicProps {
     isSettingOpened?: boolean;
 
 }
-
-class Basic extends RootComponent<IBasicProps, any> {
-
-    miniMize() {
-        remote.BrowserWindow.getFocusedWindow().minimize();
+export interface IBasicStates extends BasicState {
+    config: typeof configPara
+}
+class Basic extends RootComponent<IBasicProps, IBasicStates> {
+    constructor(props: Readonly<IBasicProps>) {
+        super(props);
+        this.state = {
+            config: configPara
+        }
     }
-    componentDidMount() {
+
+    async componentDidMount() {
+        var config = await getConfig()
+        Log.Info(config);
+        this.setState({ config })
 
         const word = document.querySelector('#word') as HTMLInputElement;
         word.focus();
@@ -47,19 +57,32 @@ class Basic extends RootComponent<IBasicProps, any> {
             window.scrollTo(window.scrollX, window.scrollY - 20);
         });
     }
+    miniMize() {
+        remote.BrowserWindow.getFocusedWindow().minimize();
+    }
+    toggleSetting() {
+        document.querySelector('.wrapper')?.classList.toggle('toggled');
+    }
+    async settingSave(type: string, value: string) {
+        Log.Info(this.state.config.default);
+        switch (type) {
+            case 'source':
+                this.state.config.default.source = value;
+                break;
+            case 'playSound':
+                this.state.config.default.playSound = value;
+                break;
+            default:
+                break;
+        }
+        this.setState({ config: this.state.config });
+        await setConfig(this.state.config.default);
+    }
     public render() {
         const { isSettingOpened } = this.props;
         return (
             <>
-                <div id="infoAlert" className="alert alert-warning alert-dismissible d-none" role="alert">
-                    <strong>Info!</strong>
-                    <span id="messages">You have new update downloaded, do you want to update?</span>
-                    <button type="button" className="btn-primary">Update</button>
-                    <button type="button" className="btn-warning" data-dismiss="alert" aria-label="Close">
-                        Later
-                </button>
-                </div>
-                <div className="modal fade" id="settingModal" role="dialog" aria-hidden="true">
+                <div className="modal fade" id="settingModal" role="dialog" aria-hidden="true" style={{ background: 'transparent' }}>
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-body">
@@ -67,27 +90,24 @@ class Basic extends RootComponent<IBasicProps, any> {
                                 <hr />
                                 <div className="form-group">
                                     <label>Language you know:</label>
-                                    <select className="form-control">
-                                        <option >element.name</option>
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Language you learn:</label>
-                                    <select className="form-control">
-                                        <option >element.name</option>
+                                    <select className="form-control" value={this.state.config.default.source} onChange={e => { this.settingSave('source', e.target.value) }}>
+                                        {
+                                            this.state.config.languageSource.map(item => (<option value={item.value}>{item.name}</option>))
+                                        }
                                     </select>
                                 </div>
                                 <div className="form-group">
                                     <label>Auto play word Sound?</label>
-                                    <select className="form-control">
-                                        <option >element.name</option>
+                                    <select className="form-control" value={this.state.config.default.playSound} onChange={e => { this.settingSave('playSound', e.target.value) }}>
+                                        {
+                                            this.state.config.playSoundOptions.map(item => (<option value={item.value}>{item.name}</option>))
+                                        }
                                     </select>
                                 </div>
-                                <div className="d-flex justify-content-end">
-                                    <button className="btn btn-success m-1" data-dismiss="modal">Save</button>
-                                    <button className="btn btn-danger m-1" data-dismiss="modal">Cancle</button>
-                                </div>
                             </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>

@@ -13,6 +13,8 @@ export const systemReducer: Reducer<SystemStates, StatesAction<SystemActionType>
             return { ...state, currentUser: null }
         case SystemActionType.ToggleSetting:
             return { ...state, isSettingOpened: !state.isSettingOpened }
+            case SystemActionType.DeleteAllHistory:
+                return { ...state, historyDeleted:action.payload.historyDeleted }
     }
     return state;
 };

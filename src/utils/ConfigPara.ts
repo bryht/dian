@@ -63,7 +63,7 @@ const configPara = {
     ]
 };
 
-const configName = 'config3';
+const configName = 'config6';
 async function initConfig() {
     const hasKeyPromise = new Promise<boolean>(resolve => {
         storage.has(configName, (errorMsg: any, result: boolean | PromiseLike<boolean> | undefined) => {
@@ -74,15 +74,13 @@ async function initConfig() {
     const hasKey = await hasKeyPromise;
     if (hasKey === false) {
         storage.set(configName, configPara.default, (errorMsg: any) => { if (errorMsg) { throw errorMsg; } });
-    } else {
-        await getConfig();
     }
 }
-async function setConfig(name: string, value: any) {
-    configPara.default.name = value;
+async function setConfig(config: typeof configPara.default) {
     storage.set(configName, configPara.default, (errorMsg: any) => { if (errorMsg) { throw errorMsg; } });
 }
 async function getConfig() {
+    await initConfig();
     const getConfigPromise = new Promise<typeof configPara.default>(resolve => {
         storage.get(configName, (errorMsg: any, result: { source: string; target: string; name: string; value: string; function: string; playSound: string; }) => {
             if (errorMsg) { throw errorMsg; }

@@ -2,5 +2,6 @@ export enum SystemActionType {
     SaveUserSuccess = 'SaveUserSuccess',
     RemoveCurrentUserSuccess = 'RemoveCurrentUserSuccess',
     RefreshCurrentUserSuccess = 'RefreshCurrentUserSuccess',
-    ToggleSetting='ToggleSetting'
+    ToggleSetting='ToggleSetting',
+    DeleteAllHistory='DeleteAllHistory'
 }

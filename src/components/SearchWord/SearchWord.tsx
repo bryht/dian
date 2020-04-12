@@ -130,7 +130,7 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
                       : ""}
                     {element.sign ? (<a className="badge badge-pill badge-warning float-right ml-1">{element.sign}</a>) : ""}
                   </div>
-                  <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} style={{ padding: '0' }} jjjjjjj aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
+                  <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} style={{ padding: '0' }} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
                     <div className="card-body" style={{ overflow: 'hidden', padding: '0', margin: '0' }}>
                       {element.isShow ?
                         (<div id="wordShowing" style={{ height: '500px', overflow: 'scroll' }} >

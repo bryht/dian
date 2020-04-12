@@ -7,6 +7,7 @@ import store from './redux/Store';
 import { Provider } from 'react-redux';
 import 'bootstrap/js/dist/dropdown';
 import 'bootstrap/js/dist/collapse';
+import 'bootstrap/js/dist/modal';
 
 ReactDOM.render(
   <Provider store={store()}>
