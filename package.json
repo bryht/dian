@@ -102,7 +102,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "package": "electron-builder --publish=github"
+    "package": "electron-builder -mwl --publish=always"
   },
   "eslintConfig": {
     "extends": "react-app"
