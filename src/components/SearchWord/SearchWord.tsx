@@ -14,6 +14,7 @@ import suggestion from "./SearchWordSuggestions";
 import './SearchWord.scss'
 import SuggestionWord from 'core/Models/SuggestionWord';
 import { RootState } from 'redux/Store';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 export interface ISearchWordProps extends BasicProps {
   historyDeletedFlag: string;
 }
@@ -103,16 +104,11 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     this.setState({ words: result });
   }
 
-  deleteWord(id: string, card: HTMLElement | undefined | null) {
+  async deleteWord(id: string) {
     const { words } = this.state;
-    if (card) {
-      card.classList.add("word-delete");
-      card.addEventListener('animationend', async t => {
-        var result = words.filter(p => p.id !== id);
-        await this.wordService.updateWords(result);
-        this.setState({ words: result });
-      });
-    }
+    var result = words.filter(p => p.id !== id);
+    await this.wordService.updateWords(result);
+    this.setState({ words: result });
   }
 
   componentDidUpdate() {
@@ -142,39 +138,46 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
           <ul id="suggestion" className="list-group">
             {
               this.state.wordsSuggestion.map(item => (
-                <li className={"list-group-item "+(item.isSelected?"active":"")} key={item.word}>{item.word}</li>
+                <li className={"list-group-item " + (item.isSelected ? "active" : "")} key={item.word}>{item.word}</li>
               ))
             }
           </ul>
         </div>
 
         <div id="wordHistory" className="mt-2">
-          {
-            this.state.words.map(
-              element => (
-                <div className="card" key={element.id} id={'card' + element.id} >
-                  <div className={"card-header alert alert-" + (element.isPhrase ? "success" : "primary")} role="tab" id={'heading' + element.id}>
-                    <>{[element.word, (element.isPhrase ? <br key={element.id} /> : ':'), element.translation]}</>
-                    <a className="badge badge-pill badge-danger float-right text-light ml-1" onClick={e => this.deleteWord(element.id, document.getElementById('card' + element.id))}>Delete</a>
-                    {element.hasContent ?
-                      (<a data-toggle="collapse" href={"#collapse" + element.id} aria-controls={"collapse" + element.id} aria-expanded="true" className="badge badge-info float-right ml-1" onClick={e => this.showWord(element.id)}>See more</a>)
-                      : ""}
-                    {element.sign ? (<a className="badge badge-pill badge-warning float-right ml-1">{element.sign}</a>) : ""}
-                  </div>
-                  <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} style={{ padding: '0' }} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
-                    <div className="card-body" style={{ overflow: 'hidden', padding: '0', margin: '0' }}>
-                      {element.isShow ?
-                        (<div id="wordShowing" style={{ height: '500px', overflow: 'scroll' }} >
-                          <div dangerouslySetInnerHTML={{ __html: element.html }} style={{ pointerEvents: 'none' }} />
-                        </div>)
-                        : ""}
+          <TransitionGroup>
+            {
+              this.state.words.map(
+                element => (
+                  <CSSTransition
+                    key={element.id}
+                    timeout={300}
+                    classNames="word">
+                    <div className="card" key={element.id} id={'card' + element.id} >
+                      <div className={"card-header alert alert-" + (element.isPhrase ? "success" : "primary")} role="tab" id={'heading' + element.id}>
+                        <>{[element.word, (element.isPhrase ? <br key={element.id} /> : ':'), element.translation]}</>
+                        <a className="badge badge-pill badge-danger float-right text-light ml-1" onClick={e => this.deleteWord(element.id)}>Delete</a>
+                        {element.hasContent ?
+                          (<a data-toggle="collapse" href={"#collapse" + element.id} aria-controls={"collapse" + element.id} aria-expanded="true" className="badge badge-info float-right ml-1" onClick={e => this.showWord(element.id)}>See more</a>)
+                          : ""}
+                        {element.sign ? (<a className="badge badge-pill badge-warning float-right ml-1">{element.sign}</a>) : ""}
+                      </div>
+                      <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} style={{ padding: '0' }} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
+                        <div className="card-body" style={{ overflow: 'hidden', padding: '0', margin: '0' }}>
+                          {element.isShow ?
+                            (<div id="wordShowing" style={{ height: '500px', overflow: 'scroll' }} >
+                              <div dangerouslySetInnerHTML={{ __html: element.html }} style={{ pointerEvents: 'none' }} />
+                            </div>)
+                            : ""}
 
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </CSSTransition>
+                )
               )
-            )
-          }
+            }
+          </TransitionGroup>
         </div>
       </>
     );

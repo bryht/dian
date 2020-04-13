@@ -1,18 +1,20 @@
-/* The animation code */
-@keyframes fly-left {
-    from {
-        left: 0;
-    }
 
-    to {
-        left: -100%;
-    }
+
+.word-enter {
+    opacity: 0;
+}
+.word-enter-active {
+    opacity: 1;
+    transition: opacity 200ms ease-in;
 }
 
-/* The element to apply the animation to */
-.word-delete {
-    animation-name: fly-left;
-    animation-duration: 0.6s;
+.word-exit {
+    left:0;
+}
+
+.word-exit-active {
+    left: -100%;
+    transition: left 0.6s;
 }
 
 .list-group-item.active,
