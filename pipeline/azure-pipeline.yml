@@ -7,7 +7,6 @@ pool:
   vmImage: 'windows-latest'
 trigger:
 - master
-- switch-react
 
 # variables:
 #   MajorVersion: 1
