@@ -28,3 +28,8 @@
     z-index: 2;
     background-color: #f1eeee;
 }
+
+/* width */
+::-webkit-scrollbar {
+    width: 0px;
+}

@@ -1,8 +1,6 @@
 const electron = require('electron');
-const pdfkit = require('pdfkit');
 const url = require('url');
 const path = require('path');
-const fs = require('fs-extra');
 const {
     app,
     BrowserWindow,
@@ -10,7 +8,6 @@ const {
     Menu,
     Tray,
     globalShortcut,
-    dialog
 } = require('electron');
 const log = require('electron-log');
 const autoUpdater = require("electron-updater").autoUpdater;
@@ -20,7 +17,6 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 function sendStatusToWindow(text) {
     log.info(text);
-    // win.webContents.send('message', text);
 }
 autoUpdater.on('checking-for-update', () => {
     sendStatusToWindow('Checking for update...');
@@ -40,7 +36,7 @@ autoUpdater.on('download-progress', (progressObj) => {
     sendStatusToWindow(log_message);
 })
 autoUpdater.on('update-downloaded', (info) => {
-    sendStatusToWindow('update');
+    autoUpdater.quitAndInstall();
 });
 
 autoUpdater.checkForUpdates();
