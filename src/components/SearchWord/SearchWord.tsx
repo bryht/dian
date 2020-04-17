@@ -39,13 +39,16 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
       wordsSuggestion: [],
       historyDeletedFlag: this.props.historyDeletedFlag
     }
-
+    window.onfocus = () => {
+      this.inputTextBox.current.focus();
+    }
   }
   toggleSetting() {
     this.invokeDispatch(SystemActions.ToggleSetting());
   }
 
   async componentDidMount() {
+
     await this.refreshHistory();
   }
 

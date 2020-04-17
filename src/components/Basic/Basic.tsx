@@ -25,11 +25,12 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
         this.state = {
             config: configPara
         }
+
     }
 
 
     async componentDidMount() {
-        
+
         var config = await getConfig()
         Log.Info(config);
         this.setState({ config })
