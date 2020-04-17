@@ -1,0 +1,57 @@
+@import "bootstrap";
+$setting-width: 130px;
+
+@keyframes sidebar-in {
+    0% {
+        right: -$setting-width;
+    }
+
+    100% {
+        right: 0px;
+    }
+}
+
+@keyframes sidebar-out {
+    0% {
+        right: 0px;
+    }
+
+    100% {
+        right: -$setting-width;
+    }
+}
+
+.wrapper {
+    margin: 2px;
+}
+
+
+.content {
+    width: 100%;
+    padding-right: 0px;
+    transition: all 0.5s ease;
+}
+
+.wrapper.toggled .content {
+    padding-right: $setting-width;
+    transition: all 0.5s ease;
+}
+
+
+.sidebar {
+    padding: 10px;
+    position: absolute;
+    display: none;
+    width: $setting-width;
+    top: 0px;
+    right: -$setting-width;
+    animation-name: sidebar-out;
+    animation-duration: 0.5s;
+}
+
+.wrapper.toggled .sidebar {
+    display: block;
+    right: 0px;
+    animation-name: sidebar-in;
+    animation-duration: 0.5s;
+}

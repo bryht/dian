@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './Basic.scss';
 import { mapRootStateToProps, RootComponent } from 'core/RootComponent/RootComponent';
 import { RootState } from 'redux/Store';
 import { BasicProps } from 'core/RootComponent/BasicProps';

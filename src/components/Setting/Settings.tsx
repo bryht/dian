@@ -232,7 +232,7 @@ class Settings extends RootComponent<ISettingsProps, any>  {
             </button>
           <div className="dropdown-menu">
             <button type="button" className="dropdown-item" onClick={e => this.exportMutiChoiceTest()}>
-              MutiChoice Test
+              Choice Test
               </button>
             <button type="button" className="dropdown-item" onClick={e => this.exportBlankTest()}>
               Blank Test
