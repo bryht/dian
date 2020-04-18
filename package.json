@@ -1,6 +1,6 @@
 {
   "name": "dict",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "private": true,
   "main": "main.ts",
   "description": "a dictionary app",
@@ -102,7 +102,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "package": "electron-builder --publish=always"
+    "package": "electron-builder -wml --publish=always"
   },
   "eslintConfig": {
     "extends": "react-app"
