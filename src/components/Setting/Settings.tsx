@@ -119,6 +119,8 @@ class Settings extends RootComponent<ISettingsProps, any>  {
       const sentence = element.example.split(' ').filter((value, i, array) => {
         if (value.includes('[xxx]')) {
           return value;
+        }else{
+          return '';
         }
       });
       const word = sentence.length === 1 ? sentence[0] : '[xxx]';
@@ -136,6 +138,8 @@ class Settings extends RootComponent<ISettingsProps, any>  {
       const answerWords = word.example.split(' ').filter((value, i, list) => {
         if (value.includes('[xxx]')) {
           return value;
+        }else{
+          return '';
         }
       });
       return (index + 1) + ':' +
