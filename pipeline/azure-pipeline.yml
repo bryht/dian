@@ -1,21 +1,21 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# # Starter pipeline
+# # Start with a minimal pipeline that you can customize to build and deploy your code.
+# # Add steps that build, run tests, deploy, and more:
+# # https://aka.ms/yaml
 
-pool:
-  vmImage: 'windows-latest'
-trigger:
-- master
+# pool:
+#   vmImage: 'windows-latest'
+# trigger:
+# - master
 
-steps:
-- task: PowerShell@2
-  env:
-     GH_TOKEN: $(ghtoken)
-  inputs:
-    targetType: 'inline'
-    script: |
-      npm install
-      npm run build
-      npm run package
-  displayName: 'Build file'
+# steps:
+# - task: PowerShell@2
+#   env:
+#      GH_TOKEN: $(ghtoken)
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       npm install
+#       npm run build
+#       npm run package
+#   displayName: 'Build file'
