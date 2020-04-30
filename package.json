@@ -1,6 +1,6 @@
 {
   "name": "dict",
-  "version": "0.5.3",
+  "version": "0.5.5",
   "private": true,
   "main": "main.ts",
   "description": "a dictionary app",

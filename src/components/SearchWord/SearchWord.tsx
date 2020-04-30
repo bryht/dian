@@ -15,6 +15,7 @@ import './SearchWord.scss'
 import SuggestionWord from 'core/Models/SuggestionWord';
 import { RootState } from 'redux/Store';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import WordHtml from './WordHtml';
 export interface ISearchWordProps extends BasicProps {
   historyDeletedFlag: string;
 }
@@ -29,10 +30,12 @@ export interface ISearchWordStates extends BasicState {
 class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
   wordService: WordService;
   inputTextBox: any;
+  cardBody: React.RefObject<HTMLDivElement>;
   constructor(params: Readonly<ISearchWordProps>) {
     super(params);
     this.wordService = new WordService();
     this.inputTextBox = React.createRef();
+    this.cardBody = React.createRef<HTMLDivElement>();
     this.state = {
       inputValue: '',
       words: [],
@@ -92,26 +95,26 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
     var exist = words.find(p => p.word === word.word);
     if (exist) words.splice(words.indexOf(exist), 1);
     words.unshift(word);
-    await this.wordService.updateWords(words);
     this.setState({ wordsSuggestion: [], words, inputValue: '' });
     this.showWord(word.id);
     this.inputTextBox.current.blur();
+    await this.wordService.updateWords(words);
   }
 
   showWord(id: string) {
-    const { words } = this.state;
-    var result = words.map(p => {
-      p.isShow = p.id === id && p.hasContent;
-      return p;
-    })
-    this.setState({ words: result });
+    var items = document.getElementsByClassName("card-body show");
+    for (let item = 0; item < items.length; item++) {
+      const element = items[item];
+      element.classList.remove("show");
+    }
+    this.cardBody.current?.classList.add("show");
   }
 
   async deleteWord(id: string) {
     const { words } = this.state;
     var result = words.filter(p => p.id !== id);
-    await this.wordService.updateWords(result);
     this.setState({ words: result });
+    await this.wordService.updateWords(result);
   }
 
   componentDidUpdate() {
@@ -154,25 +157,24 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
                 element => (
                   <CSSTransition
                     key={element.id}
-                    timeout={300}
+                    timeout={600}
+                    unmountOnExit={true}
+                    in
                     classNames="word">
                     <div className="card" key={element.id} id={'card' + element.id} >
                       <div className={"card-header alert alert-" + (element.isPhrase ? "success" : "primary")} role="tab" id={'heading' + element.id}>
                         <>{[element.word, (element.isPhrase ? <br key={element.id} /> : ':'), element.translation]}</>
                         <a className="badge badge-pill badge-danger float-right text-light ml-1" onClick={e => this.deleteWord(element.id)}>Delete</a>
                         {element.hasContent ?
-                          (<a data-toggle="collapse" href={"#collapse" + element.id} aria-controls={"collapse" + element.id} aria-expanded="true" className="badge badge-info float-right ml-1" onClick={e => this.showWord(element.id)}>See more</a>)
+                          (<a data-toggle="collapse" href={"#collapse" + element.id} aria-controls={"collapse" + element.id} aria-expanded="true" className="badge badge-info float-right ml-1">See more</a>)
                           : ""}
                         {element.sign ? (<a className="badge badge-pill badge-warning float-right ml-1">{element.sign}</a>) : ""}
                       </div>
-                      <div id={"collapse" + element.id} className={"card-body collapse" + (element.isShow === true ? " show" : "")} style={{ padding: '0' }} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
+                      <div id={"collapse" + element.id} ref={this.cardBody} className={"card-body collapse"} style={{ padding: '0' }} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
                         <div className="card-body" style={{ overflow: 'hidden', padding: '0', margin: '0' }}>
-                          {element.isShow ?
-                            (<div id="wordShowing" style={{ height: '500px', overflow: 'scroll' }} >
-                              <div dangerouslySetInnerHTML={{ __html: element.html }} style={{ pointerEvents: 'none' }} />
-                            </div>)
-                            : ""}
-
+                          <div id="wordShowing" style={{ height: '500px', overflow: 'scroll' }} >
+                            <WordHtml html={element.html}></WordHtml>
+                          </div>
                         </div>
                       </div>
                     </div>

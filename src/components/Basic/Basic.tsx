@@ -93,7 +93,7 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
                                     <label>Language you know:</label>
                                     <select className="form-control" value={this.state.config.default.source} onChange={e => { this.settingSave('source', e.target.value) }}>
                                         {
-                                            this.state.config.languageSource.map(item => (<option value={item.value}>{item.name}</option>))
+                                            this.state.config.languageSource.map(item => (<option key={item.value} value={item.value}>{item.name}</option>))
                                         }
                                     </select>
                                 </div>
@@ -101,7 +101,7 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
                                     <label>Auto play word Sound?</label>
                                     <select className="form-control" value={this.state.config.default.playSound} onChange={e => { this.settingSave('playSound', e.target.value) }}>
                                         {
-                                            this.state.config.playSoundOptions.map(item => (<option value={item.value}>{item.name}</option>))
+                                            this.state.config.playSoundOptions.map(item => (<option key={item.value} value={item.value}>{item.name}</option>))
                                         }
                                     </select>
                                 </div>
