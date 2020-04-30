@@ -1,6 +1,6 @@
 {
   "name": "dict",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "private": true,
   "main": "main.ts",
   "description": "a dictionary app",
@@ -19,7 +19,8 @@
       {
         "provider": "github",
         "owner": "bryht",
-        "repo": "dict"
+        "repo": "dict",
+        "releaseType": "release"
       }
     ],
     "extends": null,

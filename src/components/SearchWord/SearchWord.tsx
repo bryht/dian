@@ -172,9 +172,9 @@ class SearchWord extends RootComponent<ISearchWordProps, ISearchWordStates> {
                       </div>
                       <div id={"collapse" + element.id} ref={this.cardBody} className={"card-body collapse"} style={{ padding: '0' }} aria-labelledby={'heading' + element.id} data-parent="#wordHistory">
                         <div className="card-body" style={{ overflow: 'hidden', padding: '0', margin: '0' }}>
-                          <div id="wordShowing" style={{ height: '500px', overflow: 'scroll' }} >
+                          {!element.isPhrase && <div id="wordShowing" style={{ height: '500px', overflow: 'scroll' }} >
                             <WordHtml html={element.html}></WordHtml>
-                          </div>
+                          </div>}
                         </div>
                       </div>
                     </div>
