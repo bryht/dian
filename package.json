@@ -83,6 +83,7 @@
     "popper.js": "^1.16.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-modal": "^3.12.1",
     "react-redux": "^7.2.0",
     "react-scripts": "3.4.1",
     "react-transition-group": "^4.3.0",
@@ -90,12 +91,13 @@
     "typescript": "~3.7.2"
   },
   "devDependencies": {
-    "redux-logger": "^3.0.6",
+    "@types/react-modal": "^3.12.0",
     "@types/redux-logger": "^3.0.7",
+    "concurrently": "^5.1.0",
+    "electron": "^8.2.0",
     "electron-builder": "^22.4.1",
     "electron-reload": "^1.5.0",
-    "electron": "^8.2.0",
-    "concurrently": "^5.1.0",
+    "redux-logger": "^3.0.6",
     "wait-on": "^4.0.0"
   },
   "scripts": {

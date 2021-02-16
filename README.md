@@ -10,6 +10,11 @@
 
   [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
 
+## Functions
+* add more language
+* add language translate
+* language, language-dictionary-link, 
+
 ***
 ##  Commands
 - Install package ```npm install```
