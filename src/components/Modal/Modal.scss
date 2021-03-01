@@ -1,0 +1,20 @@
+.modal-component {
+  .modal-close-button {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 25px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    span {
+      position: relative;
+      top: -2px;
+    }
+  }
+  .modal-component-body {
+      margin: 20px;
+  }
+}

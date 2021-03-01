@@ -9,25 +9,21 @@ export interface IConfigProps extends BasicProps {
 
 class Config extends RootComponent<IConfigProps, any>  {
 
+    modalRef: React.RefObject<Modal>;
     constructor(props: Readonly<IConfigProps>) {
         super(props);
-        this.state = {
-            isSettingModalOpened: false
-        }
+        this.modalRef = React.createRef<Modal>();
     }
-    openSetting = () => {
-        this.setState({ isSettingModalOpened: true })
-    }
-    closeSetting = () => {
-        this.setState({ isSettingModalOpened: false })
 
+    openSetting = () => {
+        this.modalRef.current?.openModal();
     }
+
     openLink = () => {
 
     }
 
     public render() {
-        const { isSettingModalOpened } = this.state;
         return (
             <div className="btn-group-vertical">
                 <button type="button" className="btn btn-secondary" onClick={this.openSetting}>
@@ -36,9 +32,8 @@ class Config extends RootComponent<IConfigProps, any>  {
                 <button type="button" className="btn btn-warning" onClick={this.openLink}>
                     How To Use
                 </button >
-                <Modal isModalOpened={isSettingModalOpened}>
+                <Modal ref={this.modalRef}>
                     <h2>fffffff</h2>
-                    <button onClick={this.closeSetting}>close</button>
                     <div>I am a modal</div>
                     <form>
                         <input />

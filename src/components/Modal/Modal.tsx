@@ -1,38 +1,43 @@
 import * as React from 'react';
 import ReactModal from 'react-modal';
-
-export interface IModalProps {
-    isModalOpened: boolean
-}
+import './Modal.scss';
 
 export interface IModalState {
     isSettingModalOpened: boolean
 }
 
-class Modal extends React.Component<IModalProps, any>  {
-    customStyles = {
-        content: {
-            
+class Modal extends React.Component<any, IModalState>  {
+    constructor(props: Readonly<any>) {
+        super(props);
+        this.state = {
+            isSettingModalOpened: true
         }
-    };
-    
-    openSetting = () => {
-        this.setState({ isSettingModalOpened: true })
     }
-    closeSetting = () => {
-        this.setState({ isSettingModalOpened: false })
 
+    closeModal = () => {
+        this.setState({ isSettingModalOpened: false })
+    }
+
+    openModal = () => {
+        this.setState({ isSettingModalOpened: true })
     }
 
     public render() {
-        const { children, isModalOpened } = this.props;
+        const { children } = this.props;
+        const { isSettingModalOpened } = this.state;
         return (
-
             <ReactModal
-                isOpen={isModalOpened}
-                onRequestClose={this.closeSetting}
+                style={{ overlay: { zIndex: 2000 } }}
+                isOpen={isSettingModalOpened}
             >
-                {children}
+                <div className="modal-component">
+                    <button type="button" onClick={this.closeModal} className="modal-close-button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div className="modal-component-body">
+                        {children}
+                    </div>
+                </div>
             </ReactModal>
 
         );
