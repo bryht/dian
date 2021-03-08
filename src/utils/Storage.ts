@@ -1,0 +1,42 @@
+const storage = window.require('electron-json-storage');
+
+function get<T>(key: string, item: T | null = null): Promise<T | null> {
+    return new Promise<T | null>((resolve, reject) => {
+        storage.get(key, function (error: any, data: any) {
+            if (error) { reject(error); }
+            if (data.hasOwnProperty()) {
+                resolve(data as T);
+            } else {
+                resolve(item);
+            }
+        });
+    });
+}
+
+function set<T>(key: string, item: T): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        storage.set(key, item, (errorMsg: any) => {
+            if (errorMsg) {
+                reject(errorMsg);
+            }
+            resolve();
+        });
+    });
+}
+
+function remove(key: string): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        storage.remove(key, (errorMsg: any) => {
+            if (errorMsg) {
+                reject(errorMsg);
+            }
+            resolve();
+        });
+    });
+}
+
+export {
+    get,
+    set,
+    remove,
+}

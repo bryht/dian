@@ -82,45 +82,14 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
     public render() {
         const { isSettingOpened } = this.props;
         return (
-            <>
-                <div className="modal fade" id="settingModal" role="dialog" aria-hidden="true" style={{ background: 'transparent' }}>
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-body">
-                                <h2>Setting</h2>
-                                <hr />
-                                <div className="form-group">
-                                    <label>Language you know:</label>
-                                    <select className="form-control" value={this.state.config.default.source} onChange={e => { this.settingSave('source', e.target.value) }}>
-                                        {
-                                            this.state.config.languageSource.map(item => (<option key={item.value} value={item.value}>{item.name}</option>))
-                                        }
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Auto play word Sound?</label>
-                                    <select className="form-control" value={this.state.config.default.playSound} onChange={e => { this.settingSave('playSound', e.target.value) }}>
-                                        {
-                                            this.state.config.playSoundOptions.map(item => (<option key={item.value} value={item.value}>{item.name}</option>))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
+            <div className={isSettingOpened ? 'wrapper toggled' : 'wrapper'}>
+                <div className="content">
+                    {this.props.searching}
                 </div>
-                <div className={isSettingOpened ? 'wrapper toggled' : 'wrapper'}>
-                    <div className="content">
-                        {this.props.searching}
-                    </div>
-                    <div id="sidebar" className="sidebar">
-                        {this.props.setting}
-                    </div>
+                <div id="sidebar" className="sidebar">
+                    {this.props.setting}
                 </div>
-            </>
+            </div>
         );
     }
 }
