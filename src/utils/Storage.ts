@@ -4,7 +4,8 @@ function get<T>(key: string, item: T | null = null): Promise<T | null> {
     return new Promise<T | null>((resolve, reject) => {
         storage.get(key, function (error: any, data: any) {
             if (error) { reject(error); }
-            if (data.hasOwnProperty()) {
+            if (data.hasOwnProperty() ||
+                Array.isArray(data)) {
                 resolve(data as T);
             } else {
                 resolve(item);
@@ -16,10 +17,8 @@ function get<T>(key: string, item: T | null = null): Promise<T | null> {
 function set<T>(key: string, item: T): Promise<void> {
     return new Promise<void>((resolve, reject) => {
         storage.set(key, item, (errorMsg: any) => {
-            if (errorMsg) {
-                reject(errorMsg);
-            }
-            resolve();
+            if (errorMsg) { throw errorMsg; }
+            resolve()
         });
     });
 }
