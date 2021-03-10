@@ -62,7 +62,9 @@ function createWindow() {
         icon: __dirname + '/assets/icon.ico',
         webPreferences:{
            nodeIntegration:true,
-           webviewTag:true
+           webviewTag:true,
+           webSecurity: false,
+           allowRunningInsecureContent: true,
         }
     })
     // and load the index.html of the app.

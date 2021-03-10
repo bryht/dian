@@ -10,6 +10,7 @@ import { SystemActions } from 'components/System/SystemActions';
 import settingImage from 'assets/settings.svg';
 import './Search.scss';
 import { translateWord } from 'utils/Translate';
+import WordHtml from 'components/SearchWord/WordHtml';
 
 export interface ISearchProps extends BasicProps {
 }
@@ -19,6 +20,9 @@ export interface ISearchStates extends BasicState {
     inputValue: string;
     languages: Array<Language>;
     currentCulture: string;
+    translateCulture: string;
+    wordHtml: string;
+
 }
 
 class WordItem {
@@ -27,6 +31,7 @@ class WordItem {
 }
 class SearchItem {
     words: Array<WordItem> = [];
+    data: number = Date.now();
     static getId = (items: Array<WordItem>): string => items.map(x => x.text).join('-');
 
 }
@@ -39,7 +44,9 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
             searchSuggestions: [],
             inputValue: '',
             languages: [],
-            currentCulture: 'en-GB'
+            currentCulture: 'en',
+            translateCulture: 'en',
+            wordHtml: '',
         }
     }
 
@@ -48,12 +55,12 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         const searchItems = await get<Array<SearchItem>>('searchItems');
         this.setState({
             languages: languagesItems ?? [],
-            searchItems: searchItems ?? [],
+            searchItems: searchItems?.sort((a, b) => a.data - b.data) ?? [],
         })
     }
 
     async searchWord(culture: string) {
-        const { inputValue, languages, searchItems } = this.state;
+        const { inputValue, languages, searchItems, translateCulture } = this.state;
         let searchItem = new SearchItem();
         for (let index = 0; index < languages.length; index++) {
             const element = languages[index];
@@ -65,11 +72,24 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                 searchItem.words.push({ culture: element.culture, text: value })
             }
         }
-        if (!searchItems.find(x => SearchItem.getId(x.words) === SearchItem.getId(searchItem.words))) {
-            searchItems.push(searchItem);
+
+        const itemIndex = searchItems.findIndex(x => SearchItem.getId(x.words) === SearchItem.getId(searchItem.words));
+        if (itemIndex > 0) {
+            searchItems.splice(itemIndex, 1);
         }
+        searchItems.unshift(searchItem);
         this.setState({ searchItems });
         await set('searchItems', searchItems);
+        await this.showWordDDetail(translateCulture, inputValue);
+    }
+
+    showWordDDetail(culture: string, value: string) {
+        const { languages } = this.state;
+        const currentLanguage = languages.find(x => x.culture === culture);
+        if (currentLanguage) {
+            const url = WordHtml.getWordUrl(value, currentLanguage.detailLink ?? '');
+            this.setState({ wordHtml: url })
+        }
     }
 
     toggleSetting() {
@@ -77,7 +97,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
     }
 
     public render() {
-        const { languages, searchItems } = this.state;
+        const { languages, searchItems, wordHtml } = this.state;
         return (
             <div className="d-flex flex-column">
                 <div className="sticky-top mt-2 d-flex flex-column w-100">
@@ -101,13 +121,23 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                         }
                     </div>
                 </div >
-                <div>
+                <div className="accordion" id="accordionExample">
                     {searchItems.map(item =>
-                        <div key={SearchItem.getId(item.words)} className="d-flex">{item.words.map(word =>
-                            // eslint-disable-next-line jsx-a11y/anchor-is-valid
-                            <div className="badge bg-primary">{word.text}</div>
-                            
-                        )}
+                        <div className="accordion-item" key={`heading${SearchItem.getId(item.words)}`}>
+                            <h2 className="accordion-header" id={`heading${SearchItem.getId(item.words)}`}>
+                                <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${SearchItem.getId(item.words)}`} aria-expanded="false" aria-controls={`collapse${SearchItem.getId(item.words)}`}>
+                                    {item.words.map(x =>
+                                        <div className="mx-1 p-1 border border-secondary rounded">
+                                            <div className="badge rounded-pill bg-info text-muted">{x.culture}</div>
+                                            <span className="mx-1" onClick={() => this.showWordDDetail(x.culture, x.text)}>{x.text}</span>
+                                        </div>)}
+                                </button>
+                            </h2>
+                            <div id={`collapse${SearchItem.getId(item.words)}`} className="accordion-collapse collapse" aria-labelledby={`heading${SearchItem.getId(item.words)}`} data-bs-parent="#accordionExample">
+                                <div className="accordion-body">
+                                    <WordHtml url={wordHtml} html="" />
+                                </div>
+                            </div>
                         </div>
                     )}
                 </div>
