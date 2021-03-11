@@ -5,10 +5,10 @@ import * as cheerio from 'cheerio';
 export interface IWordHtmlProps {
     html: string;
     url: string;
+    hideTop: number;
 }
 
 export default class WordHtml extends React.Component<IWordHtmlProps, { html: string }> {
-
     public static getWordUrl(word: string, wordUrlTemplate: string) {
         return wordUrlTemplate.replace('{{word}}', word);
     }
@@ -33,11 +33,20 @@ export default class WordHtml extends React.Component<IWordHtmlProps, { html: st
             req.end();
         });
     }
+
     public render() {
         if (this.props.html)
             return (<div dangerouslySetInnerHTML={{ __html: this.props.html }} style={{ pointerEvents: 'none' }} />);
-        else if (this.props.url)
-            return (<webview style={{ height: 500 }} src={this.props.url} />);
+        else if (this.props.url) {
+
+            let webView = document.getElementById('webview');
+            if (!webView) {
+                return (<webview id="webview" style={{ height: 500, marginTop: -this.props.hideTop }} src={this.props.url} plugins />);
+            } else {
+                webView.setAttribute('src', this.props.url);
+                return document.getElementById('webview');
+            }
+        }
         else
             return '';
     }

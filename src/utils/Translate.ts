@@ -1,8 +1,7 @@
-import Word from 'core/Models/Word';
 import { guessLanguage } from 'guesslanguage';
 const translate = window.require('node-google-translate-skidz');
 
-function getLanguage(text: string) {
+function getCulture(text: string) {
     return new Promise<string>((resolve, reject) => {
         guessLanguage.detect(text, (result: string | PromiseLike<string>) => {
             if (result === 'unknown') {
@@ -25,4 +24,4 @@ function translateWord(fromCulture: string, toCulture: string, inputWord: string
     });
 }
 
-export { guessLanguage, translateWord }
+export { getCulture, translateWord }

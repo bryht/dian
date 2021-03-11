@@ -3,7 +3,7 @@ class Language {
     culture!: string;
     cultureName!: string;
     isSelected: boolean = false;
-    detailLink: string | undefined;
+    detailLink: string = '';
     detailHideTop: number = 0;
     detailHideFilters: Array<string> = [];
 
@@ -15,7 +15,7 @@ const languages: Array<Language> = [
         cultureName: 'English',
         isSelected: true,
         detailHideFilters: [],
-        detailHideTop: 0,
+        detailHideTop: 160,
         detailLink: 'https://www.ldoceonline.com/dictionary/{{word}}'
     },
     {
@@ -23,16 +23,16 @@ const languages: Array<Language> = [
         cultureName: 'Nederlands',
         isSelected: false,
         detailHideFilters: [],
-        detailHideTop: 0,
-        detailLink: 'https://www.deepl.com/translator#nl/en/{{word}}'
+        detailHideTop: 160,
+        detailLink: 'https://dictionary.cambridge.org/dictionary/dutch-english/{{word}}'
     },
     {
         culture: 'zh',
         cultureName: '中文',
         isSelected: false,
         detailHideFilters: [],
-        detailHideTop: 0,
-        detailLink: 'https://www.deepl.com/translator#zh/en/{{word}}'
+        detailHideTop: 160,
+        detailLink: 'http://www.zdic.net/hans/{{word}}'
     }
 ];
 
