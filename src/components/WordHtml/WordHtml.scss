@@ -1,0 +1,22 @@
+.word-html-modal {
+  padding: 0;
+  margin: 50px;
+  background-color: white;
+  .word-html-close {
+    margin-top: -12px;
+    margin-right: -12px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    cursor: pointer;
+    svg {
+      justify-self: center;
+      align-self: center;
+      fill: white;
+    }
+    border-radius: 50%;
+    border: 0;
+    background-color: red;
+    z-index: 1000;
+  }
+}

@@ -7,11 +7,11 @@ import { get, set } from 'utils/Storage';
 import { BasicState } from 'core/RootComponent/BasicState';
 import SuggestionWord from 'core/Models/SuggestionWord';
 import { SystemActions } from 'components/System/SystemActions';
-import settingImage from 'assets/settings.svg';
-import './Search.scss';
+import { ReactComponent as SettingSvg } from 'assets/settings.svg';
 import { translateWord, getCulture } from 'utils/Translate';
-import WordHtml from 'components/SearchWord/WordHtml';
-import Modal from 'components/Modal/Modal';
+import WordHtml from 'components/WordHtml/WordHtml';
+import { SearchItem } from './SearchItem';
+import './Search.scss';
 
 export interface ISearchProps extends BasicProps {
 }
@@ -25,23 +25,13 @@ export interface ISearchStates extends BasicState {
 
 }
 
-class WordItem {
-    culture: string = '';
-    text: string = '';
-}
-class SearchItem {
-    words: Array<WordItem> = [];
-    data: number = Date.now();
-    static getId = (items: Array<WordItem>): string => items.map(x => x.text).join('-');
-
-}
 class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
-    modalRef: React.RefObject<Modal>;
+    wordHtmlRef: React.RefObject<WordHtml>;
 
     constructor(props: Readonly<ISearchProps>) {
         super(props);
-        this.modalRef = React.createRef<Modal>();
+        this.wordHtmlRef = React.createRef<WordHtml>();
         this.state = {
             searchItems: [],
             searchSuggestions: [],
@@ -81,9 +71,18 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         }
         searchItems.unshift(searchItem);
 
+        this.setState({ searchItems, inputValue: '' });
+        await set('searchItems', searchItems);
+    }
+
+    async deleteWord(id: string) {
+        const { searchItems } = this.state;
+        const itemIndex = searchItems.findIndex(x => SearchItem.getId(x.words) === id);
+        if (itemIndex > -1) {
+            searchItems.splice(itemIndex, 1);
+        }
         this.setState({ searchItems });
         await set('searchItems', searchItems);
-        this.showWordDDetail(currentLanguage.culture, inputValue);
     }
 
     async onInputValueChanged(inputValue: string) {
@@ -116,7 +115,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         return currentLanguage;
     }
 
-    showWordDDetail(culture: string, value: string) {
+    showWordDetail(culture: string, value: string) {
         const { installedLanguages: languages } = this.state;
         const language = languages.find(x => x.culture === culture);
         if (language) {
@@ -124,7 +123,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
             this.setState({ wordUrl: url })
         }
 
-        this.modalRef.current?.openModal();
+        this.wordHtmlRef.current?.open();
     }
 
     toggleSetting() {
@@ -135,16 +134,19 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         const { searchItems, wordUrl, currentLanguage } = this.state;
         return (
             <div className="d-flex flex-column">
-                <div className="sticky-top mt-2 d-flex flex-column w-100">
+                <div className="sticky-top mt-2 d-flex flex-column w-100 bg-white">
                     <div className="input-group">
-                        <span className="input-group-text">{currentLanguage.culture}</span>
+                        <span className="input-group-text">{currentLanguage.cultureName}</span>
                         <input type="text" id="word" className="form-control"
+                            placeholder="Command/Ctrl+F"
+                            onKeyDown={e => { if (e.key === "Enter") { this.searchWord() } }}
+                            onKeyUp={e => { if (e.key === "Escape") { e.currentTarget.blur() } }}
                             onChange={e => this.onInputValueChanged(e.currentTarget.value)}
                             value={this.state.inputValue}></input>
                         <div className="input-group-append">
                             <button className="btn btn-outline-secondary" type="button" onClick={e => this.searchWord()}>Search</button>
-                            <button className="btn btn-outline-secondary active" type="button" onClick={e => this.toggleSetting()} >
-                                <img src={settingImage} alt="Setting" />
+                            <button className="btn btn-outline-secondary" type="button" onClick={e => this.toggleSetting()} >
+                                <SettingSvg />
                             </button>
                         </div>
                     </div>
@@ -153,18 +155,29 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                 <ul className="list-group list-group-flush">
                     {
                         searchItems.map(item => (
-                            <li className="list-group-item d-flex flex-wrap">
-                                {item.words.map(x =>
-                                    <button onClick={() => this.showWordDDetail(x.culture, x.text)} className="mx-1 btn btn-outline-secondary">
-                                        <div className="badge rounded-pill bg-info text-muted">{x.culture}</div>
-                                        <span className="mx-1" >{x.text}</span>
-                                    </button>)}
+                            <li className={`list-group-item d-flex justify-content-between ${SearchItem.isPhrase(item.words) && 'bg-success'}`}>
+                                {SearchItem.isPhrase(item.words) ?
+                                    <ul className="list-group">
+                                        {item.words.map(x =>
+                                            <li className="list-group-item">
+                                                <span className="fw-bold fs-6">{x.culture}</span>
+                                                <span className="mx-1" >- {x.text}</span>
+                                            </li>)}
+                                    </ul> :
+                                    <div className={`d-flex flex-warp`}>
+                                        {item.words.map(x =>
+                                            <button onClick={() => this.showWordDetail(x.culture, x.text)} className="mx-1 btn btn-outline-secondary">
+                                                <span className="fw-bold fs-6">{x.culture}</span>
+                                                <span className="mx-1" >- {x.text}</span>
+                                            </button>)}
+                                    </div>
+                                }
+
+                                <button type="button" className="btn-close align-self-center" onClick={() => this.deleteWord(SearchItem.getId(item.words))}></button>
                             </li>))
                     }
                 </ul>
-                <Modal ref={this.modalRef}>
-                    <WordHtml url={wordUrl} hideTop={currentLanguage.detailHideTop} html="" />
-                </Modal>
+                <WordHtml ref={this.wordHtmlRef} url={wordUrl} hideTop={currentLanguage.detailHideTop} />
             </div>
         );
     }

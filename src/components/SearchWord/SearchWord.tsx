@@ -15,7 +15,7 @@ import './SearchWord.scss'
 import SuggestionWord from 'core/Models/SuggestionWord';
 import { RootState } from 'redux/Store';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import WordHtml from './WordHtml';
+import WordHtml from '../WordHtml/WordHtml';
 export interface ISearchWordProps extends BasicProps {
   historyDeletedFlag: string;
 }

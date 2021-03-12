@@ -4,8 +4,33 @@
 @import "../node_modules/bootstrap/scss/mixins";
 
 // Your variable overrides
+$success:#fafcf3;
+$primary:#61abf1;
+
+$theme-colors: (
+  "primary":    $primary,
+  "secondary":  $secondary,
+  "success":    $success,
+  "info":       $info,
+  "warning":    $warning,
+  "danger":     $danger,
+  "light":      $light,
+  "dark":       $dark
+);
+
+$h6-font-size: 12px;
+$font-sizes: (
+  1: $h1-font-size,
+  2: $h2-font-size,
+  3: $h3-font-size,
+  4: $h4-font-size,
+  5: $h5-font-size,
+  6: $h6-font-size
+);
+
 $input-focus-box-shadow: none;
 $btn-focus-width:0;
+$btn-close-focus-shadow: none;
 
 // Bootstrap and its default variables
 @import 'bootstrap';

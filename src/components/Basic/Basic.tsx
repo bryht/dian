@@ -38,21 +38,13 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
         const word = document.querySelector('#word') as HTMLInputElement;
         word.focus();
         word.value = '';
-        Mousetrap.bind('esc', () => { this.miniMize(); });
+        Mousetrap.bind('esc', () => { if(document.querySelector('#webview')==null) this.miniMize(); });
 
         Mousetrap.bind(['command+f', 'ctrl+f'], e => {
             const word = document.querySelector('#word') as HTMLInputElement;
             word.focus();
             word.value = '';
         })
-        Mousetrap.bind('j', function () {
-            const word = document.querySelector('#wordShowing') as HTMLDivElement;
-            if (word) word.scrollTop += 20;
-        });
-        Mousetrap.bind('k', function () {
-            const word = document.querySelector('#wordShowing') as HTMLDivElement;
-            if (word) word.scrollTop -= 20;
-        });
 
         Mousetrap.bind('J', function () {
             window.scrollTo(window.scrollX, window.scrollY + 20);
