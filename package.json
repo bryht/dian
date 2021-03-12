@@ -53,6 +53,7 @@
     }
   },
   "dependencies": {
+    "@cliqz/adblocker-electron": "^1.20.3",
     "@popperjs/core": "^2.9.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
@@ -78,6 +79,7 @@
     "guesslanguage": "^0.2.0",
     "jquery": "^3.6.0",
     "mousetrap": "^1.6.5",
+    "node-fetch": "^2.6.1",
     "node-google-translate-skidz": "^1.1.2",
     "node-sass": "^4.14.1",
     "pdfkit": "^0.11.0",

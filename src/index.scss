@@ -1,7 +1,11 @@
-@import "bootstrap";
+// Required
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/mixins";
 
-body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+// Your variable overrides
+$input-focus-box-shadow: none;
+$btn-focus-width:0;
+
+// Bootstrap and its default variables
+@import 'bootstrap';

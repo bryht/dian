@@ -8,10 +8,15 @@ const {
     Menu,
     Tray,
     globalShortcut,
+    session,
 } = require('electron');
 const log = require('electron-log');
 const autoUpdater = require("electron-updater").autoUpdater;
 const electronIsDev = require("electron-is-dev");
+const { promises } = require('fs');
+const { ElectronBlocker, fullLists } = require('@cliqz/adblocker-electron');
+const nodeFetch = require('node-fetch');
+
 //Update Logging
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -52,7 +57,7 @@ ipcMain.on('message', (event, info, data) => {
 
 let win;
 var appIcon = null;
-function createWindow() {
+async function createWindow() {
     const _width = electronIsDev ? 1200 : 600, _height = 800
     win = new BrowserWindow({
         width: _width,
@@ -60,13 +65,29 @@ function createWindow() {
         minWidth: 500,
         minHeight: 600,
         icon: __dirname + '/assets/icon.ico',
-        webPreferences:{
-           nodeIntegration:true,
-           webviewTag:true,
-           webSecurity: false,
-           allowRunningInsecureContent: true,
+        webPreferences: {
+            nodeIntegration: true,
+            webviewTag: true,
+            webSecurity: false,
+            allowRunningInsecureContent: true,
         }
     })
+
+    // add ad blocker
+    const blocker = await ElectronBlocker.fromLists(
+        nodeFetch,
+        fullLists,
+        {
+            enableCompression: true,
+        },
+        {
+            path: 'engine.bin',
+            read: promises.readFile,
+            write: promises.writeFile,
+        },
+    );
+    blocker.enableBlockingInSession(session.defaultSession);
+
     // and load the index.html of the app.
     if (electronIsDev) {
         win.loadURL('http://localhost:3000/')

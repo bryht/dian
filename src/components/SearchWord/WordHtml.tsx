@@ -38,14 +38,7 @@ export default class WordHtml extends React.Component<IWordHtmlProps, { html: st
         if (this.props.html)
             return (<div dangerouslySetInnerHTML={{ __html: this.props.html }} style={{ pointerEvents: 'none' }} />);
         else if (this.props.url) {
-
-            let webView = document.getElementById('webview');
-            if (!webView) {
-                return (<webview id="webview" style={{ height: 500, marginTop: -this.props.hideTop }} src={this.props.url} plugins />);
-            } else {
-                webView.setAttribute('src', this.props.url);
-                return document.getElementById('webview');
-            }
+            return (<webview id="webview" style={{ height:"100vh" }} src={this.props.url} plugins />);
         }
         else
             return '';

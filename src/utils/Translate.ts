@@ -2,10 +2,10 @@ import { guessLanguage } from 'guesslanguage';
 const translate = window.require('node-google-translate-skidz');
 
 function getCulture(text: string) {
-    return new Promise<string>((resolve, reject) => {
-        guessLanguage.detect(text, (result: string | PromiseLike<string>) => {
+    return new Promise<string | null>((resolve, reject) => {
+        guessLanguage.detect(text, (result: string | PromiseLike<string | null> | null) => {
             if (result === 'unknown') {
-                result = 'en';
+                result = null;
             }
             resolve(result);
         });

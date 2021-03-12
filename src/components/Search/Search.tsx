@@ -11,6 +11,7 @@ import settingImage from 'assets/settings.svg';
 import './Search.scss';
 import { translateWord, getCulture } from 'utils/Translate';
 import WordHtml from 'components/SearchWord/WordHtml';
+import Modal from 'components/Modal/Modal';
 
 export interface ISearchProps extends BasicProps {
 }
@@ -18,8 +19,7 @@ export interface ISearchStates extends BasicState {
     searchItems: Array<SearchItem>;
     searchSuggestions: Array<SuggestionWord>;
     inputValue: string;
-    languages: Array<Language>;
-    currentCulture: string;
+    installedLanguages: Array<Language>;
     currentLanguage: Language;
     wordUrl: string;
 
@@ -37,14 +37,16 @@ class SearchItem {
 }
 class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
+    modalRef: React.RefObject<Modal>;
+
     constructor(props: Readonly<ISearchProps>) {
         super(props);
+        this.modalRef = React.createRef<Modal>();
         this.state = {
             searchItems: [],
             searchSuggestions: [],
             inputValue: '',
-            languages: [],
-            currentCulture: 'en',
+            installedLanguages: [],
             currentLanguage: languages[0],
             wordUrl: '',
         }
@@ -54,21 +56,21 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         const languagesItems = await get<Array<Language>>('languages', languages);
         const searchItems = await get<Array<SearchItem>>('searchItems');
         this.setState({
-            languages: languagesItems ?? [],
+            installedLanguages: languagesItems ?? [],
             searchItems: searchItems?.sort((a, b) => a.data - b.data) ?? [],
         })
     }
 
-    async searchWord(culture: string) {
-        const { inputValue, languages, searchItems } = this.state;
+    async searchWord() {
+        const { inputValue, installedLanguages, searchItems, currentLanguage } = this.state;
         let searchItem = new SearchItem();
-        for (let index = 0; index < languages.length; index++) {
-            const element = languages[index];
-            if (element.culture === culture) {
+        for (let index = 0; index < installedLanguages.length; index++) {
+            const element = installedLanguages[index];
+            if (element.culture === currentLanguage.culture) {
 
                 searchItem.words.push({ culture: element.culture, text: inputValue });
             } else {
-                var value = await translateWord(culture, element.culture, inputValue);
+                var value = await translateWord(currentLanguage.culture, element.culture, inputValue);
                 searchItem.words.push({ culture: element.culture, text: value })
             }
         }
@@ -81,37 +83,48 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
         this.setState({ searchItems });
         await set('searchItems', searchItems);
-        this.showWordDDetail(inputValue);
+        this.showWordDDetail(currentLanguage.culture, inputValue);
     }
 
     async onInputValueChanged(inputValue: string) {
-
-        let culture = '';
+        const { installedLanguages } = this.state;
+        let culture;
         if (inputValue.includes(',')) {
-            var cultures = languages.map(x => x.culture);
+            var cultures = installedLanguages.map(x => x.culture);
             var inputCulture = inputValue.split(',')[1];
             var findCulture = cultures.find(x => x === inputCulture);
             if (findCulture) {
-                culture = findCulture;
                 inputValue = inputValue.split(',')[0];
+                culture = findCulture;
             }
         } else {
             culture = await getCulture(inputValue);
         }
-        let currentLanguage = languages.find(x => x.culture === culture);
+
+        let currentLanguage = this.getCurrentLanguageByCulture(culture);
         if (currentLanguage) {
             this.setState({ inputValue, currentLanguage });
         } else {
             this.setState({ inputValue });
         }
+
     }
 
-    showWordDDetail(value: string) {
-        const { currentLanguage } = this.state;
-        if (currentLanguage) {
-            const url = WordHtml.getWordUrl(value, currentLanguage.detailLink);
+    getCurrentLanguageByCulture(culture: string | null | undefined) {
+        const { installedLanguages } = this.state;
+        let currentLanguage = installedLanguages.find(x => x.culture === culture);
+        return currentLanguage;
+    }
+
+    showWordDDetail(culture: string, value: string) {
+        const { installedLanguages: languages } = this.state;
+        const language = languages.find(x => x.culture === culture);
+        if (language) {
+            const url = WordHtml.getWordUrl(value, language.detailLink);
             this.setState({ wordUrl: url })
         }
+
+        this.modalRef.current?.openModal();
     }
 
     toggleSetting() {
@@ -119,51 +132,39 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
     }
 
     public render() {
-        const { languages, searchItems, wordUrl, currentLanguage } = this.state;
+        const { searchItems, wordUrl, currentLanguage } = this.state;
         return (
             <div className="d-flex flex-column">
                 <div className="sticky-top mt-2 d-flex flex-column w-100">
                     <div className="input-group">
+                        <span className="input-group-text">{currentLanguage.culture}</span>
                         <input type="text" id="word" className="form-control"
                             onChange={e => this.onInputValueChanged(e.currentTarget.value)}
                             value={this.state.inputValue}></input>
                         <div className="input-group-append">
-                            <button className="btn btn-secondary active" type="button" onClick={e => this.toggleSetting()} >
+                            <button className="btn btn-outline-secondary" type="button" onClick={e => this.searchWord()}>Search</button>
+                            <button className="btn btn-outline-secondary active" type="button" onClick={e => this.toggleSetting()} >
                                 <img src={settingImage} alt="Setting" />
                             </button>
                         </div>
                     </div>
-                    <div className="flex-d align-self-end mt-1">
-                        {
-                            languages.map(item => (<button type="button"
-                                onClick={e => this.searchWord(item.culture)}
-                                className="btn btn-outline-info btn-sm search-button">
-                                {item.cultureName}
-                            </button>))
-                        }
-                    </div>
                 </div >
-                <div className="accordion" id="accordionWords">
-                    {searchItems.map(item =>
-                        <div className="accordion-item" key={`heading${SearchItem.getId(item.words)}`}>
-                            <h2 className="accordion-header" id={`heading${SearchItem.getId(item.words)}`}>
-                                <button className="accordion-button collapsed flex-wrap" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${SearchItem.getId(item.words)}`} aria-expanded="false" aria-controls={`collapse${SearchItem.getId(item.words)}`}>
-                                    {item.words.map(x =>
-                                        <div className="mx-1 p-1 border border-secondary rounded">
-                                            <div className="badge rounded-pill bg-info text-muted">{x.culture}</div>
-                                            <span className="mx-1" onClick={() => this.showWordDDetail(x.text)}>{x.text}</span>
-                                        </div>)}
-                                </button>
-                            </h2>
-                            <div id={`collapse${SearchItem.getId(item.words)}`} className="accordion-collapse collapse" aria-labelledby={`heading${SearchItem.getId(item.words)}`} data-bs-parent="#accordionWords">
-                                <div className="accordion-body overflow-hidden">
-                                    <WordHtml url={wordUrl} hideTop={currentLanguage.detailHideTop} html="" />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
 
+                <ul className="list-group list-group-flush">
+                    {
+                        searchItems.map(item => (
+                            <li className="list-group-item d-flex flex-wrap">
+                                {item.words.map(x =>
+                                    <button onClick={() => this.showWordDDetail(x.culture, x.text)} className="mx-1 btn btn-outline-secondary">
+                                        <div className="badge rounded-pill bg-info text-muted">{x.culture}</div>
+                                        <span className="mx-1" >{x.text}</span>
+                                    </button>)}
+                            </li>))
+                    }
+                </ul>
+                <Modal ref={this.modalRef}>
+                    <WordHtml url={wordUrl} hideTop={currentLanguage.detailHideTop} html="" />
+                </Modal>
             </div>
         );
     }
