@@ -91,7 +91,7 @@ async function createWindow() {
         height: _height,
         minWidth: 500,
         minHeight: 600,
-        icon: __dirname + '/assets/icon.ico',
+        // icon: __dirname + '/assets/icon.ico',
         webPreferences: {
             nodeIntegration: true,
             webviewTag: true,
