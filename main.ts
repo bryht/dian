@@ -16,6 +16,8 @@ const electronIsDev = require("electron-is-dev");
 const { promises } = require('fs');
 const { ElectronBlocker, fullLists } = require('@cliqz/adblocker-electron');
 const nodeFetch = require('node-fetch');
+const googleTTS = require('google-tts-api');
+const Shell = require('node-powershell');
 
 //Update Logging
 autoUpdater.logger = log;
@@ -53,6 +55,31 @@ ipcMain.on('message', (event, info, data) => {
         default:
             break;
     }
+})
+
+ipcMain.on('play-audio', async (event, info) => {
+    console.log(info);
+    let url = googleTTS.getAudioUrl(info.value, {
+        lang: info.culture,
+        slow: false,
+        host: 'https://translate.google.com',
+        timeout: 10000,
+    });
+
+    const ps = new Shell({
+        executionPolicy: 'Bypass',
+        noProfile: true
+    });
+
+    ps.addCommand(`wget "${url}" -o "$env:USERPROFILE/AppData/Local/Temp/temp.mp3"`);
+    ps.addCommand(`Add-Type -AssemblyName presentationCore`);
+    ps.addCommand(`$mediaPlayer = New-Object system.windows.media.mediaplayer`);
+    ps.addCommand(`$mediaPlayer.open("$env:USERPROFILE/AppData/Local/Temp/temp.mp3")`);
+    ps.addCommand(`$mediaPlayer.Play()`);
+    ps.addCommand(`Start-Sleep -s 3`);
+    ps.addCommand(`exit`);
+    ps.invoke().catch(error => ps.dispose());
+
 })
 
 let win;

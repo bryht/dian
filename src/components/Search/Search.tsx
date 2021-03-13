@@ -12,6 +12,7 @@ import { translateWord, getCulture } from 'utils/Translate';
 import WordHtml from 'components/WordHtml/WordHtml';
 import { SearchItem } from './SearchItem';
 import './Search.scss';
+const { ipcRenderer } = window.require('electron');
 
 export interface ISearchProps extends BasicProps {
 }
@@ -54,6 +55,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
     async searchWord() {
         const { inputValue, installedLanguages, searchItems, currentLanguage } = this.state;
         let searchItem = new SearchItem();
+        //translate
         for (let index = 0; index < installedLanguages.length; index++) {
             const element = installedLanguages[index];
             if (element.culture === currentLanguage.culture) {
@@ -65,12 +67,17 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
             }
         }
 
+        //play sound
+        ipcRenderer.send('play-audio', { culture: currentLanguage.culture, value: inputValue })
+
+        //replace the list
         const itemIndex = searchItems.findIndex(x => SearchItem.getId(x.words) === SearchItem.getId(searchItem.words));
         if (itemIndex > 0) {
             searchItems.splice(itemIndex, 1);
         }
         searchItems.unshift(searchItem);
 
+        //save the word
         this.setState({ searchItems, inputValue: '' });
         await set('searchItems', searchItems);
     }
@@ -164,7 +171,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                                                 <span className="mx-1" >- {x.text}</span>
                                             </li>)}
                                     </ul> :
-                                    <div className={`d-flex flex-warp`}>
+                                    <div className={`d-flex flex-wrap`}>
                                         {item.words.map(x =>
                                             <button onClick={() => this.showWordDetail(x.culture, x.text)} className="mx-1 btn btn-outline-secondary">
                                                 <span className="fw-bold fs-6">{x.culture}</span>
