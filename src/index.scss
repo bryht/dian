@@ -34,3 +34,13 @@ $btn-close-focus-shadow: none;
 
 // Bootstrap and its default variables
 @import 'bootstrap';
+
+
+// scroll bar style
+::-webkit-scrollbar {
+  width: 2px;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #d6dadd;
+}

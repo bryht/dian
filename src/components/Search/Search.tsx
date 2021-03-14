@@ -48,7 +48,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         const searchItems = await get<Array<SearchItem>>('searchItems');
         this.setState({
             installedLanguages: languagesItems ?? [],
-            searchItems: searchItems?.sort((a, b) => a.data - b.data) ?? [],
+            searchItems: searchItems?.sort((a, b) => b.data - a.data) ?? [],
         })
     }
 
