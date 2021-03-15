@@ -90,21 +90,16 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         this.invokeDispatchAsync(DictActions.UpdateSearchItem([...searchItems]));
     }
 
-    async onInputValueChanged(inputValue: string) {
-        let culture;
-        if (inputValue.includes(',')) {
-            var cultures = this.props.languages.map(x => x.culture);
-            var inputCulture = inputValue.split(',')[1];
-            var findCulture = cultures.find(x => x === inputCulture);
-            if (findCulture) {
-                inputValue = inputValue.split(',')[0];
-                culture = findCulture;
-            }
-        } else {
-            culture = await getCulture(inputValue);
+    onCultureChanged(culture: string) {
+        const currentLanguage = this.getCurrentLanguageByCulture(culture);
+        if (currentLanguage) {
+            this.setState({ currentLanguage });
         }
+    }
 
-        let currentLanguage = this.getCurrentLanguageByCulture(culture);
+    async onInputValueChanged(inputValue: string) {
+        const culture = await getCulture(inputValue);
+        const currentLanguage = this.getCurrentLanguageByCulture(culture);
         if (currentLanguage) {
             this.setState({ inputValue, currentLanguage });
         } else {
@@ -135,7 +130,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
     public render() {
         const { searchItems } = this.props;
-        const { wordUrl, currentLanguage } = this.state;
+        const { wordUrl, currentLanguage, inputValue } = this.state;
         return (
             <div className="d-flex flex-column">
                 <div className="sticky-top mt-2 d-flex flex-column w-100 bg-white">
@@ -149,12 +144,15 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                             value={this.state.inputValue}></input> */}
                         <TypeInput
                             placeholder="Command/Ctrl+F"
+                            languages={this.props.languages}
+                            culture={currentLanguage.culture}
+                            onCultureChanged={culture=>this.onCultureChanged(culture)}
                             onKeyDown={e => {
                                 if (e.key === "Enter") { this.searchWord(e.target.value) }
                                 if (e.key === "Escape") { e.currentTarget.blur() }
                             }}
                             onChange={e => this.onInputValueChanged(e)}
-                            value={this.state.inputValue}
+                            value={inputValue}
                         ></TypeInput>
                         <div className="input-group-append">
                             <button className="btn btn-outline-secondary" type="button" onClick={e => this.searchWord()}>Search</button>
