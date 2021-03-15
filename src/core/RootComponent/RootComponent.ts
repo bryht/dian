@@ -25,9 +25,9 @@ export class RootComponent<Props extends BasicProps, States extends BasicState |
         return HttpRequestHelper.RequestAsync(request,currentUser?.accessToken);
     }
 
-    invokeDispatch(action: Action) {
+    async invokeDispatchAsync(action: Action) {
         const { dispatch } = this.props;
-        dispatch(action);
+        return await dispatch(action);
     }
 
 

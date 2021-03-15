@@ -2,101 +2,98 @@ import * as React from 'react';
 import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
 import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
-import { Language, languages } from 'core/Models/Language';
-import { get, set } from 'utils/Storage';
+import { Language, languages } from 'components/Models/Language';
 import { BasicState } from 'core/RootComponent/BasicState';
 import SuggestionWord from 'core/Models/SuggestionWord';
-import { SystemActions } from 'components/System/SystemActions';
 import { ReactComponent as SettingSvg } from 'assets/settings.svg';
 import { translateWord, getCulture } from 'utils/Translate';
 import WordHtml from 'components/WordHtml/WordHtml';
-import { SearchItem } from './SearchItem';
+import { SearchItem } from '../Models/SearchItem';
 import './Search.scss';
+import { RootState } from 'redux/Store';
+import { DictActions } from 'components/DictRedux';
+import TypeInput from 'components/TypeInput/TypeInput';
+
 const { ipcRenderer } = window.require('electron');
 
 export interface ISearchProps extends BasicProps {
+    searchItems: Array<SearchItem>;
+    languages: Array<Language>;
 }
 export interface ISearchStates extends BasicState {
-    searchItems: Array<SearchItem>;
     searchSuggestions: Array<SuggestionWord>;
     inputValue: string;
-    installedLanguages: Array<Language>;
     currentLanguage: Language;
     wordUrl: string;
-
 }
 
 class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
     wordHtmlRef: React.RefObject<WordHtml>;
-
     constructor(props: Readonly<ISearchProps>) {
         super(props);
         this.wordHtmlRef = React.createRef<WordHtml>();
         this.state = {
-            searchItems: [],
             searchSuggestions: [],
             inputValue: '',
-            installedLanguages: [],
             currentLanguage: languages[0],
             wordUrl: '',
         }
     }
 
     async componentDidMount() {
-        const languagesItems = await get<Array<Language>>('languages', languages);
-        const searchItems = await get<Array<SearchItem>>('searchItems');
-        this.setState({
-            installedLanguages: languagesItems ?? [],
-            searchItems: searchItems?.sort((a, b) => b.data - a.data) ?? [],
-        })
+        await this.invokeDispatchAsync(DictActions.LoadSearchItems());
     }
 
-    async searchWord() {
-        const { inputValue, installedLanguages, searchItems, currentLanguage } = this.state;
+    async searchWord(text: string | null = null) {
+        const { searchItems, languages } = this.props;
+        const { inputValue, currentLanguage } = this.state;
+        if (text == null) {
+            text = inputValue;
+        }
+        if (!text) {
+            return;
+        }
         let searchItem = new SearchItem();
         //translate
-        for (let index = 0; index < installedLanguages.length; index++) {
-            const element = installedLanguages[index];
+        for (let index = 0; index < languages.length; index++) {
+            const element = languages[index];
             if (element.culture === currentLanguage.culture) {
-
-                searchItem.words.push({ culture: element.culture, text: inputValue });
+                searchItem.words.push({ culture: element.culture, text });
             } else {
-                var value = await translateWord(currentLanguage.culture, element.culture, inputValue);
-                searchItem.words.push({ culture: element.culture, text: value })
+                var value = await translateWord(currentLanguage.culture, element.culture, text);
+                searchItem.words.push({ culture: element.culture, text: value.toLowerCase() })
             }
         }
 
         //play sound
-        ipcRenderer.send('play-audio', { culture: currentLanguage.culture, value: inputValue })
+        ipcRenderer.send('play-audio', { culture: currentLanguage.culture, value: text })
 
         //replace the list
         const itemIndex = searchItems.findIndex(x => SearchItem.getId(x.words) === SearchItem.getId(searchItem.words));
-        if (itemIndex > 0) {
+        if (itemIndex > -1) {
             searchItems.splice(itemIndex, 1);
         }
         searchItems.unshift(searchItem);
 
         //save the word
-        this.setState({ searchItems, inputValue: '' });
-        await set('searchItems', searchItems);
+        this.setState({ inputValue: '' });
+        await this.invokeDispatchAsync(DictActions.UpdateSearchItem([...searchItems]));
     }
 
-    async deleteWord(id: string) {
-        const { searchItems } = this.state;
+    deleteWord(id: string) {
+        const { searchItems } = this.props;
         const itemIndex = searchItems.findIndex(x => SearchItem.getId(x.words) === id);
         if (itemIndex > -1) {
             searchItems.splice(itemIndex, 1);
         }
-        this.setState({ searchItems });
-        await set('searchItems', searchItems);
+        this.invokeDispatchAsync(DictActions.UpdateSearchItem([...searchItems]));
     }
 
     async onInputValueChanged(inputValue: string) {
-        const { installedLanguages } = this.state;
         let culture;
         if (inputValue.includes(',')) {
-            var cultures = installedLanguages.map(x => x.culture);
+            var cultures = this.props.languages.map(x => x.culture);
             var inputCulture = inputValue.split(',')[1];
             var findCulture = cultures.find(x => x === inputCulture);
             if (findCulture) {
@@ -117,16 +114,15 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
     }
 
     getCurrentLanguageByCulture(culture: string | null | undefined) {
-        const { installedLanguages } = this.state;
-        let currentLanguage = installedLanguages.find(x => x.culture === culture);
+        const { languages } = this.props;
+        let currentLanguage = languages.find(x => x.culture === culture);
         return currentLanguage;
     }
 
     showWordDetail(culture: string, value: string) {
-        const { installedLanguages: languages } = this.state;
-        const language = languages.find(x => x.culture === culture);
-        if (language) {
-            const url = WordHtml.getWordUrl(value, language.detailLink);
+        let currentLanguage = this.getCurrentLanguageByCulture(culture);
+        if (currentLanguage) {
+            const url = WordHtml.getWordUrl(value, currentLanguage.detailLink);
             this.setState({ wordUrl: url })
         }
 
@@ -134,22 +130,32 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
     }
 
     toggleSetting() {
-        this.invokeDispatch(SystemActions.ToggleSetting());
+        this.invokeDispatchAsync(DictActions.ToggleSetting());
     }
 
     public render() {
-        const { searchItems, wordUrl, currentLanguage } = this.state;
+        const { searchItems } = this.props;
+        const { wordUrl, currentLanguage } = this.state;
         return (
             <div className="d-flex flex-column">
                 <div className="sticky-top mt-2 d-flex flex-column w-100 bg-white">
                     <div className="input-group">
                         <span className="input-group-text">{currentLanguage.cultureName}</span>
-                        <input type="text" id="word" className="form-control"
+                        {/* <input type="text" id="word" className="form-control"
                             placeholder="Command/Ctrl+F"
                             onKeyDown={e => { if (e.key === "Enter") { this.searchWord() } }}
                             onKeyUp={e => { if (e.key === "Escape") { e.currentTarget.blur() } }}
                             onChange={e => this.onInputValueChanged(e.currentTarget.value)}
-                            value={this.state.inputValue}></input>
+                            value={this.state.inputValue}></input> */}
+                        <TypeInput
+                            placeholder="Command/Ctrl+F"
+                            onKeyDown={e => {
+                                if (e.key === "Enter") { this.searchWord(e.target.value) }
+                                if (e.key === "Escape") { e.currentTarget.blur() }
+                            }}
+                            onChange={e => this.onInputValueChanged(e)}
+                            value={this.state.inputValue}
+                        ></TypeInput>
                         <div className="input-group-append">
                             <button className="btn btn-outline-secondary" type="button" onClick={e => this.searchWord()}>Search</button>
                             <button className="btn btn-outline-secondary" type="button" onClick={e => this.toggleSetting()} >
@@ -162,7 +168,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                 <ul className="list-group list-group-flush">
                     {
                         searchItems.map(item => (
-                            <li className={`list-group-item d-flex justify-content-between ${SearchItem.isPhrase(item.words) && 'bg-success'}`}>
+                            <li key={SearchItem.getId(item.words)} className={`list-group-item d-flex justify-content-between ${SearchItem.isPhrase(item.words) && 'bg-success'}`}>
                                 {SearchItem.isPhrase(item.words) ?
                                     <ul className="list-group">
                                         {item.words.map(x =>
@@ -185,9 +191,16 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                     }
                 </ul>
                 <WordHtml ref={this.wordHtmlRef} url={wordUrl} hideTop={currentLanguage.detailHideTop} />
-            </div>
+            </div >
         );
     }
 }
 
-export default connect(mapRootStateToProps)(Search);
+export function mapStateToProps(state: RootState) {
+    return {
+        searchItems: state.dict.searchItems,
+        languages: state.dict.languages.filter(p => p.isUsed),
+        ...mapRootStateToProps(state)
+    }
+}
+export default connect(mapStateToProps)(Search);

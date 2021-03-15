@@ -38,7 +38,12 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
         const word = document.querySelector('#word') as HTMLInputElement;
         word.focus();
         word.value = '';
-        Mousetrap.bind('esc', () => { if(document.querySelector('#webview')==null) this.miniMize(); });
+        Mousetrap.bind('esc', () => { 
+            const webview=document.querySelector('#webview') as HTMLWebViewElement;
+            if (webview==null) {
+                this.miniMize();
+            }
+        });
 
         Mousetrap.bind(['command+f', 'ctrl+f'], e => {
             const word = document.querySelector('#word') as HTMLInputElement;
@@ -87,7 +92,7 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    isSettingOpened: state.system.isSettingOpened,
+    isSettingOpened: state.dict.isSettingOpened,
     ...mapRootStateToProps(state),
 })
 export default connect(mapStateToProps)(Basic)

@@ -67,7 +67,7 @@ export default class WordHtml extends React.Component<IWordHtmlProps, { isOpen: 
                     <div className="word-html-close align-self-end" onClick={() => this.close()}>
                         <CloseSvg />
                     </div>
-                    <webview id="webview" style={{ height: "90vh" }} src={this.props.url} plugins />
+                    <webview id="webview" style={{ height: "90vh" }} useragent="Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1" src={this.props.url} />
                 </div>
             </ReactModal>)
         }

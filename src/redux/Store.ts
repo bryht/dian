@@ -1,10 +1,12 @@
 import { createStore, combineReducers, applyMiddleware} from 'redux';
 import { createLogger } from 'redux-logger';
 import { StorageMiddleware } from 'redux/Middlewares/StorageMiddleware';
-import { systemReducer } from 'components/System/SystemReducer';
+import { SystemReducer } from 'components/System/SystemReducer';
+import { DictReducer } from 'components/DictRedux';
 
 const rootReducer = combineReducers({
-  system: systemReducer,
+  system: SystemReducer,
+  dict: DictReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>
