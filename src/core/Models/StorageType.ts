@@ -1,7 +1,7 @@
 export enum StorageType {
-  Add,
   Get,
-  Remove
+  Remove,
+  Update,
 }
 
 

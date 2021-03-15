@@ -8,10 +8,17 @@ const {
     Menu,
     Tray,
     globalShortcut,
+    session,
 } = require('electron');
 const log = require('electron-log');
 const autoUpdater = require("electron-updater").autoUpdater;
 const electronIsDev = require("electron-is-dev");
+const { promises } = require('fs');
+const { ElectronBlocker, fullLists } = require('@cliqz/adblocker-electron');
+const nodeFetch = require('node-fetch');
+const googleTTS = require('google-tts-api');
+const Shell = require('node-powershell');
+
 //Update Logging
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -50,21 +57,64 @@ ipcMain.on('message', (event, info, data) => {
     }
 })
 
+ipcMain.on('play-audio', async (event, info) => {
+    console.log(info);
+    let url = googleTTS.getAudioUrl(info.value, {
+        lang: info.culture,
+        slow: false,
+        host: 'https://translate.google.com',
+        timeout: 10000,
+    });
+
+    const ps = new Shell({
+        executionPolicy: 'Bypass',
+        noProfile: true
+    });
+
+    ps.addCommand(`wget "${url}" -o "$env:USERPROFILE/AppData/Local/Temp/temp.mp3"`);
+    ps.addCommand(`Add-Type -AssemblyName presentationCore`);
+    ps.addCommand(`$mediaPlayer = New-Object system.windows.media.mediaplayer`);
+    ps.addCommand(`$mediaPlayer.open("$env:USERPROFILE/AppData/Local/Temp/temp.mp3")`);
+    ps.addCommand(`$mediaPlayer.Play()`);
+    ps.addCommand(`Start-Sleep -s 3`);
+    ps.addCommand(`exit`);
+    ps.invoke().catch(error => ps.dispose());
+
+})
+
 let win;
 var appIcon = null;
-function createWindow() {
+async function createWindow() {
     const _width = electronIsDev ? 1200 : 600, _height = 800
     win = new BrowserWindow({
         width: _width,
         height: _height,
         minWidth: 500,
         minHeight: 600,
-        icon: __dirname + '/assets/icon.ico',
-        webPreferences:{
-           nodeIntegration:true,
-           webviewTag:true
+        // icon: __dirname + '/assets/icon.ico',
+        webPreferences: {
+            nodeIntegration: true,
+            webviewTag: true,
+            webSecurity: false,
+            allowRunningInsecureContent: true,
         }
     })
+
+    // add ad blocker
+    const blocker = await ElectronBlocker.fromLists(
+        nodeFetch,
+        fullLists,
+        {
+            enableCompression: true,
+        },
+        {
+            path: 'engine.bin',
+            read: promises.readFile,
+            write: promises.writeFile,
+        },
+    );
+    blocker.enableBlockingInSession(session.defaultSession);
+
     // and load the index.html of the app.
     if (electronIsDev) {
         win.loadURL('http://localhost:3000/')

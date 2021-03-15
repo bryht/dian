@@ -2,7 +2,8 @@ const { remote } = window.require('electron');
 
 export enum Filter {
     pdf = 'pdf',
-    txt = 'txt'
+    txt = 'txt',
+    csv = 'csv',
 }
 
 export class File {

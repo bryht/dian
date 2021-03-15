@@ -21,23 +21,11 @@ export class SystemActions {
         }
     }
 
-    static SaveUser(currentUser: UserEntity): StorageAction<UserEntity, SystemActionType> {
-        return new StorageAction<UserEntity, SystemActionType>('user', StorageType.Add, currentUser,
-            SystemActions.SaveUserSuccess(currentUser));
-    }
-
-    static ToggleSetting(): StatesAction<SystemActionType> {
-        return {
-            type: SystemActionType.ToggleSetting,
-            payload: null
-        }
-    }
-
-    static DeleteAllHistory(): StatesAction<SystemActionType> {
-        return {
-            type: SystemActionType.DeleteAllHistory,
-            payload: null
-        }
+    static SaveUser(currentUser: UserEntity): StorageAction<SystemActionType> {
+        return new StorageAction<SystemActionType>('user',
+            StorageType.Update,
+            currentUser,
+            () => SystemActions.SaveUserSuccess(currentUser));
     }
 
 }

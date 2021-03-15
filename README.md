@@ -5,10 +5,15 @@
 ## This is a Dictionary application
 - It can search words, of course.
 - It can export words, Memrise App | txt | pdf test.
-- Using React & TypeScript Electron Bootstrap Electron-Builder ... 
+- Using React & TypeScript Electron Bulma Electron-Builder ... 
 - [How to use](how-to-use.md)
 
   [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
+
+## Functions
+* add more language
+* add language translate
+* language, language-dictionary-link, 
 
 ***
 ##  Commands
