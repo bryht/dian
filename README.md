@@ -4,8 +4,8 @@
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/bryht/6)
 ## This is a Dictionary application
 - It can search words, of course.
-- It can export words, Memrise App | txt | pdf test.
-- Using React & TypeScript Electron Bulma Electron-Builder ... 
+- It can export words.
+- Using React & TypeScript Electron Bootstrap Electron-Builder ... 
 - [How to use](how-to-use.md)
 
   [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
