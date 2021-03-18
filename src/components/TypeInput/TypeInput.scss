@@ -1,6 +1,30 @@
-.form-control{
-    padding: 0;
-    .rbt{
-        height: 36px;
+@import './node_modules/bootstrap/scss/functions';
+@import './node_modules/bootstrap/scss/variables';
+@import './node_modules/bootstrap/scss/mixins';
+@import './node_modules/bootstrap/scss/forms';
+@import './node_modules/bootstrap/scss/list-group';
+
+.auto-complete {
+  @extend .form-control;
+  margin: 0;
+  padding: 0;
+  .auto-complete-input-class-name {
+    width: 100%;
+    height: 100%;
+  }
+
+  .auto-complete-list-class-name {
+    @extend .list-group;
+    @extend .list-group-flush;
+    display: none;
+    &.show{
+        display: block;
     }
+    li {
+      @extend .list-group-item;
+      &.selected {
+          @extend .list-group-item-warning
+      }
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import { Language } from 'components/Models/Language';
 import React, { Component } from 'react';
-import { Typeahead } from 'react-bootstrap-typeahead'; // ES2015
+import { AutoCompleteInput } from '@bryht/auto-complete-input';
 import { loadWordsAsync } from './Load';
 import './TypeInput.scss';
 
@@ -15,22 +15,20 @@ interface ITypeInputProps {
 }
 
 class TypeInput extends Component<ITypeInputProps, { options: Array<string>, inputValue: string }> {
-    typeaheadRef: React.RefObject<any>;
+    inputRef: React.RefObject<any>;
     constructor(props: Readonly<ITypeInputProps>) {
         super(props);
-        this.typeaheadRef = React.createRef<any>();
+        this.inputRef = React.createRef<any>();
         this.state = {
             options: [],
             inputValue: ''
         }
     }
 
-
-    async onInputChanged(inputValue: string) {
+    async onValueChanged(inputValue: string) {
         const { culture, onChange, onCultureChanged } = this.props;
         const options = await loadWordsAsync(culture, inputValue, 6);
         this.setState({ options: options ?? [] });
-
         if (inputValue.includes(',')) {
             var cultures = this.props.languages.map(x => x.culture);
             var inputCulture = inputValue.split(',')[1];
@@ -38,39 +36,25 @@ class TypeInput extends Component<ITypeInputProps, { options: Array<string>, inp
             if (findCulture) {
                 inputValue = inputValue.split(',')[0];
                 onCultureChanged(findCulture);
-                this.typeaheadRef.current.clear();
-                this.typeaheadRef.current.getInput().value = inputValue;
             }
         }
-        onChange(inputValue);
-    }
 
-    async onValueChanged(value: string) {
-        const { onChange } = this.props;
-        onChange(value[0] ?? '');
+        onChange(inputValue);
     }
 
     render() {
         const { placeholder, onKeyDown } = this.props;
         const { options } = this.state;
-        return (
-            <div className="form-control">
-                <Typeahead
-                    id='word'
-                    ref={this.typeaheadRef}
+        return (<AutoCompleteInput id="word"
+                    className=""
+                    inputClassName=""
+                    listClassName=""
+                    value=""
                     options={options}
-                    placeholder={placeholder ?? ''}
-                    inputProps={{ 'id': 'word' }}
-                    onKeyDown={(e: any) => {
-                        if (e.key === "Enter") {
-                            this.typeaheadRef.current.clear();
-                        }
-                        onKeyDown(e)
-                    }}
-                    onInputChange={async (input, e) => await this.onInputChanged(input)}
-                    onChange={value => this.onValueChanged(value[0] ?? '')}
+                    placeholder={placeholder}
+                    onChange={(value)=>this.onValueChanged(value)}
+                    onKeyDown={(key) => onKeyDown(key)}
                 />
-            </div>
         );
     }
 

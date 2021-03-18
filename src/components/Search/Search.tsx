@@ -147,9 +147,11 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                             languages={this.props.languages}
                             culture={currentLanguage.culture}
                             onCultureChanged={culture=>this.onCultureChanged(culture)}
-                            onKeyDown={e => {
-                                if (e.key === "Enter") { this.searchWord(e.target.value) }
-                                if (e.key === "Escape") { e.currentTarget.blur() }
+                            onKeyDown={key => {
+                                if (key === "Enter") { 
+                                    this.searchWord() 
+                                }
+                                // if (key === "Escape") { e.currentTarget.blur() }
                             }}
                             onChange={e => this.onInputValueChanged(e)}
                             value={inputValue}
