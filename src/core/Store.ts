@@ -1,11 +1,11 @@
 import { createStore, combineReducers, applyMiddleware} from 'redux';
 import { createLogger } from 'redux-logger';
 import { StorageMiddleware } from 'core/Middlewares/StorageMiddleware';
-import { SystemReducer } from 'core/System/SystemReducer';
+import { AuthReducer } from 'core/Authentication/AuthReducer';
 import { DictReducer } from 'application/DictRedux';
 
 const rootReducer = combineReducers({
-  system: SystemReducer,
+  system: AuthReducer,
   dict: DictReducer,
 });
 

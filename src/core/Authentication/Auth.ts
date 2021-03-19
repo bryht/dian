@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import { UserState } from "core/Models/UserState";
 import { UserEntity } from "core/Models/UserEntity";
-import { SystemActions } from "core/System/SystemActions";
+import { AuthActions } from "core/Authentication/AuthActions";
 
 export default class Authentication {
 
@@ -22,7 +22,7 @@ export default class Authentication {
 
     static async checkAuthenticationAsync(dispatch: Dispatch, currentUser: UserEntity) {
         if (currentUser == null) {
-            dispatch(SystemActions.GoLogin());
+            dispatch(AuthActions.GoLogin());
             return;
         }
         var currentUserObject = new UserEntity();
@@ -31,9 +31,9 @@ export default class Authentication {
 
         if (currentUserState === UserState.NeedRefresh) {
             //save user logic
-            dispatch(SystemActions.SaveUser(currentUserObject));
+            dispatch(AuthActions.SaveUser(currentUserObject));
         } else if (currentUserState === UserState.NeedLogin) {
-            dispatch(SystemActions.GoLogin());
+            dispatch(AuthActions.GoLogin());
         }
     }
 

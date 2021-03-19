@@ -1,6 +1,6 @@
 import { Action } from "redux";
 import { UserEntity } from "core/Models/UserEntity";
-import Authentication from "core/Authentication ";
+import Authentication from "core/Authentication/Auth";
 import React from "react";
 import { BasicState } from "./BasicState";
 import { BasicProps } from "./BasicProps";
