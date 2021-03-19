@@ -190,7 +190,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                                     {item.words.map(x =>
                                         <div key={x.culture} onClick={() => this.showWordDetail(x.culture, x.text)}>
                                             <span className="word">{x.text}</span>
-                                            <span className="culture">{x.culture.toUpperCase()}</span>
+                                            <span className="culture">{x.culture}</span>
                                         </div>)}
                                 </div>
                             </li>))

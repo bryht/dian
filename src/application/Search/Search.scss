@@ -74,6 +74,7 @@
       div {
         display: flex;
         justify-content: space-between;
+        
         .word {
           cursor: pointer;
           &:hover {
@@ -83,6 +84,7 @@
         .culture {
           margin-left: 6px;
           color: #d3d3d3;
+          align-self: center;
         }
       }
     }
