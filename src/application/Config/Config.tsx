@@ -146,7 +146,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                 <Modal ref={this.modalRef}>
                     <ul className="nav nav-tabs">
                         <li key="config" className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Config</a>
+                            <a className="nav-link text-secondary dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Config</a>
                             <ul className="dropdown-menu">
                                 {
                                     languages.map(item => <li key={item.culture}>
@@ -162,7 +162,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                         {
                             usedLanguages.map(item =>
                                 <li key={item.culture} className="nav-item">
-                                    <a className={`nav-link ${item.isSelected && 'active'}`} onClick={() => this.onSelectLanguageChanged(item.culture)} href="#">{item.cultureName}</a>
+                                    <a className={`nav-link text-secondary ${item.isSelected && 'active'}`} onClick={() => this.onSelectLanguageChanged(item.culture)} href="#">{item.cultureName}</a>
                                 </li>)
                         }
 
@@ -174,8 +174,8 @@ class Config extends RootComponent<IConfigProps, IState>  {
                                 <input type="text" className="form-control" id="link" onChange={e => this.onLanguageDetailLinkChanged(selectedLanguage.culture, e.target.value)} value={selectedLanguage.detailLink}></input>
                             </div>
                             <div className="d-flex">
-                                <button type="button" onClick={this.saveConfig} className="btn btn-primary m-2 align-self-end">Save</button>
-                                <button type="button" onClick={this.deleteConfig} className="btn btn-primary m-2 align-self-end">Reset</button>
+                                <button type="button" onClick={this.deleteConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
+                                <button type="button" onClick={this.saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
                             </div>
                         </div>
                     </div>
