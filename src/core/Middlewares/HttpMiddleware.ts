@@ -2,7 +2,7 @@ import { Middleware } from "redux";
 import { RootState } from "../Store";
 import Consts from "core/Consts";
 import Authentication from "core/Authentication ";
-import HttpRequestHelper from "utils/HttpRequest/HttpRequestHelper";
+import HttpRequestHelper from "core/Utils/HttpRequest/HttpRequestHelper";
 import { UserEntity } from "core/Models/UserEntity";
 
 export const HttpMiddleware: Middleware = api => next => async action => {

@@ -2,16 +2,17 @@ import * as React from 'react';
 import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
 import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
-import { Language, languages } from 'components/Models/Language';
+import { Language, languages } from 'application/Models/Language';
 import { BasicState } from 'core/RootComponent/BasicState';
 import { ReactComponent as SettingSvg } from 'assets/settings.svg';
-import { translateWord, getCulture } from 'utils/Translate';
-import WordHtml from 'components/WordHtml/WordHtml';
+import { ReactComponent as SearchSvg } from 'assets/search.svg';
+import { translateWord, getCulture } from 'application/Translate';
+import WordHtml from 'application/WordHtml/WordHtml';
 import { SearchItem } from '../Models/SearchItem';
 import './Search.scss';
-import { RootState } from 'redux/Store';
-import { DictActions } from 'components/DictRedux';
-import { loadWordsAsync } from 'components/Search/Load';
+import { RootState } from 'core/Store';
+import { DictActions } from 'application/DictRedux';
+import { loadWordsAsync } from 'application/Search/Load';
 import { AutoCompleteInput } from '@bryht/auto-complete-input';
 
 const { ipcRenderer } = window.require('electron');
@@ -95,13 +96,6 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         this.invokeDispatchAsync(DictActions.UpdateSearchItem([...searchItems]));
     }
 
-    onCultureChanged(culture: string) {
-        const currentLanguage = this.getCurrentLanguageByCulture(culture);
-        if (currentLanguage) {
-            this.setState({ currentLanguage });
-        }
-    }
-
     onInputValueChanged(inputValue: string) {
         this.setState({ inputValue });
     }
@@ -110,7 +104,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         const { currentLanguage } = this.state;
         let culture = await getCulture(typedValue) || currentLanguage.culture;
 
-        const splits = ['/', ',', '-'];
+        const splits = ['/', '\\', ',', '-'];
         splits.forEach(split => {
             if (typedValue.includes(split)) {
                 var cultures = this.props.languages.map(x => x.culture);
@@ -176,7 +170,9 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                             inputValue={inputValue}
                         />
                         <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" type="button" onClick={e => this.translateWord()}>Search</button>
+                            <button className="btn btn-outline-secondary" type="button" onClick={e => this.translateWord()}>
+                                <SearchSvg />
+                            </button>
                             <button className="btn btn-outline-secondary" type="button" onClick={e => this.toggleSetting()} >
                                 <SettingSvg />
                             </button>
@@ -184,28 +180,19 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                     </div>
                 </div >
 
-                <ul className="list-group list-group-flush">
+                <ul className="translate-list">
                     {
                         searchItems.map(item => (
-                            <li key={SearchItem.getId(item.words)} className={`list-group-item d-flex justify-content-between ${SearchItem.isPhrase(item.words) && 'bg-success'}`}>
-                                {SearchItem.isPhrase(item.words) ?
-                                    <ul className="list-group">
-                                        {item.words.map(x =>
-                                            <li className="list-group-item">
-                                                <span className="fw-bold fs-6">{x.culture}</span>
-                                                <span className="mx-1" >- {x.text}</span>
-                                            </li>)}
-                                    </ul> :
-                                    <div className={`d-flex flex-wrap`}>
-                                        {item.words.map(x =>
-                                            <button onClick={() => this.showWordDetail(x.culture, x.text)} className="mx-1 btn btn-outline-secondary">
-                                                <span className="fw-bold fs-6">{x.culture}</span>
-                                                <span className="mx-1" >- {x.text}</span>
-                                            </button>)}
-                                    </div>
-                                }
+                            <li key={SearchItem.getId(item.words)} className={`translate-list-item ${SearchItem.isPhrase(item.words) && 'bg-success'}`}>
+                                <div className="translate-list-item-words">
+                                    {item.words.map(x =>
+                                        <div key={x.culture} onClick={() => this.showWordDetail(x.culture, x.text)}>
+                                            <span className="word">{x.text}</span>
+                                            <span className="culture">{x.culture.toUpperCase()}</span>
+                                        </div>)}
+                                </div>
+                                <button type="button" className="btn-close" onClick={() => this.deleteWord(SearchItem.getId(item.words))}></button>
 
-                                <button type="button" className="btn-close align-self-center" onClick={() => this.deleteWord(SearchItem.getId(item.words))}></button>
                             </li>))
                     }
                 </ul>

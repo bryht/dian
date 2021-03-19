@@ -4,9 +4,9 @@ import Authentication from "core/Authentication ";
 import React from "react";
 import { BasicState } from "./BasicState";
 import { BasicProps } from "./BasicProps";
-import { RootState } from "redux/Store";
-import HttpRequestHelper from "utils/HttpRequest/HttpRequestHelper";
-import { IHttpRequest } from "utils/HttpRequest/IHttpRequest";
+import { RootState } from "core/Store";
+import HttpRequestHelper from "core/Utils/HttpRequest/HttpRequestHelper";
+import { IHttpRequest } from "core/Utils/HttpRequest/IHttpRequest";
 
 
 export class RootComponent<Props extends BasicProps, States extends BasicState | any> extends React.Component<Props, States>{

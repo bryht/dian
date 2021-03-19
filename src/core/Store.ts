@@ -1,8 +1,8 @@
 import { createStore, combineReducers, applyMiddleware} from 'redux';
 import { createLogger } from 'redux-logger';
-import { StorageMiddleware } from 'redux/Middlewares/StorageMiddleware';
-import { SystemReducer } from 'components/System/SystemReducer';
-import { DictReducer } from 'components/DictRedux';
+import { StorageMiddleware } from 'core/Middlewares/StorageMiddleware';
+import { SystemReducer } from 'core/System/SystemReducer';
+import { DictReducer } from 'application/DictRedux';
 
 const rootReducer = combineReducers({
   system: SystemReducer,

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Basic from 'components/Basic/Basic';
-import Config from 'components/Config/Config';
-import Search from 'components/Search/Search';
+import Basic from 'application/Basic/Basic';
+import Config from 'application/Config/Config';
+import Search from 'application/Search/Search';
 
 export interface IHomePageProps {
 }

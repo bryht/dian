@@ -1,7 +1,7 @@
 import { Middleware } from "redux";
 import { StorageType } from "core/Models/StorageType";
-import { get, set } from "utils/Storage";
-import { StorageAction } from "redux/Actions/StorageAction";
+import { get, set } from "core/Utils/Storage";
+import { StorageAction } from "core/Actions/StorageAction";
 
 export const StorageMiddleware: Middleware = api => next => async (action: StorageAction<any>) => {
   if (action.isStorage) {

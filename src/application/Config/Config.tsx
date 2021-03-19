@@ -3,14 +3,14 @@ import * as React from 'react';
 import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
 import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
-import Modal from 'components/Modal/Modal';
-import { Language } from 'components/Models/Language';
-import { get } from 'utils/Storage';
-import { SearchItem } from 'components/Models/SearchItem';
-import Consts from 'components/Const';
-import { Filter, File } from 'utils/File';
-import { DictActions } from 'components/DictRedux';
-import { RootState } from 'redux/Store';
+import Modal from 'components/Modal';
+import { Language } from 'application/Models/Language';
+import { get } from 'core/Utils/Storage';
+import { SearchItem } from 'application/Models/SearchItem';
+import Consts from 'application/Const';
+import { Filter, File } from 'core/Utils/File';
+import { DictActions } from 'application/DictRedux';
+import { RootState } from 'core/Store';
 const fs = window.require('fs-extra');
 
 export interface IConfigProps extends BasicProps {
@@ -145,11 +145,11 @@ class Config extends RootComponent<IConfigProps, IState>  {
                 </button >
                 <Modal ref={this.modalRef}>
                     <ul className="nav nav-tabs">
-                        <li className="nav-item dropdown">
+                        <li key="config" className="nav-item dropdown">
                             <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Config</a>
                             <ul className="dropdown-menu">
                                 {
-                                    languages.map(item => <li>
+                                    languages.map(item => <li key={item.culture}>
                                         <div className="form-check form-switch">
                                             <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(item.culture, e.target)} checked={item.isUsed}></input>
                                             <label className="form-check-label">{item.cultureName}</label>
@@ -160,9 +160,10 @@ class Config extends RootComponent<IConfigProps, IState>  {
                             </ul>
                         </li>
                         {
-                            usedLanguages.map(item => <li className="nav-item">
-                                <a className={`nav-link ${item.isSelected && 'active'}`} onClick={() => this.onSelectLanguageChanged(item.culture)} href="#">{item.cultureName}</a>
-                            </li>)
+                            usedLanguages.map(item =>
+                                <li key={item.culture} className="nav-item">
+                                    <a className={`nav-link ${item.isSelected && 'active'}`} onClick={() => this.onSelectLanguageChanged(item.culture)} href="#">{item.cultureName}</a>
+                                </li>)
                         }
 
                     </ul>
@@ -172,14 +173,6 @@ class Config extends RootComponent<IConfigProps, IState>  {
                                 <label htmlFor="link">Detail link:</label>
                                 <input type="text" className="form-control" id="link" onChange={e => this.onLanguageDetailLinkChanged(selectedLanguage.culture, e.target.value)} value={selectedLanguage.detailLink}></input>
                             </div>
-                            {/* <div className="m-2">
-                                <label htmlFor="top">detail hide top:</label>
-                                <input type="number" className="form-control" id="top" value={selected?.detailHideTop}></input>
-                            </div>
-                            <div className="m-2">
-                                <label htmlFor="link">detail hider filters:</label>
-                                <input type="text" className="form-control" id="link" value={selected?.detailHideFilters}></input>
-                            </div> */}
                             <div className="d-flex">
                                 <button type="button" onClick={this.saveConfig} className="btn btn-primary m-2 align-self-end">Save</button>
                                 <button type="button" onClick={this.deleteConfig} className="btn btn-primary m-2 align-self-end">Reset</button>

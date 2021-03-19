@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { StorageType } from "../../core/Models/StorageType";
+import { StorageType } from "../Models/StorageType";
 import { StatesAction } from "./StatesAction";
 export class StorageAction<TActionType> implements Action {
   constructor(key: string, storageType: StorageType, value?: any, onSuccess?: (result: any) => StatesAction<TActionType>, onFail?: (message: any) => StatesAction<TActionType>) {

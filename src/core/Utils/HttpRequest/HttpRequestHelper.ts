@@ -1,6 +1,6 @@
-import Log from "../Log";
+import Log from "core/Utils/Log";
 import { IHttpRequest } from "./IHttpRequest";
-import Env from "config/env";
+import Env from "core/Env";
 
 export default class HttpRequestHelper {
 

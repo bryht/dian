@@ -1,8 +1,8 @@
-import { Language, languages } from "components/Models/Language";
+import { Language, languages } from "application/Models/Language";
 import { StorageType } from "core/Models/StorageType";
 import { Reducer } from "redux";
-import { StatesAction } from "redux/Actions/StatesAction";
-import { StorageAction } from "redux/Actions/StorageAction";
+import { StatesAction } from "core/Actions/StatesAction";
+import { StorageAction } from "core/Actions/StorageAction";
 import Consts from "./Const";
 import { SearchItem } from "./Models/SearchItem";
 

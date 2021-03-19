@@ -1,12 +1,10 @@
 import * as React from 'react';
 import './Basic.scss';
 import { mapRootStateToProps, RootComponent } from 'core/RootComponent/RootComponent';
-import { RootState } from 'redux/Store';
+import { RootState } from 'core/Store';
 import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
-import Log from 'utils/Log';
-import { configPara, getConfig, setConfig } from 'utils/ConfigPara';
 import { BasicState } from 'core/RootComponent/BasicState';
 const { remote } = window.require('electron');
 
@@ -17,23 +15,10 @@ export interface IBasicProps extends BasicProps {
 
 }
 export interface IBasicStates extends BasicState {
-    config: typeof configPara
 }
 class Basic extends RootComponent<IBasicProps, IBasicStates> {
-    constructor(props: Readonly<IBasicProps>) {
-        super(props);
-        this.state = {
-            config: configPara
-        }
-
-    }
-
 
     async componentDidMount() {
-
-        var config = await getConfig()
-        Log.Info(config);
-        this.setState({ config })
 
         const word = document.querySelector('#word') as HTMLInputElement;
         word.focus();
@@ -57,25 +42,12 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
         Mousetrap.bind('K', function () {
             window.scrollTo(window.scrollX, window.scrollY - 20);
         });
+
     }
     miniMize() {
         remote.BrowserWindow.getFocusedWindow().minimize();
     }
-    async settingSave(type: string, value: string) {
-        Log.Info(this.state.config.default);
-        switch (type) {
-            case 'source':
-                this.state.config.default.source = value;
-                break;
-            case 'playSound':
-                this.state.config.default.playSound = value;
-                break;
-            default:
-                break;
-        }
-        this.setState({ config: this.state.config });
-        await setConfig(this.state.config.default);
-    }
+    
     public render() {
         const { isSettingOpened } = this.props;
         return (

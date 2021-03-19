@@ -1,0 +1,85 @@
+@import './node_modules/bootstrap/scss/functions';
+@import './node_modules/bootstrap/scss/variables';
+@import './node_modules/bootstrap/scss/mixins';
+@import './node_modules/bootstrap/scss/forms';
+@import './node_modules/bootstrap/scss/list-group';
+
+.auto-complete {
+  @extend .form-control;
+  margin: 0;
+  padding: 0;
+  .auto-complete-input-class-name {
+    width: 100%;
+    height: 100%;
+  }
+
+  .auto-complete-list-class-name {
+    @extend .list-group;
+    display: none;
+    &.show {
+      display: block;
+    }
+    li {
+      @extend .list-group-item;
+      &.selected {
+        @extend .list-group-item-warning;
+      }
+      span.typed {
+        background-color: $warning;
+      }
+    }
+  }
+}
+
+.translate-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+  
+  .translate-list-item {
+    display: flex;
+    list-style-type: none;
+    margin: 2px;
+    padding: 3px 10px;
+    border:solid 0.5px #b3b1b1;
+    border-radius: 5px;
+    box-shadow: 1px 1px #727272;
+    background: #fffffb;
+
+    .translate-list-item-words {
+      display: flex;
+      flex-direction: column;
+      div{
+        display: flex;
+        justify-content: space-between;
+        .word{
+          cursor: pointer;
+          &:hover{
+            text-decoration: underline;
+          }
+        }
+        .culture{
+          margin-left: 6px;
+          color: #d3d3d3;
+        }
+      }
+    }
+
+    .btn-close {
+      display: none;
+      border:solid 1px red;
+      border-radius: 50%;
+      width: 10px;
+      height: 10px;
+      position: absolute;
+      margin-right: 0px;
+    }
+
+    &:hover .btn-close{
+        display: block;
+    }
+
+
+  }
+}
