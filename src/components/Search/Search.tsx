@@ -4,7 +4,6 @@ import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
 import { Language, languages } from 'components/Models/Language';
 import { BasicState } from 'core/RootComponent/BasicState';
-import SuggestionWord from 'core/Models/SuggestionWord';
 import { ReactComponent as SettingSvg } from 'assets/settings.svg';
 import { translateWord, getCulture } from 'utils/Translate';
 import WordHtml from 'components/WordHtml/WordHtml';
@@ -12,7 +11,8 @@ import { SearchItem } from '../Models/SearchItem';
 import './Search.scss';
 import { RootState } from 'redux/Store';
 import { DictActions } from 'components/DictRedux';
-import TypeInput from 'components/TypeInput/TypeInput';
+import { loadWordsAsync } from 'components/Search/Load';
+import { AutoCompleteInput } from '@bryht/auto-complete-input';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -21,21 +21,26 @@ export interface ISearchProps extends BasicProps {
     languages: Array<Language>;
 }
 export interface ISearchStates extends BasicState {
-    searchSuggestions: Array<SuggestionWord>;
     inputValue: string;
+    typedValue: string;
     currentLanguage: Language;
     wordUrl: string;
+    options: Array<string>;
+
 }
 
 class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
     wordHtmlRef: React.RefObject<WordHtml>;
+    typeInputRef: React.RefObject<AutoCompleteInput>;
     constructor(props: Readonly<ISearchProps>) {
         super(props);
         this.wordHtmlRef = React.createRef<WordHtml>();
+        this.typeInputRef = React.createRef<AutoCompleteInput>();
         this.state = {
-            searchSuggestions: [],
             inputValue: '',
+            typedValue: '',
+            options: [],
             currentLanguage: languages[0],
             wordUrl: '',
         }
@@ -45,7 +50,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         await this.invokeDispatchAsync(DictActions.LoadSearchItems());
     }
 
-    async searchWord(text: string | null = null) {
+    async translateWord(text: string | null = null) {
         const { searchItems, languages } = this.props;
         const { inputValue, currentLanguage } = this.state;
         if (text == null) {
@@ -77,7 +82,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         searchItems.unshift(searchItem);
 
         //save the word
-        this.setState({ inputValue: '' });
+        this.setState({ inputValue: '', options: [] });
         await this.invokeDispatchAsync(DictActions.UpdateSearchItem([...searchItems]));
     }
 
@@ -97,14 +102,33 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         }
     }
 
-    async onInputValueChanged(inputValue: string) {
-        const culture = await getCulture(inputValue);
-        const currentLanguage = this.getCurrentLanguageByCulture(culture);
-        if (currentLanguage) {
-            this.setState({ inputValue, currentLanguage });
-        } else {
-            this.setState({ inputValue });
-        }
+    onInputValueChanged(inputValue: string) {
+        this.setState({ inputValue });
+    }
+
+    async onTypedValueChanged(typedValue: string) {
+        const { currentLanguage } = this.state;
+        let culture = await getCulture(typedValue) || currentLanguage.culture;
+
+        const splits = ['/', ',', '-'];
+        splits.forEach(split => {
+            if (typedValue.includes(split)) {
+                var cultures = this.props.languages.map(x => x.culture);
+                var inputCulture = typedValue.split(split)[1];
+                var findCulture = cultures.find(x => x === inputCulture);
+                if (findCulture) {
+                    typedValue = typedValue.split(split)[0];
+                    culture = findCulture;
+                }
+            }
+        });
+        const options = await loadWordsAsync(culture, typedValue, 6);
+        this.setState({
+            options: options ?? [],
+            typedValue: typedValue,
+            inputValue: typedValue,
+            currentLanguage: this.getCurrentLanguageByCulture(culture) ?? currentLanguage
+        });
 
     }
 
@@ -130,34 +154,29 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
     public render() {
         const { searchItems } = this.props;
-        const { wordUrl, currentLanguage, inputValue } = this.state;
+        const { wordUrl, currentLanguage, inputValue, options } = this.state;
         return (
             <div className="d-flex flex-column">
                 <div className="sticky-top mt-2 d-flex flex-column w-100 bg-white">
                     <div className="input-group">
                         <span className="input-group-text">{currentLanguage.cultureName}</span>
-                        {/* <input type="text" id="word" className="form-control"
+                        <AutoCompleteInput
+                            id="word"
+                            ref={this.typeInputRef}
+                            options={options}
                             placeholder="Command/Ctrl+F"
-                            onKeyDown={e => { if (e.key === "Enter") { this.searchWord() } }}
-                            onKeyUp={e => { if (e.key === "Escape") { e.currentTarget.blur() } }}
-                            onChange={e => this.onInputValueChanged(e.currentTarget.value)}
-                            value={this.state.inputValue}></input> */}
-                        <TypeInput
-                            placeholder="Command/Ctrl+F"
-                            languages={this.props.languages}
-                            culture={currentLanguage.culture}
-                            onCultureChanged={culture=>this.onCultureChanged(culture)}
+                            onTypedValueChanged={value => this.onTypedValueChanged(value)}
+                            onInputValueChanged={value => this.onInputValueChanged(value)}
                             onKeyDown={key => {
-                                if (key === "Enter") { 
-                                    this.searchWord() 
+                                if (key === "Enter") {
+                                    this.translateWord()
                                 }
-                                // if (key === "Escape") { e.currentTarget.blur() }
+                                if (key === "Escape") { this.typeInputRef.current?.blur(); }
                             }}
-                            onChange={e => this.onInputValueChanged(e)}
-                            value={inputValue}
-                        ></TypeInput>
+                            inputValue={inputValue}
+                        />
                         <div className="input-group-append">
-                            <button className="btn btn-outline-secondary" type="button" onClick={e => this.searchWord()}>Search</button>
+                            <button className="btn btn-outline-secondary" type="button" onClick={e => this.translateWord()}>Search</button>
                             <button className="btn btn-outline-secondary" type="button" onClick={e => this.toggleSetting()} >
                                 <SettingSvg />
                             </button>

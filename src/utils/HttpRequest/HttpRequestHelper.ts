@@ -2,7 +2,7 @@ import Log from "../Log";
 import { IHttpRequest } from "./IHttpRequest";
 import Env from "config/env";
 
-export default class HttpRequestHelper<T> {
+export default class HttpRequestHelper {
 
     public static CrateRequest(url: string, body: any | null = null, method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET'): IHttpRequest {
         return {
