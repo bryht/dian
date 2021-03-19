@@ -3,7 +3,7 @@ import * as https from 'https';
 import * as cheerio from 'cheerio';
 import ReactModal from 'react-modal';
 import './WordHtml.scss';
-import { ReactComponent as CloseSvg } from 'assets/close.svg';
+import CloseButton from 'components/CloseButton/CloseButton';
 
 export interface IWordHtmlProps {
     url: string;
@@ -64,9 +64,7 @@ export default class WordHtml extends React.Component<IWordHtmlProps, { isOpen: 
                 isOpen={isOpen}
             >
                 <div className="d-flex flex-column">
-                    <div className="word-html-close align-self-end" onClick={() => this.close()}>
-                        <CloseSvg />
-                    </div>
+                    <CloseButton className="align-self-end" close={() => this.close()}></CloseButton>
                     <webview id="webview" style={{ height: "90vh" }} useragent="Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1" src={this.props.url} />
                 </div>
             </ReactModal>)

@@ -12,7 +12,7 @@ import { SearchItem } from '../Models/SearchItem';
 import './Search.scss';
 import { RootState } from 'core/Store';
 import { DictActions } from 'application/DictRedux';
-import { loadWordsAsync } from 'application/Search/Load';
+import { loadWordsAsync } from 'application/Load';
 import { AutoCompleteInput } from '@bryht/auto-complete-input';
 
 const { ipcRenderer } = window.require('electron');
