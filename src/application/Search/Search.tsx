@@ -14,6 +14,7 @@ import { RootState } from 'core/Store';
 import { DictActions } from 'application/DictRedux';
 import { loadWordsAsync } from 'application/Load';
 import { AutoCompleteInput } from '@bryht/auto-complete-input';
+import CloseButton from 'components/CloseButton/CloseButton';
 
 const { ipcRenderer } = window.require('electron');
 
@@ -184,6 +185,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                     {
                         searchItems.map(item => (
                             <li key={SearchItem.getId(item.words)} className={`translate-list-item ${SearchItem.isPhrase(item.words) && 'bg-success'}`}>
+                                <CloseButton className="list-item-close" close={()=>this.deleteWord(SearchItem.getId(item.words))}></CloseButton>        
                                 <div className="translate-list-item-words">
                                     {item.words.map(x =>
                                         <div key={x.culture} onClick={() => this.showWordDetail(x.culture, x.text)}>
@@ -191,8 +193,6 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                                             <span className="culture">{x.culture.toUpperCase()}</span>
                                         </div>)}
                                 </div>
-                                <button type="button" className="btn-close" onClick={() => this.deleteWord(SearchItem.getId(item.words))}></button>
-
                             </li>))
                     }
                 </ul>
