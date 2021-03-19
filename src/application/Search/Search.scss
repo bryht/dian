@@ -4,6 +4,18 @@
 @import './node_modules/bootstrap/scss/forms';
 @import './node_modules/bootstrap/scss/list-group';
 
+.input-group {
+  .auto-complete{
+    border-radius: 0;
+    border: none;
+  }
+  .input-group-append{
+    button{
+      border-radius: 0;
+      border-left: none;
+    }
+  }
+}
 .auto-complete {
   @extend .form-control;
   margin: 0;
@@ -39,9 +51,10 @@
   
   .translate-list-item {
     display: flex;
+    flex-direction: column;
     list-style-type: none;
     margin: 2px;
-    padding: 3px 10px;
+    padding: 3px 3px 0 10px;
     border:solid 0.5px #b3b1b1;
     border-radius: 5px;
     box-shadow: 1px 1px #727272;
@@ -66,17 +79,17 @@
       }
     }
 
-    .btn-close {
+    .list-item-close {
       display: none;
-      border:solid 1px red;
-      border-radius: 50%;
-      width: 10px;
-      height: 10px;
+      align-self: flex-end;
       position: absolute;
-      margin-right: 0px;
+      margin-top: 0px;
+      margin-right: -20px;
+      height: 15px;
+      width: 15px;
     }
 
-    &:hover .btn-close{
+    &:hover .list-item-close{
         display: block;
     }
 
