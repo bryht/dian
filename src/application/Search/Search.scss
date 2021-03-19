@@ -45,7 +45,7 @@
     button {
       border-radius: 0;
       border-left: none;
-      &:nth-child(2){
+      &:nth-child(2) {
         border-top-right-radius: 6px;
         border-bottom-right-radius: 6px;
       }
@@ -74,11 +74,16 @@
       div {
         display: flex;
         justify-content: space-between;
-        
+
         .word {
-          cursor: pointer;
-          &:hover {
-            text-decoration: underline;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          span {
+            cursor: pointer;
+            &:hover {
+              text-decoration: underline;
+            }
           }
         }
         .culture {
@@ -95,7 +100,7 @@
       position: absolute;
       margin-top: 0px;
       margin-right: -20px;
-      svg{
+      svg {
         height: 15px;
         width: 15px;
       }
@@ -103,6 +108,18 @@
 
     &:hover .list-item-close {
       display: flex;
+    }
+
+    &.is-phrase {
+      background-color: red;
+      .translate-list-item-words {
+        div {
+          border-bottom: dotted 0.2px #d3d3d3;
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
     }
   }
 }

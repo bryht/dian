@@ -147,6 +147,14 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         this.invokeDispatchAsync(DictActions.ToggleSetting());
     }
 
+    renderWord(text: string, culture: string, item: SearchItem) {
+        if (culture === 'zh' && SearchItem.isPhrase(item.words)) {
+            return text;
+        } else {
+            return text.split(' ').map(w => <span onClick={() => this.showWordDetail(culture, w)}>{w}&nbsp;</span>)
+        }
+    }
+
     public render() {
         const { searchItems } = this.props;
         const { wordUrl, currentLanguage, inputValue, options } = this.state;
@@ -184,12 +192,12 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                 <ul className="translate-list">
                     {
                         searchItems.map(item => (
-                            <li key={SearchItem.getId(item.words)} className={`translate-list-item ${SearchItem.isPhrase(item.words) && 'bg-success'}`}>
-                                <CloseButton className="list-item-close" close={()=>this.deleteWord(SearchItem.getId(item.words))}></CloseButton>        
+                            <li key={SearchItem.getId(item.words)} className={`translate-list-item ${SearchItem.isPhrase(item.words) && 'bg-success is-phrase'}`}>
+                                <CloseButton className="list-item-close" close={() => this.deleteWord(SearchItem.getId(item.words))}></CloseButton>
                                 <div className="translate-list-item-words">
                                     {item.words.map(x =>
-                                        <div key={x.culture} onClick={() => this.showWordDetail(x.culture, x.text)}>
-                                            <span className="word">{x.text}</span>
+                                        <div key={x.culture} >
+                                            <div className="word">{this.renderWord(x.text, x.culture, item)}</div>
                                             <span className="culture">{x.culture}</span>
                                         </div>)}
                                 </div>
