@@ -212,7 +212,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
 export function mapStateToProps(state: RootState) {
     return {
-        searchItems: state.dict.searchItems,
+        searchItems: state.dict.searchItems ?? [],
         languages: state.dict.languages.filter(p => p.isUsed),
         ...mapRootStateToProps(state)
     }
