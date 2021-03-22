@@ -135,7 +135,7 @@ async function createWindow() {
     win.on("closed", () => win = null)
 
     appIcon = new Tray(__dirname + '/build/icon.png');
-    appIcon.setToolTip('This is Dict');
+    appIcon.setToolTip('This is Dian');
     appIcon.addListener("click", () => win.show());
     var contextMenu = Menu.buildFromTemplate([
         {

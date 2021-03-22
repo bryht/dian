@@ -1,4 +1,4 @@
-# Dict 
+# Dian 
 [![Package](https://github.com/bryht/dict/workflows/Package/badge.svg)](https://github.com/bryht/dict/actions)
 [![Join the chat at https://gitter.im/bryhtDict/Lobby](https://badges.gitter.im/bryhtDict/Lobby.svg)](https://gitter.im/bryhtDict/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/bryht/6)
@@ -18,9 +18,9 @@
 ![](/assets/imgs/2.gif)
 
 ### Hot Keys.
-- `Ctrl+Shift+F` Open Dict Global
+- `Ctrl+Shift+F` Open Dian Global
 - `Ctrl+F` Cursor to Search Input
-- `Esc` Minimise Dict
+- `Esc` Minimise Dian
 - `/nl` Switch to dutch, other possibilities: `-zh  \en  ,fr` etc  it follow [List of ISO 639-1 codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
 - `Shift+j` Word list Scroll Down
 - `Shift+k` Word list Scroll Up

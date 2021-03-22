@@ -1,6 +1,6 @@
 {
   "name": "dict",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "private": true,
   "main": "main.ts",
   "description": "a dictionary app",
@@ -10,7 +10,7 @@
     "email": "bryht@live.com"
   },
   "build": {
-    "appId": "Dict",
+    "appId": "Dian",
     "files": [
       "build/**/*",
       "main.ts"
