@@ -72,7 +72,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
     }
 
     openHowToUse = () => {
-        const url = 'https://github.com/bryht/dict/blob/master/README.md';
+        const url = 'https://bryht.github.io/dian';
         shell.openExternal(url);
     }
 

@@ -1,6 +1,6 @@
 async function loadWordsAsync(culture: string, search: string, count: number) {
     if (!cache.find(x => x.culture === culture)) {
-        const res = await fetch(`https://raw.githubusercontent.com/bryht/dict/master/public/resources/${culture}.txt`);
+        const res = await fetch(`https://raw.githubusercontent.com/bryht/dian/master/public/resources/${culture}.txt`);
         const txt = await res.text();
         cache.push({
             culture: culture,
