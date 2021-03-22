@@ -25,7 +25,7 @@
 - `Shift+k` Word list Scroll Up
 
 ### 4. Detail link
-- https://xxxxxx/```'{{word}}'```  need to keep ```{{word}}```, other parts can change freely.
+- https://xxxxxx/```{% raw %}{{word}}{% endraw %}```  need to keep ```{% raw %}{{word}}{% endraw %}```, other parts can change freely.
 
 ---
 ## How to Contribute
