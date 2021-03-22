@@ -12,10 +12,10 @@
 # How to use
 
 ## 1. Search word or phrase
-![](/assets/imgs/1.gif)
+![](/imgs/1.gif)
 
 ## 2. Config languages
-![](/assets/imgs/2.gif)
+![](/imgs/2.gif)
 
 ### Hot Keys.
 - `Ctrl+Shift+F` Open Dian Global
