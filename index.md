@@ -1,37 +1,42 @@
-## Welcome to GitHub Pages
+# Dian 
+[![Package](https://github.com/bryht/dict/workflows/Package/badge.svg)](https://github.com/bryht/dict/actions)
+[![Join the chat at https://gitter.im/bryhtDict/Lobby](https://badges.gitter.im/bryhtDict/Lobby.svg)](https://gitter.im/bryhtDict/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/bryht/6)
+## This is a Dictionary application
+- It can search words, of course.
+- It can export words.
+- Using React & TypeScript Electron Bootstrap Electron-Builder ... 
 
-You can use the [editor on GitHub](https://github.com/bryht/dict/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+  [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+# How to use
 
-### Markdown
+## 1. Search word or phrase
+![](/assets/imgs/1.gif)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## 2. Config languages
+![](/assets/imgs/2.gif)
 
-```markdown
-Syntax highlighted code block
+### Hot Keys.
+- `Ctrl+Shift+F` Open Dian Global
+- `Ctrl+F` Cursor to Search Input
+- `Esc` Minimise Dian
+- `/nl` Switch to dutch, other possibilities: `-zh  \en  ,fr` etc  it follow [List of ISO 639-1 codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+- `Shift+j` Word list Scroll Down
+- `Shift+k` Word list Scroll Up
 
-# Header 1
-## Header 2
-### Header 3
+### Detail link
+- https://xxxxxx/`{{word}}`  need to keep `{{word}}`, other parts can change freely.
 
-- Bulleted
-- List
+---
+# How to Contribute
+I am using React & TypeScript Electron Bootstrap Electron-Builder, if you are interesting, just make a pr, we will have a look.
+##  Basic commands can help you to start the project.
+- Install package ```npm install```
+- Build  and initial assets ```npm run build``` 
+- dev ```npm start``` 
+- package ```npm run package``` 
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/bryht/dict/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+***
+## Thanks
+- Icon: https://goo.gl/roiFNg
