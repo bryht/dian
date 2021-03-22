@@ -45,7 +45,7 @@ const languages: Array<Language> = [
     {
         culture: 'ko',
         cultureFull: 'ko-KO',
-        cultureName: '조선',
+        cultureName: '한국어',
         isSelected: false,
         isUsed: false,
         detailHideFilters: [],
@@ -61,6 +61,46 @@ const languages: Array<Language> = [
         detailHideFilters: [],
         detailHideTop: 160,
         detailLink: 'https://www.google.com/search?q={{word}}'
+    },
+    {
+        culture: 'ru',
+        cultureFull: 'ru-RU',
+        cultureName: 'Pусский',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://en.openrussian.org/ru/{{word}}'
+    },
+    {
+        culture: 'es',
+        cultureFull: 'es-ES',
+        cultureName: 'Español',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://www.collinsdictionary.com/dictionary/spanish-english/{{word}}'
+    },
+    {
+        culture: 'pt',
+        cultureFull: 'pt-PT',
+        cultureName: 'Português',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://www.collinsdictionary.com/dictionary/portuguese-english/{{word}}'
+    },
+    {
+        culture: 'it',
+        cultureFull: 'it-IT',
+        cultureName: 'Italiano',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://www.collinsdictionary.com/dictionary/italian-english/{{word}}'
     },
     {
         culture: 'fr',

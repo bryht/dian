@@ -6,7 +6,7 @@ import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
 import { BasicState } from 'core/RootComponent/BasicState';
-const { remote } = window.require('electron');
+const { remote,ipcRenderer } = window.require('electron');
 
 export interface IBasicProps extends BasicProps {
     searching: any;
@@ -20,9 +20,13 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
 
     async componentDidMount() {
 
-        const word = document.querySelector('#word') as HTMLInputElement;
-        word.focus();
-        word.value = '';
+        ipcRenderer.on('input-message', (event:any, message:any) => {
+            if (message==="focus") {
+                const word = document.querySelector('#word') as HTMLInputElement;
+                word.focus();
+                word.value = '';
+            }
+          })
         Mousetrap.bind('esc', () => { 
             const webview=document.querySelector('#webview') as HTMLWebViewElement;
             if (webview==null) {

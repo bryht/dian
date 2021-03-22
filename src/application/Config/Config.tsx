@@ -12,6 +12,7 @@ import { Filter, File } from 'core/Utils/File';
 import { DictActions } from 'application/DictRedux';
 import { RootState } from 'core/Store';
 const fs = window.require('fs-extra');
+const { shell } = window.require('electron');
 
 export interface IConfigProps extends BasicProps {
     initialLanguages: Array<Language>;
@@ -71,7 +72,8 @@ class Config extends RootComponent<IConfigProps, IState>  {
     }
 
     openHowToUse = () => {
-
+        const url = 'https://github.com/bryht/dict/blob/master/README.md';
+        shell.openExternal(url);
     }
 
     onSelectLanguageChanged = (culture: string) => {

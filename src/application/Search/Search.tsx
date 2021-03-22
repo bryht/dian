@@ -160,7 +160,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         const { wordUrl, currentLanguage, inputValue, options } = this.state;
         return (
             <div className="d-flex flex-column">
-                <div className="sticky-top mt-2 d-flex flex-column w-100 bg-white">
+                <div className="sticky-top d-flex mb-1 flex-column w-100 bg-white">
                     <div className="input-group">
                         <span className="input-group-text">{currentLanguage.cultureName}</span>
                         <AutoCompleteInput

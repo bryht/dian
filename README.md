@@ -6,17 +6,32 @@
 - It can search words, of course.
 - It can export words.
 - Using React & TypeScript Electron Bootstrap Electron-Builder ... 
-- [How to use](how-to-use.md)
 
   [![Github Releases](https://img.shields.io/github/downloads/bryht/Dict/total.svg?style=plastic)](https://github.com/bryht/Dict/releases/latest)
 
-## Functions
-* add more language
-* add language translate
-* language, language-dictionary-link, 
+# How to use
 
-***
-##  Commands
+## 1. Search word or phrase
+![](/assets/imgs/1.gif)
+
+## 2. Config languages
+![](/assets/imgs/2.gif)
+
+### Hot Keys.
+- `Ctrl+Shift+F` Open Dict Global
+- `Ctrl+F` Cursor to Search Input
+- `Esc` Minimise Dict
+- `/nl` Switch to dutch, other possibilities: `-zh  \en  ,fr` etc  it follow [List of ISO 639-1 codes](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)
+- `Shift+j` Word list Scroll Down
+- `Shift+k` Word list Scroll Up
+
+### Detail link
+- https://xxxxxx/`{{word}}`  need to keep `{{word}}`, other parts can change freely.
+
+---
+# How to Contribute
+I am using React & TypeScript Electron Bootstrap Electron-Builder, if you are interesting, just make a pr, we will have a look.
+##  Basic commands can help you to start the project.
 - Install package ```npm install```
 - Build  and initial assets ```npm run build``` 
 - dev ```npm start``` 

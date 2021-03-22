@@ -22,25 +22,25 @@ const Shell = require('node-powershell');
 //Update Logging
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
-function sendStatusToWindow(text) {
+function Logging(text) {
     log.info(text);
 }
 autoUpdater.on('checking-for-update', () => {
-    sendStatusToWindow('Checking for update...');
+    Logging('Checking for update...');
 })
 autoUpdater.on('update-available', (info) => {
-    sendStatusToWindow('Update available.');
+    Logging('Update available.');
 })
 autoUpdater.on('update-not-available', (info) => {
-    sendStatusToWindow('Update not available.');
+    Logging('Update not available.');
 })
 autoUpdater.on('error', (err) => {
-    sendStatusToWindow('Error in auto-updater. ' + err);
+    Logging('Error in auto-updater. ' + err);
 })
 autoUpdater.on('download-progress', (progressObj) => {
     let log_message = "Speed: " + parseInt(progressObj.bytesPerSecond) / (1204 * 8);
     log_message = log_message + 'KB/s  Progress:' + parseInt(progressObj.percent) + '%';
-    sendStatusToWindow(log_message);
+    Logging(log_message);
 })
 autoUpdater.on('update-downloaded', (info) => {
     autoUpdater.quitAndInstall();
@@ -122,7 +122,7 @@ async function createWindow() {
         require('electron-reload')(__dirname, {
             electron: path.join(__dirname, '..', '..', 'node_modules', '.bin', 'electron'),
             forceHardReset: true,
-            hardResetMethod: 'exit'
+            hardResetMethod: 'exit',
         });
     } else {
         win.loadURL(url.format({
@@ -159,6 +159,7 @@ async function createWindow() {
     });
     globalShortcut.register('CommandOrControl+Shift+' + (electronIsDev ? 'D' : 'F'), () => {
         win.show();
+        win.webContents.send('input-message', 'focus');
     });
 
 }
