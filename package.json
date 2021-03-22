@@ -11,6 +11,7 @@
   },
   "build": {
     "appId": "Dian",
+    "productName": "Dian",
     "files": [
       "build/**/*",
       "main.ts"
