@@ -8,11 +8,14 @@
 - You can `translate to all the languages` (configured) at the same time.
 - You can use a lot of `hot keys`.
 
-  ![Github Releases](https://img.shields.io/github/downloads/bryht/dian/total.svg?style=plastic)
+  ![Github Releases](https://img.shields.io/github/downloads/bryht/dian/total?style=for-the-badge)
+  
+    [![Dian_Setup_Windows.exe](https://img.shields.io/github/downloads/bryht/dian/latest/Dian_Setup_win.exe?style=flat)](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_win.exe)
 
-  * [Dian_Setup_Windows.exe](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_win.exe)
-  * [Dian_Setup_Mac.zip](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.zip)
-  * [Dian_Setup_Mac.dmg](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.dmg)
+    [![Dian_Setup_Windows.exe](https://img.shields.io/github/downloads/bryht/dian/latest/Dian_Setup_mac.zip?style=flat)](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.zip)
+
+    [![Dian_Setup_Windows.exe](https://img.shields.io/github/downloads/bryht/dian/latest/Dian_Setup_mac.dmg?style=flat)](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.dmg)
+
 
 ## How to use
 
