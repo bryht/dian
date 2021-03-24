@@ -1,7 +1,2 @@
 theme: jekyll-theme-merlot
-show_downloads: true
 google_analytics: G-MFSTZZQD6J
-
-github:
-  zip_url: https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.zip
-  another_url: https://github.com/bryht/dian/releases/latest/download/Dian_Setup_win.exe
