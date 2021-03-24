@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
 import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
 import { BasicProps } from 'core/RootComponent/BasicProps';
@@ -127,6 +128,10 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
     }
 
+    changeCurrentLanguage(language: Language) {
+        this.setState({ currentLanguage: language })
+    }
+
     getCurrentLanguageByCulture(culture: string | null | undefined) {
         const { languages } = this.props;
         let currentLanguage = languages.find(x => x.culture === culture);
@@ -156,13 +161,18 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
     }
 
     public render() {
-        const { searchItems } = this.props;
+        const { searchItems, languages } = this.props;
         const { wordUrl, currentLanguage, inputValue, options } = this.state;
         return (
             <div className="d-flex flex-column">
                 <div className="sticky-top d-flex mb-1 flex-column w-100 bg-white">
                     <div className="input-group">
-                        <span className="input-group-text">{currentLanguage.cultureName}</span>
+                        <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{currentLanguage.cultureName}</button>
+                        <ul className="dropdown-menu">
+                            {
+                                languages.map(l => <li><a className="dropdown-item" href="#" onClick={()=>this.changeCurrentLanguage(l)}>{l.cultureName}&nbsp;&nbsp;(/{l.culture})</a></li>)
+                            }
+                        </ul>
                         <AutoCompleteInput
                             id="word"
                             ref={this.typeInputRef}
