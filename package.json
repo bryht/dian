@@ -1,6 +1,6 @@
 {
   "name": "dian",
-  "version": "0.6.9",
+  "version": "0.7.0",
   "private": true,
   "main": "main.ts",
   "description": "a dictionary app",
@@ -12,6 +12,7 @@
   "build": {
     "appId": "Dian",
     "productName": "Dian",
+    "artifactName": "${productName}_Setup_${os}_${arch}.${ext}",
     "files": [
       "build/**/*",
       "main.ts"
