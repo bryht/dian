@@ -11,6 +11,7 @@ import Consts from 'application/Const';
 import { Filter, File } from 'core/Utils/File';
 import { DictActions } from 'application/DictRedux';
 import { RootState } from 'core/Store';
+
 const fs = window.require('fs-extra');
 const { shell } = window.require('electron');
 
@@ -44,7 +45,8 @@ class Config extends RootComponent<IConfigProps, IState>  {
         }
     }
 
-    openSetting = () => {
+    openSetting = async () => {
+        await this.invokeDispatchAsync(DictActions.LoadLanguages());
         this.modalRef.current?.openModal();
     }
 
@@ -84,18 +86,18 @@ class Config extends RootComponent<IConfigProps, IState>  {
         this.setState({ languages });
     }
 
-    onUsedLanguageChange = (culture: string, target: any) => {
+    onUsedLanguageChange = (culture: string, checked: boolean) => {
         const { languages } = this.state;
         languages.forEach(item => {
             if (item.culture === culture) {
-                item.isUsed = !target.checked;
+                item.isUsed = !checked;
+                if (languages.filter(p => p.isUsed).length < 2) {
+                    item.isUsed= checked;
+                    alert('Need choose at least 2 language');
+                }
             }
         });
-
-        if (languages.filter(p => p.isUsed).length < 2) {
-            alert('Need choose at least 2 language');
-            return;
-        }
+        
         this.setState({ languages });
     }
 
@@ -124,7 +126,6 @@ class Config extends RootComponent<IConfigProps, IState>  {
 
     public render() {
         const { languages } = this.state;
-        const usedLanguages = languages.filter(p => p.isUsed);
         const selectedLanguage = languages.find(p => p.isSelected);
 
         if (!selectedLanguage) {
@@ -146,40 +147,36 @@ class Config extends RootComponent<IConfigProps, IState>  {
                     How To Use
                 </button >
                 <Modal ref={this.modalRef}>
-                    <ul className="nav nav-tabs">
-                        <li key="config" className="nav-item dropdown">
-                            <a className="nav-link text-secondary dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Config</a>
-                            <ul className="dropdown-menu">
-                                {
-                                    languages.map(item => <li key={item.culture}>
-                                        <div className="form-check form-switch">
-                                            <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(item.culture, e.target)} checked={item.isUsed}></input>
-                                            <label className="form-check-label">{item.cultureName}</label>
-                                        </div>
-                                    </li>)
-                                }
-
-                            </ul>
-                        </li>
+                    <h5>Config language and detail link</h5>
+                    <div className="d-flex flex-wrap">
                         {
-                            usedLanguages.map(item =>
-                                <li key={item.culture} className="nav-item">
-                                    <a className={`nav-link text-secondary ${item.isSelected && 'active'}`} onClick={() => this.onSelectLanguageChanged(item.culture)} href="#">{item.cultureName}</a>
-                                </li>)
-                        }
+                            languages.map(l =>
+                                l.isUsed ?
+                                    <div className="input-group mb-1">
+                                        <div className="input-group-text">
+                                            <div className="form-check form-switch">
+                                                <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                                <label className="form-check-label">{l.cultureName}</label>
+                                            </div>
+                                        </div>
+                                        <input type="text" className="form-control" onChange={e => this.onLanguageDetailLinkChanged(l.culture, e.target.value)} value={l.detailLink}></input>
+                                    </div>
+                                    :
+                                    <div className="m-1">
+                                        <div className="input-group-text">
+                                            <div className="form-check form-switch">
+                                                <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                                <label className="form-check-label">{l.cultureName}</label>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                    </ul>
-                    <div className="card w-100 border-top-0">
-                        <div className="card-body d-flex flex-column">
-                            <div className="m-2">
-                                <label htmlFor="link">Detail link:</label>
-                                <input type="text" className="form-control" id="link" onChange={e => this.onLanguageDetailLinkChanged(selectedLanguage.culture, e.target.value)} value={selectedLanguage.detailLink}></input>
-                            </div>
-                            <div className="d-flex">
-                                <button type="button" onClick={this.deleteConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
-                                <button type="button" onClick={this.saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
-                            </div>
-                        </div>
+                            )
+                        }
+                    </div>
+                    <div className="d-flex justify-content-end">
+                        <button type="button" onClick={this.deleteConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
+                        <button type="button" onClick={this.saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
                     </div>
                 </Modal>
             </div>

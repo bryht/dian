@@ -1,7 +1,7 @@
 // Required
-@import "../node_modules/bootstrap/scss/functions";
-@import "../node_modules/bootstrap/scss/variables";
-@import "../node_modules/bootstrap/scss/mixins";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
 
 // Your variable overrides
 $success:#fafcf3;
@@ -29,12 +29,13 @@ $font-sizes: (
 );
 
 $input-focus-box-shadow: none;
+$input-box-shadow: none;
 $btn-focus-width:0;
 $btn-close-focus-shadow: none;
+$btn-focus-box-shadow: none;
 
 // Bootstrap and its default variables
 @import 'bootstrap';
-
 
 // scroll bar style
 ::-webkit-scrollbar {
