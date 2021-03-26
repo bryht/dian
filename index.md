@@ -1,7 +1,9 @@
 # This is a Dictionary application
 [![Package](https://github.com/bryht/dian/workflows/Package/badge.svg)](https://github.com/bryht/dian/actions)
-[![Join the chat at https://gitter.im/bryhtDict/Lobby](https://badges.gitter.im/bryhtDict/Lobby.svg)](https://gitter.im/bryhtDict/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/bryht/6)
+[![](https://img.shields.io/static/v1?label=discussion&message=!)](https://github.com/bryht/dian/discussions) 
+[![](https://img.shields.io/github/stars/bryht/dian)](https://github.com/bryht/dian/stargazers)
+[![](https://img.shields.io/badge/Donate-PayPal-gold.svg)](https://www.paypal.me/bryht/6)
+
 - You can use it to `translate words`, phrases.
 - You can use it to `export words`, then you can import to other software, for example: quizlet.
 - You can use `switch language` while you are typing, by `/nl  /en /zh` etc.
