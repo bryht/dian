@@ -1,7 +1,8 @@
 # Dian 
 [![Package](https://github.com/bryht/dian/workflows/Package/badge.svg)](https://github.com/bryht/dian/actions)
-[![Join the chat at https://gitter.im/bryhtDict/Lobby](https://badges.gitter.im/bryhtDict/Lobby.svg)](https://gitter.im/bryhtDict/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
-[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/bryht/6)
+[![](https://img.shields.io/static/v1?label=discussion&message=!)](https://github.com/bryht/dian/discussions) 
+[![](https://img.shields.io/github/stars/bryht/dian)](https://github.com/bryht/dian/stargazers)
+[![](https://img.shields.io/badge/Donate-PayPal-gold.svg)](https://www.paypal.me/bryht/6)
 ## This is a Dictionary application
 - It can search words, of course.
 - It can export words.
