@@ -15,6 +15,10 @@ class Modal extends React.Component<any, IModalState>  {
 
     closeModal = () => {
         this.setState({ isModalOpened: false })
+        const { onModalClosed } = this.props;
+        if (onModalClosed) {
+            onModalClosed();
+        }
     }
 
     openModal = () => {

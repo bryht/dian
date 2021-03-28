@@ -52,6 +52,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
 
     async deleteSearchItems() {
         this.invokeDispatchAsync(DictActions.UpdateSearchItem([]));
+        await this.invokeDispatchAsync(DictActions.ToggleSetting())
     }
 
     async exportWords() {
@@ -70,20 +71,14 @@ class Config extends RootComponent<IConfigProps, IState>  {
                 }
             }
             alert('Words have saved in ' + fileName);
+            await this.invokeDispatchAsync(DictActions.ToggleSetting())
         }
     }
 
-    openHowToUse = () => {
+    openHowToUse = async () => {
         const url = 'https://bryht.github.io/dian';
         shell.openExternal(url);
-    }
-
-    onSelectLanguageChanged = (culture: string) => {
-        const { languages } = this.state;
-        languages.forEach(item => {
-            item.isSelected = item.culture === culture;
-        });
-        this.setState({ languages });
+        await this.invokeDispatchAsync(DictActions.ToggleSetting())
     }
 
     onUsedLanguageChange = (culture: string, checked: boolean) => {
@@ -116,13 +111,19 @@ class Config extends RootComponent<IConfigProps, IState>  {
         const { languages } = this.state;
         await this.invokeDispatchAsync(DictActions.UpdateLanguages(languages));
         this.modalRef.current?.closeModal();
+    }
+
+   
+    resetConfig = async () => {
+        await this.invokeDispatchAsync(DictActions.UpdateLanguages([]));
+        await this.invokeDispatchAsync(DictActions.LoadLanguages());
+        this.modalRef.current?.closeModal();
+    }
+
+    modalClosed =async () => {
         await this.invokeDispatchAsync(DictActions.ToggleSetting())
     }
 
-    deleteConfig = async () => {
-        await this.invokeDispatchAsync(DictActions.UpdateLanguages([]));
-        await this.invokeDispatchAsync(DictActions.LoadLanguages());
-    }
 
     public render() {
         const { languages } = this.state;
@@ -146,7 +147,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                 <button type="button" className="btn btn-outline-secondary" onClick={() => this.openHowToUse()}>
                     How To Use
                 </button >
-                <Modal ref={this.modalRef}>
+                <Modal ref={this.modalRef} onModalClosed={()=>this.modalClosed}>
                     <h5>Config language and detail link</h5>
                     <div className="d-flex flex-wrap">
                         {
@@ -175,7 +176,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                         }
                     </div>
                     <div className="d-flex justify-content-end">
-                        <button type="button" onClick={this.deleteConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
+                        <button type="button" onClick={this.resetConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
                         <button type="button" onClick={this.saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
                     </div>
                 </Modal>
