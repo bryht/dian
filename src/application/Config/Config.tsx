@@ -153,7 +153,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                         {
                             languages.map(l =>
                                 l.isUsed ?
-                                    <div className="input-group mb-1">
+                                    <div key={l.culture} className="input-group mb-1">
                                         <div className="input-group-text">
                                             <div className="form-check form-switch">
                                                 <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
@@ -163,7 +163,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                                         <input type="text" className="form-control" onChange={e => this.onLanguageDetailLinkChanged(l.culture, e.target.value)} value={l.detailLink}></input>
                                     </div>
                                     :
-                                    <div className="m-1">
+                                    <div key={l.culture} className="m-1">
                                         <div className="input-group-text">
                                             <div className="form-check form-switch">
                                                 <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>

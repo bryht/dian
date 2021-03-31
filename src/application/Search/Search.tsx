@@ -156,7 +156,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         if (culture === 'zh' && SearchItem.isPhrase(item.words)) {
             return text;
         } else {
-            return text.split(' ').map(w => <span onClick={() => this.showWordDetail(culture, w)}>{w}&nbsp;</span>)
+            return text.split(' ').map(w => <span key={w} onClick={() => this.showWordDetail(culture, w)}>{w}&nbsp;</span>)
         }
     }
 
@@ -170,7 +170,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                         <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{currentLanguage.cultureName}</button>
                         <ul className="dropdown-menu">
                             {
-                                languages.map(l => <li><a className="dropdown-item" href="#" onClick={()=>this.changeCurrentLanguage(l)}>{l.cultureName}&nbsp;&nbsp;(/{l.culture})</a></li>)
+                                languages.map(l => <li key={l.culture}><a className="dropdown-item" href="#" onClick={()=>this.changeCurrentLanguage(l)}>{l.cultureName}&nbsp;&nbsp;(/{l.culture})</a></li>)
                             }
                         </ul>
                         <AutoCompleteInput
@@ -206,7 +206,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                                 <CloseButton className="list-item-close" close={() => this.deleteWord(SearchItem.getId(item.words))}></CloseButton>
                                 <div className="translate-list-item-words">
                                     {item.words.map(x =>
-                                        <div key={x.culture} >
+                                        <div key={`${x.culture}-${x.text}`} >
                                             <div className="word">{this.renderWord(x.text, x.culture, item)}</div>
                                             <span className="culture">{x.culture}</span>
                                         </div>)}
