@@ -14,8 +14,6 @@
   
     [![Dian_Setup_Windows.exe](https://img.shields.io/github/downloads/bryht/dian/latest/Dian_Setup_win.exe?style=flat)](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_win.exe)
 
-    [![Dian_Setup_Windows.exe](https://img.shields.io/github/downloads/bryht/dian/latest/Dian_Setup_mac.zip?style=flat)](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.zip)
-
     [![Dian_Setup_Windows.exe](https://img.shields.io/github/downloads/bryht/dian/latest/Dian_Setup_mac.dmg?style=flat)](https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.dmg)
 
 
