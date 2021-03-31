@@ -102,6 +102,7 @@ async function createWindow() {
             webviewTag: true,
             webSecurity: false,
             allowRunningInsecureContent: true,
+            contextIsolation: false
         }
     })
 

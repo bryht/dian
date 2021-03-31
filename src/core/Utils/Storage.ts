@@ -1,10 +1,12 @@
 const storage = window.require('electron-json-storage');
+const os = window.require('os');
+storage.setDataPath(os.tmpdir());
 
 function get<T>(key: string, item: T | null = null): Promise<T | null> {
     return new Promise<T | null>((resolve, reject) => {
         storage.get(key, function (error: any, data: any) {
             if (error) { reject(error); }
-            if (data.hasOwnProperty() ||
+            if ((data && data.hasOwnProperty()) ||
                 Array.isArray(data)) {
                 resolve(data as T);
             } else {
