@@ -42,6 +42,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
         let syncId = await get<string>("sync-id");
         if (!syncId) {
             syncId = Guid.newGuid();
+            await set("sync-id", syncId);
         }
         this.setState({ syncId })
     }
