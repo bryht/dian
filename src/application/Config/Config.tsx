@@ -5,12 +5,13 @@ import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
 import Modal from 'components/Modal';
 import { Language } from 'application/Models/Language';
-import { get } from 'core/Utils/Storage';
+import { get, set } from 'core/Utils/Storage';
 import { SearchItem } from 'application/Models/SearchItem';
 import Consts from 'application/Const';
 import { Filter, File } from 'core/Utils/File';
 import { DictActions } from 'application/DictRedux';
 import { RootState } from 'core/Store';
+import Guid from 'core/Utils/Guid';
 
 const fs = window.require('fs-extra');
 const { shell } = window.require('electron');
@@ -21,6 +22,7 @@ export interface IConfigProps extends BasicProps {
 
 export interface IState {
     languages: Array<Language>;
+    syncId: string;
 }
 
 class Config extends RootComponent<IConfigProps, IState>  {
@@ -30,12 +32,19 @@ class Config extends RootComponent<IConfigProps, IState>  {
         super(props);
         this.modalRef = React.createRef<Modal>();
         this.state = {
-            languages: this.props.initialLanguages
+            languages: this.props.initialLanguages,
+            syncId: ''
         }
     }
 
     async componentDidMount() {
         await this.invokeDispatchAsync(DictActions.LoadLanguages());
+        let syncId = await get<string>("sync-id");
+        if (!syncId) {
+            syncId = Guid.newGuid();
+            await set("sync-id", syncId);
+        }
+        this.setState({ syncId })
     }
 
     componentDidUpdate(prevProps: IConfigProps, prevState: IState) {
@@ -85,15 +94,14 @@ class Config extends RootComponent<IConfigProps, IState>  {
         const { languages } = this.state;
         languages.forEach(item => {
             if (item.culture === culture) {
-                item.isUsed = !checked;
+                item.isUsed = checked;
                 if (languages.filter(p => p.isUsed).length < 2) {
-                    item.isUsed= checked;
+                    item.isUsed = true;
                     alert('Need choose at least 2 language');
                 }
             }
         });
-        
-        this.setState({ languages });
+        this.setState({ languages: [...languages] });
     }
 
     onLanguageDetailLinkChanged = (culture: string, value: string) => {
@@ -113,20 +121,20 @@ class Config extends RootComponent<IConfigProps, IState>  {
         this.modalRef.current?.closeModal();
     }
 
-   
+
     resetConfig = async () => {
         await this.invokeDispatchAsync(DictActions.UpdateLanguages([]));
         await this.invokeDispatchAsync(DictActions.LoadLanguages());
         this.modalRef.current?.closeModal();
     }
 
-    modalClosed =async () => {
+    modalClosed = async () => {
         await this.invokeDispatchAsync(DictActions.ToggleSetting())
     }
 
 
     public render() {
-        const { languages } = this.state;
+        const { languages, syncId } = this.state;
         const selectedLanguage = languages.find(p => p.isSelected);
 
         if (!selectedLanguage) {
@@ -147,7 +155,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                 <button type="button" className="btn btn-outline-secondary" onClick={() => this.openHowToUse()}>
                     How To Use
                 </button >
-                <Modal ref={this.modalRef} onModalClosed={()=>this.modalClosed}>
+                <Modal ref={this.modalRef} onModalClosed={() => this.modalClosed}>
                     <h5>Config language and detail link</h5>
                     <div className="d-flex flex-wrap">
                         {
@@ -156,7 +164,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                                     <div key={l.culture} className="input-group mb-1">
                                         <div className="input-group-text">
                                             <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                                <input className="form-check-input" type="checkbox" onChange={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
                                                 <label className="form-check-label">{l.cultureName}</label>
                                             </div>
                                         </div>
@@ -166,7 +174,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                                     <div key={l.culture} className="m-1">
                                         <div className="input-group-text">
                                             <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                                <input className="form-check-input" type="checkbox" onChange={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
                                                 <label className="form-check-label">{l.cultureName}</label>
                                             </div>
                                         </div>
@@ -174,6 +182,10 @@ class Config extends RootComponent<IConfigProps, IState>  {
 
                             )
                         }
+                    </div>
+                    <h5>Sync id</h5>
+                    <div>
+                        {syncId}
                     </div>
                     <div className="d-flex justify-content-end">
                         <button type="button" onClick={this.resetConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>

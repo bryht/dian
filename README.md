@@ -13,9 +13,9 @@
 ## How to Contribute
 I am using React & TypeScript Electron Bootstrap Electron-Builder, if you are interesting, just make a pr, we will have a look.
 ###  Basic commands can help you to start the project.
-- Install package ```npm install```
-- dev ```npm start``` 
-- package ```npm run package``` 
+- Install package ```yarn install```
+- dev ```yarn start``` 
+- package ```yarn run package``` 
 
 ***
 ## Thanks
