@@ -1,27 +1,51 @@
-import { guessLanguage } from 'guesslanguage';
-const translate = window.require('node-google-translate-skidz');
+import { franc } from 'franc';
 
-function getCulture(text: string) {
-    return new Promise<string | null>((resolve, reject) => {
-        guessLanguage.detect(text, (result: string | PromiseLike<string | null> | null) => {
-            if (result === 'unknown') {
-                result = null;
+// Simple language detection using franc
+function getCulture(text: string): Promise<string | null> {
+    return new Promise<string | null>((resolve) => {
+        try {
+            const langCode = franc(text, { minLength: 1 });
+            if (langCode === 'und') {
+                resolve(null);
+            } else {
+                // franc returns ISO 639-3, but we need ISO 639-1 for some cases
+                // Map common languages
+                const iso3ToIso1: Record<string, string> = {
+                    'eng': 'en',
+                    'deu': 'de',
+                    'fra': 'fr',
+                    'spa': 'es',
+                    'ita': 'it',
+                    'por': 'pt',
+                    'nld': 'nl',
+                    'rus': 'ru',
+                    'jpn': 'ja',
+                    'kor': 'ko',
+                    'cmn': 'zh',
+                    'zho': 'zh',
+                };
+                resolve(iso3ToIso1[langCode] || langCode);
             }
-            resolve(result);
-        });
+        } catch {
+            resolve(null);
+        }
     });
 }
 
-function translateWord(fromCulture: string, toCulture: string, inputWord: string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        translate({
-            text: inputWord,
-            source: fromCulture,
-            target: toCulture,
-        }, function (params: { translation: string; }) {
-            resolve(params.translation);
-        });
-    });
+// Using Google Translate API via web fetch
+async function translateWord(fromCulture: string, toCulture: string, inputWord: string): Promise<string> {
+    try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromCulture}&tl=${toCulture}&dt=t&q=${encodeURIComponent(inputWord)}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data && data[0] && data[0][0] && data[0][0][0]) {
+            return data[0][0][0];
+        }
+        return inputWord;
+    } catch (error) {
+        console.error('Translation error:', error);
+        return inputWord;
+    }
 }
 
 export { getCulture, translateWord }

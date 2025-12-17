@@ -17,8 +17,6 @@ import { loadWordsAsync } from 'application/Load';
 import { AutoCompleteInput } from '@bryht/auto-complete-input';
 import CloseButton from 'components/CloseButton/CloseButton';
 
-const { ipcRenderer } = window.require('electron');
-
 export interface ISearchProps extends BasicProps {
     searchItems: Array<SearchItem>;
     languages: Array<Language>;
@@ -34,8 +32,8 @@ export interface ISearchStates extends BasicState {
 
 class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
-    wordHtmlRef: React.RefObject<WordHtml>;
-    typeInputRef: React.RefObject<AutoCompleteInput>;
+    wordHtmlRef: React.RefObject<WordHtml | null>;
+    typeInputRef: React.RefObject<AutoCompleteInput | null>;
     constructor(props: Readonly<ISearchProps>) {
         super(props);
         this.wordHtmlRef = React.createRef<WordHtml>();
@@ -75,27 +73,30 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
         }
 
         //play sound
+        const { ipcRenderer } = window.require('electron');
         ipcRenderer.send('play-audio', { culture: currentLanguage.culture, value: text })
 
-        //replace the list
-        const itemIndex = searchItems.findIndex(x => SearchItem.getId(x.words) === SearchItem.getId(searchItem.words));
+        //replace the list - create a copy to avoid mutating Redux state
+        const updatedSearchItems = [...searchItems];
+        const itemIndex = updatedSearchItems.findIndex(x => SearchItem.getId(x.words) === SearchItem.getId(searchItem.words));
         if (itemIndex > -1) {
-            searchItems.splice(itemIndex, 1);
+            updatedSearchItems.splice(itemIndex, 1);
         }
-        searchItems.unshift(searchItem);
+        updatedSearchItems.unshift(searchItem);
 
         //save the word
         this.setState({ inputValue: '', options: [] });
-        await this.invokeDispatchAsync(DictActions.UpdateSearchItem([...searchItems]));
+        await this.invokeDispatchAsync(DictActions.UpdateSearchItem(updatedSearchItems));
     }
 
     deleteWord(id: string) {
         const { searchItems } = this.props;
-        const itemIndex = searchItems.findIndex(x => SearchItem.getId(x.words) === id);
+        const updatedSearchItems = [...searchItems];
+        const itemIndex = updatedSearchItems.findIndex(x => SearchItem.getId(x.words) === id);
         if (itemIndex > -1) {
-            searchItems.splice(itemIndex, 1);
+            updatedSearchItems.splice(itemIndex, 1);
         }
-        this.invokeDispatchAsync(DictActions.UpdateSearchItem([...searchItems]));
+        this.invokeDispatchAsync(DictActions.UpdateSearchItem(updatedSearchItems));
     }
 
     onInputValueChanged(inputValue: string) {
@@ -178,6 +179,9 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                             ref={this.typeInputRef}
                             options={options}
                             placeholder="Command/Ctrl+F"
+                            className="auto-complete"
+                            inputClassName="auto-complete-input-class-name"
+                            listClassName="auto-complete-list-class-name"
                             onTypedValueChanged={value => this.onTypedValueChanged(value)}
                             onInputValueChanged={value => this.onInputValueChanged(value)}
                             onKeyDown={key => {
@@ -223,7 +227,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
 export function mapStateToProps(state: RootState) {
     return {
         searchItems: state.dict.searchItems ?? [],
-        languages: state.dict.languages.filter(p => p.isUsed),
+        languages: state.dict.languages.filter((p: Language) => p.isUsed),
         ...mapRootStateToProps(state)
     }
 }

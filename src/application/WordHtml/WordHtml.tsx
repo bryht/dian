@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as https from 'https';
 import * as cheerio from 'cheerio';
 import ReactModal from 'react-modal';
 import './WordHtml.scss';
@@ -23,25 +22,16 @@ export default class WordHtml extends React.Component<IWordHtmlProps, { isOpen: 
     }
 
     public static async getWordHtml(wordUrl: string) {
-
-        return new Promise<string>((resolve, reject) => {
-
-            const req = https.request(wordUrl, function (res) {
-                const chunks: Buffer[] = [];
-                res.on('data', function (chunk) {
-                    chunks.push(chunk as Buffer);
-                });
-                res.on('end', function () {
-                    const body = Buffer.concat(chunks);
-                    const $body = cheerio.load(body.toString());
-                    const html = $body.html();
-                    debugger;
-                    resolve(html);
-                });
-            });
-            req.end();
-        });
-
+        try {
+            const response = await fetch(wordUrl);
+            const body = await response.text();
+            const $body = cheerio.load(body);
+            const html = $body.html();
+            return html;
+        } catch (error) {
+            console.error('Error fetching word HTML:', error);
+            return '';
+        }
     }
 
     open() {

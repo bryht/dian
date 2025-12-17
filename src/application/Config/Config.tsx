@@ -12,9 +12,6 @@ import { Filter, File } from 'core/Utils/File';
 import { DictActions } from 'application/DictRedux';
 import { RootState } from 'core/Store';
 
-const fs = window.require('fs-extra');
-const { shell } = window.require('electron');
-
 export interface IConfigProps extends BasicProps {
     initialLanguages: Array<Language>;
 }
@@ -25,7 +22,7 @@ export interface IState {
 
 class Config extends RootComponent<IConfigProps, IState>  {
 
-    modalRef: React.RefObject<Modal>;
+    modalRef: React.RefObject<Modal | null>;
     constructor(props: Readonly<IConfigProps>) {
         super(props);
         this.modalRef = React.createRef<Modal>();
@@ -56,6 +53,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
     }
 
     async exportWords() {
+        const fs = window.require('fs-extra');
         const searchItems = await get<Array<SearchItem>>(Consts.searchItems, []);
         if (searchItems) {
             const fileName = await File.openFile('SaveWords', 'WordList', Filter.csv);
@@ -76,6 +74,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
     }
 
     openHowToUse = async () => {
+        const { shell } = window.require('electron');
         const url = 'https://bryht.github.io/dian';
         shell.openExternal(url);
         await this.invokeDispatchAsync(DictActions.ToggleSetting())

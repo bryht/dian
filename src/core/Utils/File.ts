@@ -1,5 +1,3 @@
-const { remote } = window.require('electron');
-
 export enum Filter {
     pdf = 'pdf',
     txt = 'txt',
@@ -8,6 +6,7 @@ export enum Filter {
 
 export class File {
     static async openFile(title: string, defaultPath: string, filter: Filter) {
+        const { remote } = window.require('electron');
         var win = remote.getCurrentWindow();
         const result = await remote.dialog.showSaveDialog(win, {
             'title': title,

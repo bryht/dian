@@ -6,7 +6,6 @@ import { BasicProps } from 'core/RootComponent/BasicProps';
 import { connect } from 'react-redux';
 import Mousetrap from 'mousetrap';
 import { BasicState } from 'core/RootComponent/BasicState';
-const { remote,ipcRenderer } = window.require('electron');
 
 export interface IBasicProps extends BasicProps {
     searching: any;
@@ -19,6 +18,7 @@ export interface IBasicStates extends BasicState {
 class Basic extends RootComponent<IBasicProps, IBasicStates> {
 
     async componentDidMount() {
+        const { ipcRenderer } = window.require('electron');
 
         ipcRenderer.on('input-message', (event:any, message:any) => {
             if (message==="focus") {
@@ -49,6 +49,7 @@ class Basic extends RootComponent<IBasicProps, IBasicStates> {
 
     }
     miniMize() {
+        const remote = window.require('@electron/remote');
         remote.BrowserWindow.getFocusedWindow().minimize();
     }
     
