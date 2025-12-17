@@ -12,7 +12,7 @@ import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
 
-// Wait a bit for Electron to fully initialize before rendering
+// Wait longer for Electron to fully initialize before rendering
 setTimeout(() => {
   const container = document.getElementById('root');
   const root = createRoot(container!);
@@ -23,7 +23,7 @@ setTimeout(() => {
       </React.StrictMode>
     </Provider>
   );
-}, 100);
+}, 300);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

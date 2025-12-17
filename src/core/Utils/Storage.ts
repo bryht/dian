@@ -1,16 +1,21 @@
 let storage: any = null;
 let remote: any = null;
 let isInitialized = false;
+let initializationAttempted = false;
 
 function initializeStorage() {
-    if (!isInitialized) {
+    if (isInitialized) return true;
+    
+    // Only try once per call to avoid spamming console
+    if (!initializationAttempted) {
+        initializationAttempted = true;
         try {
-            // Wait a bit to ensure Electron is fully ready
+            // Check if Electron environment is ready
             if (typeof window === 'undefined' || !window.require) {
-                console.warn('Electron environment not ready yet');
-                return;
+                return false;
             }
             
+            // Try to load modules with additional error handling
             if (!storage) {
                 storage = window.require('electron-json-storage');
             }
@@ -21,21 +26,26 @@ function initializeStorage() {
             if (storage && remote && remote.app) {
                 storage.setDataPath(remote.app.getPath('userData'));
                 isInitialized = true;
+                return true;
             }
         } catch (error) {
-            console.error('Failed to initialize storage:', error);
+            // Silently fail - Electron not ready yet
+            initializationAttempted = false; // Allow retry
+            return false;
         }
     }
+    
+    return isInitialized;
 }
 
 function get<T>(key: string, item: T | null = null): Promise<T | null> {
-    initializeStorage();
+    // Try to initialize, but don't fail if not ready
+    if (!initializeStorage()) {
+        // Storage not ready, return default immediately
+        return Promise.resolve(item);
+    }
+    
     return new Promise<T | null>((resolve, reject) => {
-        if (!storage || !isInitialized) {
-            console.warn('Storage not initialized, returning default value');
-            resolve(item);
-            return;
-        }
         storage.get(key, function (error: any, data: any) {
             if (error) { reject(error); return; }
             // Check if data has any own properties or is an array
@@ -50,13 +60,13 @@ function get<T>(key: string, item: T | null = null): Promise<T | null> {
 }
 
 function set<T>(key: string, item: T): Promise<void> {
-    initializeStorage();
+    // Try to initialize, but don't fail if not ready
+    if (!initializeStorage()) {
+        // Storage not ready, silently skip
+        return Promise.resolve();
+    }
+    
     return new Promise<void>((resolve, reject) => {
-        if (!storage || !isInitialized) {
-            console.warn('Storage not initialized, skipping save');
-            resolve();
-            return;
-        }
         storage.set(key, item, (errorMsg: any) => {
             if (errorMsg) { throw errorMsg; }
             resolve()
