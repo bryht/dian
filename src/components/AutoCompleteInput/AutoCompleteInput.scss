@@ -1,0 +1,18 @@
+.auto-complete-list-class-name {
+  background-color: wheat;
+  display: none;
+  position: absolute;
+  z-index: 2000;
+  &.show {
+    display: block;
+  }
+
+  li {
+    &.selected {
+      background-color: yellow;
+    }
+    span.typed {
+      background-color: yellow;
+    }
+  }
+}

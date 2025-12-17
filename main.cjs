@@ -62,15 +62,16 @@ ipcMain.on('message', (event, info, data) => {
 
 ipcMain.on('play-audio', async (event, info) => {
     try {
-        console.log(info);
-        let audioUrl = googleTTS.getAudioUrl(info.value, {
+        console.log('Playing audio for:', info);
+        const audioUrl = googleTTS.getAudioUrl(info.value, {
             lang: info.culture,
             slow: false,
             host: 'https://translate.google.com',
             timeout: 10000,
         });
 
-        const tempFile = path.join(os.tmpdir(), 'temp.mp3');
+        console.log('Audio URL:', audioUrl);
+        const tempFile = path.join(os.tmpdir(), 'dian_temp.mp3');
         
         // Download the audio file
         const file = fs.createWriteStream(tempFile);
@@ -78,17 +79,25 @@ ipcMain.on('play-audio', async (event, info) => {
             response.pipe(file);
             file.on('finish', () => {
                 file.close();
+                console.log('Audio file downloaded to:', tempFile);
                 // Play using PowerShell on Windows
                 if (process.platform === 'win32') {
-                    const psCommand = `
-                        Add-Type -AssemblyName presentationCore;
-                        $mediaPlayer = New-Object system.windows.media.mediaplayer;
-                        $mediaPlayer.open('${tempFile.replace(/\\/g, '\\\\')}');
-                        $mediaPlayer.Play();
-                        Start-Sleep -s 3;
-                    `;
-                    exec(`powershell -Command "${psCommand}"`, (error) => {
-                        if (error) console.log('Audio playback error:', error);
+                    // Use single quotes for the PowerShell command and escape the path properly
+                    const escapedPath = tempFile.replace(/\\/g, '\\\\');
+                    const psCommand = `Add-Type -AssemblyName presentationCore; $mediaPlayer = New-Object system.windows.media.mediaplayer; $mediaPlayer.open('${escapedPath}'); $mediaPlayer.Play(); Start-Sleep -Milliseconds 100; while($mediaPlayer.NaturalDuration.HasTimeSpan -eq $false) { Start-Sleep -Milliseconds 100 }; $duration = $mediaPlayer.NaturalDuration.TimeSpan.TotalSeconds; Start-Sleep -Seconds $duration`;
+                    
+                    exec(`powershell -NoProfile -ExecutionPolicy Bypass -Command "${psCommand}"`, (error, stdout, stderr) => {
+                        if (error) {
+                            console.log('Audio playback error:', error);
+                            console.log('stderr:', stderr);
+                        }
+                        if (stdout) console.log('stdout:', stdout);
+                        // Clean up temp file after playing
+                        setTimeout(() => {
+                            fs.unlink(tempFile, (err) => {
+                                if (err) console.log('Error deleting temp file:', err);
+                            });
+                        }, 5000);
                     });
                 }
             });
@@ -97,7 +106,7 @@ ipcMain.on('play-audio', async (event, info) => {
             fs.unlink(tempFile, () => {});
         });
     } catch (error) {
-        console.log(error);
+        console.log('Error in play-audio:', error);
     }
 })
 

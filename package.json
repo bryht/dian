@@ -39,7 +39,6 @@
     }
   },
   "dependencies": {
-    "@bryht/auto-complete-input": "^0.0.17",
     "@cliqz/adblocker-electron": "^1.33.0",
     "@electron/remote": "^2.1.2",
     "@popperjs/core": "^2.11.8",

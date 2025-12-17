@@ -14,7 +14,7 @@ import './Search.scss';
 import { RootState } from 'core/Store';
 import { DictActions } from 'application/DictRedux';
 import { loadWordsAsync } from 'application/Load';
-import { AutoCompleteInput } from '@bryht/auto-complete-input';
+import AutoCompleteInput from 'components/AutoCompleteInput';
 import CloseButton from 'components/CloseButton/CloseButton';
 
 export interface ISearchProps extends BasicProps {
@@ -182,9 +182,9 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                             className="auto-complete"
                             inputClassName="auto-complete-input-class-name"
                             listClassName="auto-complete-list-class-name"
-                            onTypedValueChanged={value => this.onTypedValueChanged(value)}
-                            onInputValueChanged={value => this.onInputValueChanged(value)}
-                            onKeyDown={key => {
+                            onTypedValueChanged={(value: string) => this.onTypedValueChanged(value)}
+                            onInputValueChanged={(value: string) => this.onInputValueChanged(value)}
+                            onKeyDown={(key: string) => {
                                 if (key === "Enter") {
                                     this.translateWord()
                                 }
