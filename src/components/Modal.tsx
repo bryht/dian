@@ -1,48 +1,50 @@
 import * as React from 'react';
 import ReactModal from 'react-modal';
 
-export interface IModalState {
-    isModalOpened: boolean
+export interface IModalProps {
+    onModalClosed?: () => void;
+    children?: React.ReactNode;
 }
 
-class Modal extends React.Component<any, IModalState>  {
-    constructor(props: Readonly<any>) {
-        super(props);
-        this.state = {
-            isModalOpened: false
+export interface IModalRef {
+    openModal: () => void;
+    closeModal: () => void;
+}
+
+const Modal = React.forwardRef<IModalRef, IModalProps>((props, ref) => {
+    const [isModalOpened, setIsModalOpened] = React.useState(false);
+
+    const closeModal = React.useCallback(() => {
+        setIsModalOpened(false);
+        if (props.onModalClosed) {
+            props.onModalClosed();
         }
-    }
+    }, [props]);
 
-    closeModal = () => {
-        this.setState({ isModalOpened: false })
-        const { onModalClosed } = this.props;
-        if (onModalClosed) {
-            onModalClosed();
-        }
-    }
+    const openModal = React.useCallback(() => {
+        setIsModalOpened(true);
+    }, []);
 
-    openModal = () => {
-        this.setState({ isModalOpened: true })
-    }
+    React.useImperativeHandle(ref, () => ({
+        openModal,
+        closeModal
+    }));
 
-    public render() {
-        const { children } = this.props;
-        const { isModalOpened } = this.state;
-        return (
-            <ReactModal
-                style={{ overlay: { zIndex: 2000 } }}
-                isOpen={isModalOpened}
-            >
-                <div className="m-2 d-flex flex-column">
-                    <button type="button" className="btn-close align-self-end" onClick={this.closeModal}></button>
-                    <div className="m-2">
-                        {children}
-                    </div>
+    return (
+        <ReactModal
+            style={{ overlay: { zIndex: 2000 } }}
+            isOpen={isModalOpened}
+        >
+            <div className="m-2 d-flex flex-column">
+                <button type="button" className="btn-close align-self-end" onClick={closeModal}></button>
+                <div className="m-2">
+                    {props.children}
                 </div>
-            </ReactModal>
+            </div>
+        </ReactModal>
+    );
+});
 
-        );
-    }
-}
+Modal.displayName = 'Modal';
 
 export default Modal;

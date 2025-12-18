@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
-import { BasicProps } from 'core/RootComponent/BasicProps';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'components/Modal';
 import { Language } from 'application/Models/Language';
 import { get } from 'core/Utils/Storage';
@@ -11,48 +9,34 @@ import Consts from 'application/Const';
 import { Filter, File } from 'core/Utils/File';
 import { DictActions } from 'application/DictRedux';
 import { RootState } from 'core/Store';
+import type { IModalRef } from 'components/Modal';
 
-export interface IConfigProps extends BasicProps {
-    initialLanguages: Array<Language>;
-}
+const Config: React.FC = () => {
+    const dispatch = useDispatch();
+    const initialLanguages = useSelector((state: RootState) => state.dict.languages);
 
-export interface IState {
-    languages: Array<Language>;
-}
+    const modalRef = React.useRef<IModalRef>(null);
+    const [languages, setLanguages] = React.useState<Array<Language>>(initialLanguages);
 
-class Config extends RootComponent<IConfigProps, IState>  {
+    React.useEffect(() => {
+        dispatch(DictActions.LoadLanguages() as any);
+    }, [dispatch]);
 
-    modalRef: React.RefObject<Modal | null>;
-    constructor(props: Readonly<IConfigProps>) {
-        super(props);
-        this.modalRef = React.createRef<Modal>();
-        this.state = {
-            languages: this.props.initialLanguages
-        }
-    }
+    React.useEffect(() => {
+        setLanguages(initialLanguages);
+    }, [initialLanguages]);
 
-    async componentDidMount() {
-        await this.invokeDispatchAsync(DictActions.LoadLanguages());
-    }
+    const openSetting = React.useCallback(async () => {
+        await dispatch(DictActions.LoadLanguages() as any);
+        modalRef.current?.openModal();
+    }, [dispatch]);
 
-    componentDidUpdate(prevProps: IConfigProps, prevState: IState) {
-        if (this.props.initialLanguages !== prevProps.initialLanguages &&
-            this.props.initialLanguages !== prevState.languages) {
-            this.setState({ languages: this.props.initialLanguages })
-        }
-    }
+    const deleteSearchItems = React.useCallback(async () => {
+        dispatch(DictActions.UpdateSearchItem([]) as any);
+        await dispatch(DictActions.ToggleSetting() as any);
+    }, [dispatch]);
 
-    openSetting = async () => {
-        await this.invokeDispatchAsync(DictActions.LoadLanguages());
-        this.modalRef.current?.openModal();
-    }
-
-    async deleteSearchItems() {
-        this.invokeDispatchAsync(DictActions.UpdateSearchItem([]));
-        await this.invokeDispatchAsync(DictActions.ToggleSetting())
-    }
-
-    async exportWords() {
+    const exportWords = React.useCallback(async () => {
         const fs = window.require('fs-extra');
         const searchItems = await get<Array<SearchItem>>(Consts.searchItems, []);
         if (searchItems) {
@@ -69,124 +53,119 @@ class Config extends RootComponent<IConfigProps, IState>  {
                 }
             }
             alert('Words have saved in ' + fileName);
-            await this.invokeDispatchAsync(DictActions.ToggleSetting())
+            await dispatch(DictActions.ToggleSetting() as any);
         }
-    }
+    }, [dispatch]);
 
-    openHowToUse = async () => {
+    const openHowToUse = React.useCallback(async () => {
         const { shell } = window.require('electron');
         const url = 'https://bryht.github.io/dian';
         shell.openExternal(url);
-        await this.invokeDispatchAsync(DictActions.ToggleSetting())
-    }
+        await dispatch(DictActions.ToggleSetting() as any);
+    }, [dispatch]);
 
-    onUsedLanguageChange = (culture: string, checked: boolean) => {
-        const { languages } = this.state;
-        languages.forEach(item => {
-            if (item.culture === culture) {
-                item.isUsed = !checked;
-                if (languages.filter(p => p.isUsed).length < 2) {
-                    item.isUsed= checked;
-                    alert('Need choose at least 2 language');
+    const onUsedLanguageChange = React.useCallback((culture: string, newIsUsed: boolean) => {
+        setLanguages(prevLanguages => {
+            // Check if we would have at least 2 languages after this change
+            const wouldHaveTwoLanguages = prevLanguages.filter(p => 
+                p.culture === culture ? newIsUsed : p.isUsed
+            ).length >= 2;
+            
+            if (!wouldHaveTwoLanguages) {
+                alert('Need choose at least 2 language');
+                return prevLanguages; // Return unchanged
+            }
+
+            return prevLanguages.map(item => {
+                if (item.culture === culture) {
+                    return { ...item, isUsed: newIsUsed };
                 }
-            }
+                return item;
+            });
         });
-        
-        this.setState({ languages });
-    }
+    }, []);
 
-    onLanguageDetailLinkChanged = (culture: string, value: string) => {
-        const { languages } = this.state;
-        languages.forEach(item => {
-            item.isSelected = item.culture === culture;
-            if (item.isSelected) {
-                item.detailLink = value;
-            }
+    const onLanguageDetailLinkChanged = React.useCallback((culture: string, value: string) => {
+        setLanguages(prevLanguages => {
+            return prevLanguages.map(item => ({
+                ...item,
+                isSelected: item.culture === culture,
+                detailLink: item.culture === culture ? value : item.detailLink
+            }));
         });
-        this.setState({ languages });
+    }, []);
+
+    const saveConfig = React.useCallback(async () => {
+        await dispatch(DictActions.UpdateLanguages(languages) as any);
+        modalRef.current?.closeModal();
+    }, [languages, dispatch]);
+
+    const resetConfig = React.useCallback(async () => {
+        await dispatch(DictActions.UpdateLanguages([]) as any);
+        await dispatch(DictActions.LoadLanguages() as any);
+        modalRef.current?.closeModal();
+    }, [dispatch]);
+
+    const modalClosed = React.useCallback(async () => {
+        await dispatch(DictActions.ToggleSetting() as any);
+    }, [dispatch]);
+
+
+    const selectedLanguage = languages.find(p => p.isSelected);
+
+    if (!selectedLanguage) {
+        return null;
     }
 
-    saveConfig = async () => {
-        const { languages } = this.state;
-        await this.invokeDispatchAsync(DictActions.UpdateLanguages(languages));
-        this.modalRef.current?.closeModal();
-    }
-
-   
-    resetConfig = async () => {
-        await this.invokeDispatchAsync(DictActions.UpdateLanguages([]));
-        await this.invokeDispatchAsync(DictActions.LoadLanguages());
-        this.modalRef.current?.closeModal();
-    }
-
-    modalClosed =async () => {
-        await this.invokeDispatchAsync(DictActions.ToggleSetting())
-    }
-
-
-    public render() {
-        const { languages } = this.state;
-        const selectedLanguage = languages.find(p => p.isSelected);
-
-        if (!selectedLanguage) {
-            return '';
-        }
-
-        return (
-            <div className="btn-group-vertical">
-                <button type="button" className="btn btn-outline-secondary" onClick={() => this.openSetting()}>
-                    Setting
-                </button>
-                <button type="button" className="btn btn-outline-secondary" onClick={() => this.exportWords()}>
-                    Export
-                </button>
-                <button type="button" className="btn btn-outline-danger" onClick={() => this.deleteSearchItems()}>
-                    DeleteAll
-                </button>
-                <button type="button" className="btn btn-outline-secondary" onClick={() => this.openHowToUse()}>
-                    How To Use
-                </button >
-                <Modal ref={this.modalRef} onModalClosed={()=>this.modalClosed}>
-                    <h5>Config language and detail link</h5>
-                    <div className="d-flex flex-wrap">
-                        {
-                            languages.map(l =>
-                                l.isUsed ?
-                                    <div key={l.culture} className="input-group mb-1">
-                                        <div className="input-group-text">
-                                            <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onChange={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
-                                                <label className="form-check-label">{l.cultureName}</label>
-                                            </div>
-                                        </div>
-                                        <input type="text" className="form-control" onChange={e => this.onLanguageDetailLinkChanged(l.culture, e.target.value)} value={l.detailLink}></input>
-                                    </div>
-                                    :
-                                    <div key={l.culture} className="m-1">
-                                        <div className="input-group-text">
-                                            <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onChange={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
-                                                <label className="form-check-label">{l.cultureName}</label>
-                                            </div>
+    return (
+        <div className="btn-group-vertical">
+            <button type="button" className="btn btn-outline-secondary" onClick={openSetting}>
+                Setting
+            </button>
+            <button type="button" className="btn btn-outline-secondary" onClick={exportWords}>
+                Export
+            </button>
+            <button type="button" className="btn btn-outline-danger" onClick={deleteSearchItems}>
+                DeleteAll
+            </button>
+            <button type="button" className="btn btn-outline-secondary" onClick={openHowToUse}>
+                How To Use
+            </button >
+            <Modal ref={modalRef} onModalClosed={modalClosed}>
+                <h5>Config language and detail link</h5>
+                <div className="d-flex flex-wrap">
+                    {
+                        languages.map(l =>
+                            l.isUsed ?
+                                <div key={l.culture} className="input-group mb-1">
+                                    <div className="input-group-text">
+                                        <div className="form-check form-switch">
+                                            <input className="form-check-input" type="checkbox" onChange={e => onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                            <label className="form-check-label">{l.cultureName}</label>
                                         </div>
                                     </div>
+                                    <input type="text" className="form-control" onChange={e => onLanguageDetailLinkChanged(l.culture, e.target.value)} value={l.detailLink}></input>
+                                </div>
+                                :
+                                <div key={l.culture} className="m-1">
+                                    <div className="input-group-text">
+                                        <div className="form-check form-switch">
+                                            <input className="form-check-input" type="checkbox" onChange={e => onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                            <label className="form-check-label">{l.cultureName}</label>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            )
-                        }
-                    </div>
-                    <div className="d-flex justify-content-end">
-                        <button type="button" onClick={this.resetConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
-                        <button type="button" onClick={this.saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
-                    </div>
-                </Modal>
-            </div>
-        );
-    }
-}
-export function mapStateToProps(state: RootState) {
-    return {
-        initialLanguages: state.dict.languages,
-        ...mapRootStateToProps(state)
-    }
-}
-export default connect(mapStateToProps)(Config);
+                        )
+                    }
+                </div>
+                <div className="d-flex justify-content-end">
+                    <button type="button" onClick={resetConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
+                    <button type="button" onClick={saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
+                </div>
+            </Modal>
+        </div>
+    );
+};
+
+export default Config;
