@@ -91,6 +91,15 @@ ipcMain.handle('open-external-url', async (event, url) => {
     return { success: true };
 });
 
+// Handle window minimize
+ipcMain.handle('minimize-window', async (event) => {
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+        focusedWindow.minimize();
+    }
+    return { success: true };
+});
+
 ipcMain.on('play-audio', async (event, info) => {
     try {
         console.log('Playing audio for:', info);

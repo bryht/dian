@@ -25,9 +25,8 @@ const Basic: React.FC<IBasicProps> = ({ searching, setting }) => {
             }
         };
 
-        const miniMize = () => {
-            const remote = window.require('@electron/remote');
-            remote.BrowserWindow.getFocusedWindow().minimize();
+        const miniMize = async () => {
+            await ipcRenderer.invoke('minimize-window');
         };
 
         ipcRenderer.on('input-message', handleInputMessage);
