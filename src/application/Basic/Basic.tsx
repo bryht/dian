@@ -1,74 +1,75 @@
 import * as React from 'react';
 import './Basic.scss';
-import { mapRootStateToProps, RootComponent } from 'core/RootComponent/RootComponent';
 import { RootState } from 'core/Store';
-import { BasicProps } from 'core/RootComponent/BasicProps';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Mousetrap from 'mousetrap';
-import { BasicState } from 'core/RootComponent/BasicState';
-const { remote,ipcRenderer } = window.require('electron');
 
-export interface IBasicProps extends BasicProps {
+export interface IBasicProps {
     searching: any;
     setting: any;
-    isSettingOpened?: boolean;
-
 }
-export interface IBasicStates extends BasicState {
-}
-class Basic extends RootComponent<IBasicProps, IBasicStates> {
 
-    async componentDidMount() {
+const Basic: React.FC<IBasicProps> = ({ searching, setting }) => {
+    const isSettingOpened = useSelector((state: RootState) => state.dict.isSettingOpened);
 
-        ipcRenderer.on('input-message', (event:any, message:any) => {
-            if (message==="focus") {
+    React.useEffect(() => {
+        const { ipcRenderer } = window.require('electron');
+
+        const handleInputMessage = (event: any, message: any) => {
+            if (message === "focus") {
                 const word = document.querySelector('#word') as HTMLInputElement;
+                if (word) {
+                    word.focus();
+                    word.value = '';
+                }
+            }
+        };
+
+        const miniMize = async () => {
+            await ipcRenderer.invoke('minimize-window');
+        };
+
+        ipcRenderer.on('input-message', handleInputMessage);
+
+        Mousetrap.bind('esc', () => {
+            const webview = document.querySelector('#webview') as HTMLElement;
+            if (!webview) {
+                miniMize();
+            }
+        });
+
+        Mousetrap.bind(['command+f', 'ctrl+f'], () => {
+            const word = document.querySelector('#word') as HTMLInputElement;
+            if (word) {
                 word.focus();
                 word.value = '';
             }
-          })
-        Mousetrap.bind('esc', () => { 
-            const webview=document.querySelector('#webview') as HTMLWebViewElement;
-            if (webview==null) {
-                this.miniMize();
-            }
         });
 
-        Mousetrap.bind(['command+f', 'ctrl+f'], e => {
-            const word = document.querySelector('#word') as HTMLInputElement;
-            word.focus();
-            word.value = '';
-        })
-
-        Mousetrap.bind('J', function () {
+        Mousetrap.bind('J', () => {
             window.scrollTo(window.scrollX, window.scrollY + 20);
         });
-        Mousetrap.bind('K', function () {
+
+        Mousetrap.bind('K', () => {
             window.scrollTo(window.scrollX, window.scrollY - 20);
         });
 
-    }
-    miniMize() {
-        remote.BrowserWindow.getFocusedWindow().minimize();
-    }
-    
-    public render() {
-        const { isSettingOpened } = this.props;
-        return (
-            <div className={isSettingOpened ? 'wrapper toggled' : 'wrapper'}>
-                <div className="content">
-                    {this.props.searching}
-                </div>
-                <div id="sidebar" className="sidebar">
-                    {this.props.setting}
-                </div>
-            </div>
-        );
-    }
-}
+        return () => {
+            ipcRenderer.removeListener('input-message', handleInputMessage);
+            Mousetrap.unbind(['esc', 'command+f', 'ctrl+f', 'J', 'K']);
+        };
+    }, []);
 
-const mapStateToProps = (state: RootState) => ({
-    isSettingOpened: state.dict.isSettingOpened,
-    ...mapRootStateToProps(state),
-})
-export default connect(mapStateToProps)(Basic)
+    return (
+        <div className={isSettingOpened ? 'wrapper toggled' : 'wrapper'}>
+            <div className="content">
+                {searching}
+            </div>
+            <div id="sidebar" className="sidebar">
+                {setting}
+            </div>
+        </div>
+    );
+};
+
+export default Basic;

@@ -1,41 +1,24 @@
-// Required
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/mixins";
-
-// Your variable overrides
-$success:#fafcf3;
-$primary:#61abf1;
-
-$theme-colors: (
-  "primary":    $primary,
-  "secondary":  $secondary,
-  "success":    $success,
-  "info":       $info,
-  "warning":    $warning,
-  "danger":     $danger,
-  "light":      $light,
-  "dark":       $dark
-);
-
+// Your variable overrides - must be defined before importing Bootstrap
+$success: #fafcf3;
+$primary: #61abf1;
 $h6-font-size: 12px;
-$font-sizes: (
-  1: $h1-font-size,
-  2: $h2-font-size,
-  3: $h3-font-size,
-  4: $h4-font-size,
-  5: $h5-font-size,
-  6: $h6-font-size
-);
-
 $input-focus-box-shadow: none;
 $input-box-shadow: none;
-$btn-focus-width:0;
+$btn-focus-width: 0;
 $btn-close-focus-shadow: none;
 $btn-focus-box-shadow: none;
 
-// Bootstrap and its default variables
-@import 'bootstrap';
+// Import Bootstrap with custom variables
+@use "bootstrap/scss/bootstrap" with (
+  $primary: $primary,
+  $success: $success,
+  $h6-font-size: $h6-font-size,
+  $input-focus-box-shadow: $input-focus-box-shadow,
+  $input-box-shadow: $input-box-shadow,
+  $btn-focus-width: $btn-focus-width,
+  $btn-close-focus-shadow: $btn-close-focus-shadow,
+  $btn-focus-box-shadow: $btn-focus-box-shadow
+);
 
 // scroll bar style
 ::-webkit-scrollbar {

@@ -1,8 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import { RootComponent, mapRootStateToProps } from 'core/RootComponent/RootComponent';
-import { BasicProps } from 'core/RootComponent/BasicProps';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'components/Modal';
 import { Language } from 'application/Models/Language';
 import { get } from 'core/Utils/Storage';
@@ -11,183 +9,178 @@ import Consts from 'application/Const';
 import { Filter, File } from 'core/Utils/File';
 import { DictActions } from 'application/DictRedux';
 import { RootState } from 'core/Store';
+import type { IModalRef } from 'components/Modal';
 
-const fs = window.require('fs-extra');
-const { shell } = window.require('electron');
+const Config: React.FC = () => {
+    const dispatch = useDispatch();
+    const initialLanguages = useSelector((state: RootState) => state.dict.languages);
+    const searchItems = useSelector((state: RootState) => state.dict.searchItems ?? []);
 
-export interface IConfigProps extends BasicProps {
-    initialLanguages: Array<Language>;
-}
+    const modalRef = React.useRef<IModalRef>(null);
+    const [languages, setLanguages] = React.useState<Array<Language>>(initialLanguages);
 
-export interface IState {
-    languages: Array<Language>;
-}
+    React.useEffect(() => {
+        dispatch(DictActions.LoadLanguages() as any);
+    }, [dispatch]);
 
-class Config extends RootComponent<IConfigProps, IState>  {
+    React.useEffect(() => {
+        setLanguages(initialLanguages);
+    }, [initialLanguages]);
 
-    modalRef: React.RefObject<Modal>;
-    constructor(props: Readonly<IConfigProps>) {
-        super(props);
-        this.modalRef = React.createRef<Modal>();
-        this.state = {
-            languages: this.props.initialLanguages
-        }
-    }
+    const openSetting = React.useCallback(async () => {
+        await dispatch(DictActions.LoadLanguages() as any);
+        modalRef.current?.openModal();
+    }, [dispatch]);
 
-    async componentDidMount() {
-        await this.invokeDispatchAsync(DictActions.LoadLanguages());
-    }
+    const deleteSearchItems = React.useCallback(async () => {
+        dispatch(DictActions.UpdateSearchItem([]) as any);
+        await dispatch(DictActions.ToggleSetting() as any);
+    }, [dispatch]);
 
-    componentDidUpdate(prevProps: IConfigProps, prevState: IState) {
-        if (this.props.initialLanguages !== prevProps.initialLanguages &&
-            this.props.initialLanguages !== prevState.languages) {
-            this.setState({ languages: this.props.initialLanguages })
-        }
-    }
-
-    openSetting = async () => {
-        await this.invokeDispatchAsync(DictActions.LoadLanguages());
-        this.modalRef.current?.openModal();
-    }
-
-    async deleteSearchItems() {
-        this.invokeDispatchAsync(DictActions.UpdateSearchItem([]));
-        await this.invokeDispatchAsync(DictActions.ToggleSetting())
-    }
-
-    async exportWords() {
-        const searchItems = await get<Array<SearchItem>>(Consts.searchItems, []);
-        if (searchItems) {
+    const exportWords = React.useCallback(async () => {
+        const { ipcRenderer } = window.require('electron');
+        if (searchItems && searchItems.length > 0) {
             const fileName = await File.openFile('SaveWords', 'WordList', Filter.csv);
             if (!fileName) {
                 return false;
             }
-            await fs.appendFileSync(fileName, Buffer.from(`\uFEFF`));
-
-            for (let index = 0; index < searchItems.length; index++) {
-                const element = searchItems[index];
-                if (SearchItem.isPhrase(element.words) === false) {
-                    await fs.appendFileSync(fileName, Buffer.from(`${element.words.map(x => x.text).join(";")}\r\n`));
-                }
+            
+            const filteredItems = searchItems.filter(element => !SearchItem.isPhrase(element.words));
+            console.log('Total items:', searchItems.length, 'Filtered items:', filteredItems.length);
+            
+            if (filteredItems.length === 0) {
+                alert('No non-phrase words to export!');
+                await dispatch(DictActions.ToggleSetting() as any);
+                return;
             }
-            alert('Words have saved in ' + fileName);
-            await this.invokeDispatchAsync(DictActions.ToggleSetting())
+            
+            const csvData = filteredItems
+                .map(element => element.words.map(x => x.text).join(";"))
+                .join("\r\n") + "\r\n";
+            
+            console.log('CSV Data length:', csvData.length);
+            
+            const result = await ipcRenderer.invoke('export-words', { fileName, csvData });
+            if (result.success) {
+                alert('Words have saved in ' + fileName);
+            } else {
+                alert('Failed to save words: ' + result.error);
+            }
+            await dispatch(DictActions.ToggleSetting() as any);
+        } else {
+            alert('No search items to export!');
         }
-    }
+    }, [searchItems, dispatch]);
 
-    openHowToUse = async () => {
+    const openHowToUse = React.useCallback(async () => {
+        const { ipcRenderer } = window.require('electron');
         const url = 'https://bryht.github.io/dian';
-        shell.openExternal(url);
-        await this.invokeDispatchAsync(DictActions.ToggleSetting())
-    }
+        await ipcRenderer.invoke('open-external-url', url);
+        await dispatch(DictActions.ToggleSetting() as any);
+    }, [dispatch]);
 
-    onUsedLanguageChange = (culture: string, checked: boolean) => {
-        const { languages } = this.state;
-        languages.forEach(item => {
-            if (item.culture === culture) {
-                item.isUsed = !checked;
-                if (languages.filter(p => p.isUsed).length < 2) {
-                    item.isUsed= checked;
-                    alert('Need choose at least 2 language');
+    const onUsedLanguageChange = React.useCallback((culture: string, newIsUsed: boolean) => {
+        setLanguages(prevLanguages => {
+            // Check if we would have at least 2 languages after this change
+            const wouldHaveTwoLanguages = prevLanguages.filter(p => 
+                p.culture === culture ? newIsUsed : p.isUsed
+            ).length >= 2;
+            
+            if (!wouldHaveTwoLanguages) {
+                alert('Need choose at least 2 language');
+                return prevLanguages; // Return unchanged
+            }
+
+            return prevLanguages.map(item => {
+                if (item.culture === culture) {
+                    return { ...item, isUsed: newIsUsed };
                 }
-            }
+                return item;
+            });
         });
-        
-        this.setState({ languages });
-    }
+    }, []);
 
-    onLanguageDetailLinkChanged = (culture: string, value: string) => {
-        const { languages } = this.state;
-        languages.forEach(item => {
-            item.isSelected = item.culture === culture;
-            if (item.isSelected) {
-                item.detailLink = value;
-            }
+    const onLanguageDetailLinkChanged = React.useCallback((culture: string, value: string) => {
+        setLanguages(prevLanguages => {
+            return prevLanguages.map(item => ({
+                ...item,
+                isSelected: item.culture === culture,
+                detailLink: item.culture === culture ? value : item.detailLink
+            }));
         });
-        this.setState({ languages });
+    }, []);
+
+    const saveConfig = React.useCallback(async () => {
+        await dispatch(DictActions.UpdateLanguages(languages) as any);
+        modalRef.current?.closeModal();
+    }, [languages, dispatch]);
+
+    const resetConfig = React.useCallback(async () => {
+        await dispatch(DictActions.UpdateLanguages([]) as any);
+        await dispatch(DictActions.LoadLanguages() as any);
+        modalRef.current?.closeModal();
+    }, [dispatch]);
+
+    const modalClosed = React.useCallback(async () => {
+        await dispatch(DictActions.ToggleSetting() as any);
+    }, [dispatch]);
+
+
+    const selectedLanguage = languages.find(p => p.isSelected);
+
+    if (!selectedLanguage) {
+        return null;
     }
 
-    saveConfig = async () => {
-        const { languages } = this.state;
-        await this.invokeDispatchAsync(DictActions.UpdateLanguages(languages));
-        this.modalRef.current?.closeModal();
-    }
-
-   
-    resetConfig = async () => {
-        await this.invokeDispatchAsync(DictActions.UpdateLanguages([]));
-        await this.invokeDispatchAsync(DictActions.LoadLanguages());
-        this.modalRef.current?.closeModal();
-    }
-
-    modalClosed =async () => {
-        await this.invokeDispatchAsync(DictActions.ToggleSetting())
-    }
-
-
-    public render() {
-        const { languages } = this.state;
-        const selectedLanguage = languages.find(p => p.isSelected);
-
-        if (!selectedLanguage) {
-            return '';
-        }
-
-        return (
-            <div className="btn-group-vertical">
-                <button type="button" className="btn btn-outline-secondary" onClick={() => this.openSetting()}>
-                    Setting
-                </button>
-                <button type="button" className="btn btn-outline-secondary" onClick={() => this.exportWords()}>
-                    Export
-                </button>
-                <button type="button" className="btn btn-outline-danger" onClick={() => this.deleteSearchItems()}>
-                    DeleteAll
-                </button>
-                <button type="button" className="btn btn-outline-secondary" onClick={() => this.openHowToUse()}>
-                    How To Use
-                </button >
-                <Modal ref={this.modalRef} onModalClosed={()=>this.modalClosed}>
-                    <h5>Config language and detail link</h5>
-                    <div className="d-flex flex-wrap">
-                        {
-                            languages.map(l =>
-                                l.isUsed ?
-                                    <div key={l.culture} className="input-group mb-1">
-                                        <div className="input-group-text">
-                                            <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
-                                                <label className="form-check-label">{l.cultureName}</label>
-                                            </div>
-                                        </div>
-                                        <input type="text" className="form-control" onChange={e => this.onLanguageDetailLinkChanged(l.culture, e.target.value)} value={l.detailLink}></input>
-                                    </div>
-                                    :
-                                    <div key={l.culture} className="m-1">
-                                        <div className="input-group-text">
-                                            <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
-                                                <label className="form-check-label">{l.cultureName}</label>
-                                            </div>
+    return (
+        <div className="btn-group-vertical">
+            <button type="button" className="btn btn-outline-secondary" onClick={openSetting}>
+                Setting
+            </button>
+            <button type="button" className="btn btn-outline-secondary" onClick={exportWords}>
+                Export
+            </button>
+            <button type="button" className="btn btn-outline-danger" onClick={deleteSearchItems}>
+                DeleteAll
+            </button>
+            <button type="button" className="btn btn-outline-secondary" onClick={openHowToUse}>
+                How To Use
+            </button >
+            <Modal ref={modalRef} onModalClosed={modalClosed}>
+                <h5>Config language and detail link</h5>
+                <div className="d-flex flex-wrap">
+                    {
+                        languages.map(l =>
+                            l.isUsed ?
+                                <div key={l.culture} className="input-group mb-1">
+                                    <div className="input-group-text">
+                                        <div className="form-check form-switch">
+                                            <input className="form-check-input" type="checkbox" onChange={e => onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                            <label className="form-check-label">{l.cultureName}</label>
                                         </div>
                                     </div>
+                                    <input type="text" className="form-control" onChange={e => onLanguageDetailLinkChanged(l.culture, e.target.value)} value={l.detailLink}></input>
+                                </div>
+                                :
+                                <div key={l.culture} className="m-1">
+                                    <div className="input-group-text">
+                                        <div className="form-check form-switch">
+                                            <input className="form-check-input" type="checkbox" onChange={e => onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                            <label className="form-check-label">{l.cultureName}</label>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            )
-                        }
-                    </div>
-                    <div className="d-flex justify-content-end">
-                        <button type="button" onClick={this.resetConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
-                        <button type="button" onClick={this.saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
-                    </div>
-                </Modal>
-            </div>
-        );
-    }
-}
-export function mapStateToProps(state: RootState) {
-    return {
-        initialLanguages: state.dict.languages,
-        ...mapRootStateToProps(state)
-    }
-}
-export default connect(mapStateToProps)(Config);
+                        )
+                    }
+                </div>
+                <div className="d-flex justify-content-end">
+                    <button type="button" onClick={resetConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
+                    <button type="button" onClick={saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
+                </div>
+            </Modal>
+        </div>
+    );
+};
+
+export default Config;

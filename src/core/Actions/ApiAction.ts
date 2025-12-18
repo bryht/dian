@@ -1,25 +1,32 @@
 import { Action } from "redux";
 import { StatesAction } from "./StatesAction";
-export class ApiAction<Type> implements Action {
-  constructor(url: string, method: string = 'GET', onSuccessType: Type | null = null, onStartType: Type | null) {
+
+export class ApiAction<Type extends string = string> implements Action {
+  constructor(url: string, method: string = 'GET', onSuccessType?: Type, onStartType?: Type) {
     this.url = url;
-    this.onStart.type = onStartType;
-    this.onSuccess.type = onSuccessType;
     this.method = method;
+    if (onStartType) {
+      this.onStart = { type: onStartType };
+    }
+    if (onSuccessType) {
+      this.onSuccess = { type: onSuccessType };
+    }
   }
-  result: any;
-  body: any;
+  result: unknown;
+  body: unknown;
   url: string | null;
   type: string = 'api';
-  private _value: any | null = null;
-  get value(): any | null {
+  private _value: unknown = null;
+  get value(): unknown {
     return this._value;
   }
-  set value(newValue: any) {
+  set value(newValue: unknown) {
     this._value = newValue;
-    this.onSuccess.payload = newValue;
+    if (this.onSuccess) {
+      this.onSuccess.payload = newValue;
+    }
   }
   public method: string = '';
-  onStart: StatesAction<Type> = { type: null, payload: null };
-  onSuccess: StatesAction<Type> = { type: null, payload: null };
+  onStart?: StatesAction<Type>;
+  onSuccess?: StatesAction<Type>;
 }

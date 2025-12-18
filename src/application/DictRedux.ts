@@ -1,6 +1,6 @@
 import { Language, languages } from "application/Models/Language";
 import { StorageType } from "core/Models/StorageType";
-import { Reducer } from "redux";
+import { Reducer, UnknownAction } from "redux";
 import { StatesAction } from "core/Actions/StatesAction";
 import { StorageAction } from "core/Actions/StorageAction";
 import Consts from "./Const";
@@ -47,9 +47,10 @@ export class DictActions {
 
     static LoadLanguages(): StorageAction<DictActionType> {
         return new StorageAction(Consts.languages, StorageType.Get, [], (result) => {
+            const languageArray = result as Language[];
             return ({
                 type: DictActionType.LoadLanguages,
-                payload: (result && result.length > 0) ? result : languages
+                payload: (languageArray && languageArray.length > 0) ? languageArray : languages
             })
         })
     }
@@ -66,18 +67,19 @@ export class DictActions {
 
 }
 
-export const DictReducer: Reducer<DictStates, StatesAction<DictActionType>> = (state = new DictStates(), action) => {
-    switch (action.type) {
+export const DictReducer: Reducer<DictStates, UnknownAction> = (state = new DictStates(), action) => {
+    const dictAction = action as StatesAction<DictActionType>;
+    switch (dictAction.type) {
         case DictActionType.ToggleSetting:
             return { ...state, isSettingOpened: !state.isSettingOpened }
         case DictActionType.LoadSearchItems:
-            return { ...state, searchItems: action.payload }
+            return { ...state, searchItems: dictAction.payload as SearchItem[] }
         case DictActionType.UpdateSearchItems:
-            return { ...state, searchItems: action.payload }
+            return { ...state, searchItems: dictAction.payload as SearchItem[] }
         case DictActionType.LoadLanguages:
-            return { ...state, languages: action.payload }
+            return { ...state, languages: dictAction.payload as Language[] }
         case DictActionType.UpdateLanguages:
-            return { ...state, languages: action.payload }
+            return { ...state, languages: dictAction.payload as Language[] }
     }
     return state;
 };
