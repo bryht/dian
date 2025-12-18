@@ -155,7 +155,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                                     <div key={l.culture} className="input-group mb-1">
                                         <div className="input-group-text">
                                             <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                                <input className="form-check-input" type="checkbox" onChange={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
                                                 <label className="form-check-label">{l.cultureName}</label>
                                             </div>
                                         </div>
@@ -165,7 +165,7 @@ class Config extends RootComponent<IConfigProps, IState>  {
                                     <div key={l.culture} className="m-1">
                                         <div className="input-group-text">
                                             <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onInput={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
+                                                <input className="form-check-input" type="checkbox" onChange={e => this.onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
                                                 <label className="form-check-label">{l.cultureName}</label>
                                             </div>
                                         </div>

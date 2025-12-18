@@ -13,21 +13,31 @@ async function loadWordsAsync(culture: string, search: string, count: number) {
     }
     
     if (!cache.find(x => x.culture === culture)) {
-        try {
-            const res = await fetch(`/resources/${culture}.txt`);
-            if (!res.ok) {
-                console.error(`Failed to load words for culture ${culture}, status: ${res.status}`);
+            let txt: string | null = null;
+            // Try HTTP fetch first (dev server)
+            try {
+                console.log(`[loadWordsAsync] fetching /resources/${culture}.txt`);
+                const res = await fetch(`https://raw.githubusercontent.com/bryht/dian/master/public/resources/${culture}.txt`);
+                if (res.ok) {
+                    txt = await res.text();
+                } else {
+                    console.warn(`[loadWordsAsync] HTTP ${res.status} for /resources/${culture}.txt`);
+                }
+            } catch (error) {
+                console.warn(`[loadWordsAsync] HTTP fetch failed for /resources/${culture}.txt:`, error);
+            }
+
+            if (txt == null) {
+                console.error(`[loadWordsAsync] Unable to load words for culture ${culture} from HTTP or filesystem.`);
                 return [];
             }
-            const txt = await res.text();
+
             cache.push({
                 culture: culture,
                 words: txt.split('\n').map(w => w.trim()).filter(w => w.length > 0)
-            })
-        } catch (error) {
-            console.error(`Failed to load words for culture ${culture}:`, error);
-            return [];
-        }
+            });
+            const added = cache.find(x => x.culture === culture)?.words.length || 0;
+            console.log(`[loadWordsAsync] loaded ${added} words for ${culture}`);
     }
     
     const searchLower = search.toLowerCase();

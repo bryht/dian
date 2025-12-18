@@ -30,7 +30,7 @@ export interface ISearchStates extends BasicState {
 
 }
 
-class Search extends RootComponent<ISearchProps, ISearchStates>  {
+class Search extends RootComponent<ISearchProps, ISearchStates> {
 
     wordHtmlRef: React.RefObject<WordHtml | null>;
     typeInputRef: React.RefObject<AutoCompleteInput | null>;
@@ -105,7 +105,8 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
 
     async onTypedValueChanged(typedValue: string) {
         const { currentLanguage } = this.state;
-        let culture = await getCulture(typedValue) || currentLanguage.culture;
+        let detected = await getCulture(typedValue);
+        let culture = (detected && ['de', 'en', 'es', 'fr', 'it', 'ja', 'ko', 'nl', 'pt', 'ru', 'zh'].includes(detected)) ? detected : currentLanguage.culture;
 
         const splits = ['/', '\\', ',', '-'];
         splits.forEach(split => {
@@ -171,7 +172,7 @@ class Search extends RootComponent<ISearchProps, ISearchStates>  {
                         <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{currentLanguage.cultureName}</button>
                         <ul className="dropdown-menu">
                             {
-                                languages.map(l => <li key={l.culture}><a className="dropdown-item" href="#" onClick={()=>this.changeCurrentLanguage(l)}>{l.cultureName}&nbsp;&nbsp;(/{l.culture})</a></li>)
+                                languages.map(l => <li key={l.culture}><a className="dropdown-item" href="#" onClick={() => this.changeCurrentLanguage(l)}>{l.cultureName}&nbsp;&nbsp;(/{l.culture})</a></li>)
                             }
                         </ul>
                         <AutoCompleteInput
