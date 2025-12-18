@@ -17,7 +17,7 @@ export interface IProps {
 
 class AutoCompleteInput extends Component<IProps, { isShowDropdown: boolean, typedValue: string, selectedOption: string }> {
 
-    inputRef: RefObject<HTMLInputElement>;
+    inputRef: RefObject<HTMLInputElement | null>;
     constructor(props: Readonly<IProps>) {
         super(props);
         this.inputRef = React.createRef<HTMLInputElement>();
