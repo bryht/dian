@@ -6,15 +6,12 @@ export enum Filter {
 
 export class File {
     static async openFile(title: string, defaultPath: string, filter: Filter) {
-        const { remote } = window.require('electron');
-        var win = remote.getCurrentWindow();
-        const result = await remote.dialog.showSaveDialog(win, {
-            'title': title,
-            'defaultPath': defaultPath + '-' + Date.now(),
-            'filters': [{ 'name': filter, 'extensions': [filter] }],
-            'buttonLabel': 'Save'
+        const { ipcRenderer } = window.require('electron');
+        const fileName = await ipcRenderer.invoke('show-save-dialog', {
+            title,
+            defaultPath,
+            filter
         });
-        const fileName = result.filePath;
         if (fileName === undefined) {
             return false;
         }

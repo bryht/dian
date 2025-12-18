@@ -14,6 +14,7 @@ import type { IModalRef } from 'components/Modal';
 const Config: React.FC = () => {
     const dispatch = useDispatch();
     const initialLanguages = useSelector((state: RootState) => state.dict.languages);
+    const searchItems = useSelector((state: RootState) => state.dict.searchItems ?? []);
 
     const modalRef = React.useRef<IModalRef>(null);
     const [languages, setLanguages] = React.useState<Array<Language>>(initialLanguages);
@@ -37,30 +38,44 @@ const Config: React.FC = () => {
     }, [dispatch]);
 
     const exportWords = React.useCallback(async () => {
-        const fs = window.require('fs-extra');
-        const searchItems = await get<Array<SearchItem>>(Consts.searchItems, []);
-        if (searchItems) {
+        const { ipcRenderer } = window.require('electron');
+        if (searchItems && searchItems.length > 0) {
             const fileName = await File.openFile('SaveWords', 'WordList', Filter.csv);
             if (!fileName) {
                 return false;
             }
-            await fs.appendFileSync(fileName, Buffer.from(`\uFEFF`));
-
-            for (let index = 0; index < searchItems.length; index++) {
-                const element = searchItems[index];
-                if (SearchItem.isPhrase(element.words) === false) {
-                    await fs.appendFileSync(fileName, Buffer.from(`${element.words.map(x => x.text).join(";")}\r\n`));
-                }
+            
+            const filteredItems = searchItems.filter(element => !SearchItem.isPhrase(element.words));
+            console.log('Total items:', searchItems.length, 'Filtered items:', filteredItems.length);
+            
+            if (filteredItems.length === 0) {
+                alert('No non-phrase words to export!');
+                await dispatch(DictActions.ToggleSetting() as any);
+                return;
             }
-            alert('Words have saved in ' + fileName);
+            
+            const csvData = filteredItems
+                .map(element => element.words.map(x => x.text).join(";"))
+                .join("\r\n") + "\r\n";
+            
+            console.log('CSV Data length:', csvData.length);
+            
+            const result = await ipcRenderer.invoke('export-words', { fileName, csvData });
+            if (result.success) {
+                alert('Words have saved in ' + fileName);
+            } else {
+                alert('Failed to save words: ' + result.error);
+            }
             await dispatch(DictActions.ToggleSetting() as any);
+        } else {
+            alert('No search items to export!');
         }
-    }, [dispatch]);
+    }, [searchItems, dispatch]);
 
     const openHowToUse = React.useCallback(async () => {
-        const { shell } = window.require('electron');
+        const { ipcRenderer } = window.require('electron');
         const url = 'https://bryht.github.io/dian';
-        shell.openExternal(url);
+        await ipcRenderer.invoke('open-external-url', url);
         await dispatch(DictActions.ToggleSetting() as any);
     }, [dispatch]);
 

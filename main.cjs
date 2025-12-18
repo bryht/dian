@@ -60,6 +60,37 @@ ipcMain.on('message', (event, info, data) => {
     }
 })
 
+// Handle save dialog
+ipcMain.handle('show-save-dialog', async (event, { title, defaultPath, filter }) => {
+    const { dialog } = require('electron');
+    const result = await dialog.showSaveDialog(BrowserWindow.getFocusedWindow(), {
+        title: title,
+        defaultPath: defaultPath + '-' + Date.now(),
+        filters: [{ name: filter, extensions: [filter] }],
+        buttonLabel: 'Save'
+    });
+    return result.filePath;
+});
+
+// Handle export words to file
+ipcMain.handle('export-words', async (event, { fileName, csvData }) => {
+    try {
+        const fsExtra = require('fs-extra');
+        await fsExtra.writeFile(fileName, '\uFEFF' + csvData, 'utf8');
+        return { success: true };
+    } catch (error) {
+        console.error('Error exporting words:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Handle opening external URLs
+ipcMain.handle('open-external-url', async (event, url) => {
+    const { shell } = require('electron');
+    await shell.openExternal(url);
+    return { success: true };
+});
+
 ipcMain.on('play-audio', async (event, info) => {
     try {
         console.log('Playing audio for:', info);
