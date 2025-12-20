@@ -1,10 +1,8 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { StorageMiddleware } from 'core/Middlewares/StorageMiddleware';
-import { AuthReducer } from 'core/Authentication/AuthReducer';
 import { DictReducer } from 'application/DictRedux';
 
 const rootReducer = combineReducers({
-  system: AuthReducer,
   dict: DictReducer,
 });
 

@@ -3,9 +3,7 @@ import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'components/Modal';
 import { Language } from 'application/Models/Language';
-import { get } from 'core/Utils/Storage';
 import { SearchItem } from 'application/Models/SearchItem';
-import Consts from 'application/Const';
 import { Filter, File } from 'core/Utils/File';
 import { DictActions } from 'application/DictRedux';
 import { RootState } from 'core/Store';
@@ -33,23 +31,35 @@ const Config: React.FC = () => {
     }, [dispatch]);
 
     const deleteSearchItems = React.useCallback(async () => {
-        dispatch(DictActions.UpdateSearchItem([]) as any);
-        await dispatch(DictActions.ToggleSetting() as any);
-    }, [dispatch]);
+        if (!searchItems || searchItems.length === 0) {
+            alert('No search history to delete.');
+            return;
+        }
+        
+        if (window.confirm(`Are you sure you want to delete all ${searchItems.length} search history items? This action cannot be undone.`)) {
+            dispatch(DictActions.UpdateSearchItem([]) as any);
+            await dispatch(DictActions.ToggleSetting() as any);
+        }
+    }, [dispatch, searchItems]);
 
     const exportWords = React.useCallback(async () => {
-        const { ipcRenderer } = window.require('electron');
-        if (searchItems && searchItems.length > 0) {
+        if (!searchItems || searchItems.length === 0) {
+            alert('No search history available to export. Please search for some words first.');
+            return;
+        }
+
+        try {
+            const { ipcRenderer } = window.require('electron');
             const fileName = await File.openFile('SaveWords', 'WordList', Filter.csv);
+            
             if (!fileName) {
-                return false;
+                return;
             }
             
             const filteredItems = searchItems.filter(element => !SearchItem.isPhrase(element.words));
-            console.log('Total items:', searchItems.length, 'Filtered items:', filteredItems.length);
             
             if (filteredItems.length === 0) {
-                alert('No non-phrase words to export!');
+                alert(`All ${searchItems.length} items are phrases and cannot be exported. Only individual words can be exported.`);
                 await dispatch(DictActions.ToggleSetting() as any);
                 return;
             }
@@ -58,45 +68,50 @@ const Config: React.FC = () => {
                 .map(element => element.words.map(x => x.text).join(";"))
                 .join("\r\n") + "\r\n";
             
-            console.log('CSV Data length:', csvData.length);
-            
             const result = await ipcRenderer.invoke('export-words', { fileName, csvData });
+            
             if (result.success) {
-                alert('Words have saved in ' + fileName);
+                alert(`Successfully exported ${filteredItems.length} word(s) to:\n${fileName}`);
             } else {
-                alert('Failed to save words: ' + result.error);
+                alert(`Failed to export words: ${result.error || 'Unknown error'}`);
             }
+            
             await dispatch(DictActions.ToggleSetting() as any);
-        } else {
-            alert('No search items to export!');
+        } catch (error) {
+            console.error('Error exporting words:', error);
+            alert(`An error occurred while exporting: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }, [searchItems, dispatch]);
 
     const openHowToUse = React.useCallback(async () => {
-        const { ipcRenderer } = window.require('electron');
-        const url = 'https://bryht.github.io/dian';
-        await ipcRenderer.invoke('open-external-url', url);
-        await dispatch(DictActions.ToggleSetting() as any);
+        try {
+            const { ipcRenderer } = window.require('electron');
+            const url = 'https://bryht.github.io/dian';
+            await ipcRenderer.invoke('open-external-url', url);
+            await dispatch(DictActions.ToggleSetting() as any);
+        } catch (error) {
+            console.error('Error opening external URL:', error);
+            alert('Failed to open documentation. Please visit https://bryht.github.io/dian manually.');
+        }
     }, [dispatch]);
 
     const onUsedLanguageChange = React.useCallback((culture: string, newIsUsed: boolean) => {
         setLanguages(prevLanguages => {
             // Check if we would have at least 2 languages after this change
-            const wouldHaveTwoLanguages = prevLanguages.filter(p => 
+            const activeLanguagesCount = prevLanguages.filter(p => 
                 p.culture === culture ? newIsUsed : p.isUsed
-            ).length >= 2;
+            ).length;
             
-            if (!wouldHaveTwoLanguages) {
-                alert('Need choose at least 2 language');
-                return prevLanguages; // Return unchanged
+            if (activeLanguagesCount < 2) {
+                alert('Please select at least 2 languages.');
+                return prevLanguages;
             }
 
-            return prevLanguages.map(item => {
-                if (item.culture === culture) {
-                    return { ...item, isUsed: newIsUsed };
-                }
-                return item;
-            });
+            return prevLanguages.map(item => 
+                item.culture === culture 
+                    ? { ...item, isUsed: newIsUsed } 
+                    : item
+            );
         });
     }, []);
 
@@ -141,13 +156,13 @@ const Config: React.FC = () => {
                 Export
             </button>
             <button type="button" className="btn btn-outline-danger" onClick={deleteSearchItems}>
-                DeleteAll
+                ClearAll
             </button>
             <button type="button" className="btn btn-outline-secondary" onClick={openHowToUse}>
-                How To Use
+                Document
             </button >
             <Modal ref={modalRef} onModalClosed={modalClosed}>
-                <h5>Config language and detail link</h5>
+                <h5>Configure Languages and Dictionary Links</h5>
                 <div className="d-flex flex-wrap">
                     {
                         languages.map(l =>
