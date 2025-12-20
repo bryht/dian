@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Language, languages } from './Models/Language';
-import { SearchItem } from './Models/SearchItem';
-import { get, set } from 'core/Utils/Storage';
-import Consts from './Const';
+import { Language, languages, SearchItem } from '../models';
+import { get, set } from '../utils';
+import Consts from '../constants';
 
 interface DictContextValue {
     isSettingOpened: boolean;

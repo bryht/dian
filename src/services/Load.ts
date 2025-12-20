@@ -1,7 +1,16 @@
 // Valid cultures that have resource files
 const validCultures = ['de', 'en', 'es', 'fr', 'it', 'ja', 'ko', 'nl', 'pt', 'ru', 'zh'];
 
-async function loadWordsAsync(culture: string, search: string, count: number) {
+// Cache structure with proper typing
+interface CacheEntry {
+    culture: string;
+    words: string[];
+}
+
+// In-memory cache for loaded word lists
+let cache: CacheEntry[] = [];
+
+export async function loadWordsAsync(culture: string, search: string, count: number) {
     // Only load resources for valid cultures
     if (!validCultures.includes(culture)) {
         return [];
@@ -52,8 +61,3 @@ async function loadWordsAsync(culture: string, search: string, count: number) {
     
     return [...startsWithMatches, ...containsMatches].slice(0, count);
 }
-
-//most-common-words-by-language
-let cache: Array<{ culture: string, words: Array<string> }>=[];
-
-export { loadWordsAsync };

@@ -48,4 +48,4 @@ async function translateWord(fromCulture: string, toCulture: string, inputWord: 
     }
 }
 
-export { getCulture, translateWord }
+export { getCulture, translateWord };

@@ -1,17 +1,16 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import { Language, languages } from 'application/Models/Language';
+import { Language, languages, SearchItem } from '../../models';
 import { ReactComponent as SettingSvg } from 'assets/settings.svg';
 import { ReactComponent as SearchSvg } from 'assets/search.svg';
-import { translateWord, getCulture } from 'application/Translate';
-import WordHtml, { getWordUrl } from 'application/WordHtml/WordHtml';
-import { SearchItem } from '../Models/SearchItem';
+import { translateWord, getCulture } from '../../services';
+import WordHtml, { getWordUrl } from '../../components/WordDisplay/WordHtml';
 import './Search.scss';
-import { loadWordsAsync } from 'application/Load';
-import AutoCompleteInput from 'components/AutoCompleteInput';
-import CloseButton from 'components/CloseButton/CloseButton';
-import type { IWordHtmlRef } from 'application/WordHtml/WordHtml';
-import { useDict } from '../DictContext';
+import { loadWordsAsync } from '../../services';
+import AutoCompleteInput from '../../components/AutoCompleteInput';
+import CloseButton from '../../components/CloseButton/CloseButton';
+import type { IWordHtmlRef } from '../../components/WordDisplay/WordHtml';
+import { useDict } from '../../context';
 
 const Search: React.FC = () => {
     const { searchItems, languages: contextLanguages, updateSearchItems, loadSearchItems, toggleSetting } = useDict();

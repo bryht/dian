@@ -1,14 +1,19 @@
 import * as React from 'react';
-import './Basic.scss';
-import { useDict } from '../DictContext';
+import Config from '../features/config/Config';
+import Search from '../features/search/Search';
+import { DictProvider, useDict } from '../context';
 import Mousetrap from 'mousetrap';
+import './HomePage.scss';
 
-export interface IBasicProps {
-    searching: any;
-    setting: any;
-}
+const HomePage: React.FC = () => {
+    return (
+        <DictProvider>
+            <HomePageContent />
+        </DictProvider>
+    );
+};
 
-const Basic: React.FC<IBasicProps> = ({ searching, setting }) => {
+const HomePageContent: React.FC = () => {
     const { isSettingOpened } = useDict();
 
     React.useEffect(() => {
@@ -62,13 +67,13 @@ const Basic: React.FC<IBasicProps> = ({ searching, setting }) => {
     return (
         <div className={isSettingOpened ? 'wrapper toggled' : 'wrapper'}>
             <div className="content">
-                {searching}
+                <Search />
             </div>
             <div id="sidebar" className="sidebar">
-                {setting}
+                <Config />
             </div>
         </div>
     );
 };
 
-export default Basic;
+export default HomePage;

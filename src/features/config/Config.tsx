@@ -1,11 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import Modal from 'components/Modal';
-import { Language } from 'application/Models/Language';
-import { SearchItem } from 'application/Models/SearchItem';
-import { Filter, File } from 'core/Utils/File';
-import type { IModalRef } from 'components/Modal';
-import { useDict } from '../DictContext';
+import Modal from '../../components/Modal';
+import { Language, SearchItem } from '../../models';
+import { Filter, File } from '../../utils';
+import type { IModalRef } from '../../components/Modal';
+import { useDict } from '../../context';
 
 const Config: React.FC = () => {
     const { languages: initialLanguages, searchItems, updateSearchItems, updateLanguages, loadLanguages, toggleSetting } = useDict();

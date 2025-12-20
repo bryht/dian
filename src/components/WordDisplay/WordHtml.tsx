@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as cheerio from 'cheerio';
 import ReactModal from 'react-modal';
 import './WordHtml.scss';
-import CloseButton from 'components/CloseButton/CloseButton';
+import CloseButton from '../CloseButton/CloseButton';
 
 export interface IWordHtmlProps {
     url: string;
