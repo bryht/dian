@@ -128,6 +128,7 @@ $warning-color: #ffc107;
     padding: 3px 3px 0 10px;
     border: solid 0.5px #b3b1b1;
     background: #fffffb;
+    position: relative;
 
     .translate-list-item-words {
       display: flex;
@@ -159,8 +160,8 @@ $warning-color: #ffc107;
       display: none;
       align-self: flex-end;
       position: absolute;
-      margin-top: 0px;
-      margin-right: -20px;
+      top: 8px;
+      right: 8px;
       svg {
         height: 15px;
         width: 15px;

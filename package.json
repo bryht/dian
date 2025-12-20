@@ -1,6 +1,6 @@
 {
   "name": "dian",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "private": true,
   "main": "main.cjs",
   "description": "a dictionary app",
