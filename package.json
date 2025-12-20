@@ -91,7 +91,7 @@
     "start": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "package": "electron-builder -wm --publish=always",
+    "package": "electron-builder -w --publish=always",
     "package-local": "electron-builder -w"
   }
 }
