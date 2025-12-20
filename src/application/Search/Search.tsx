@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import { Language, languages } from 'application/Models/Language';
 import { ReactComponent as SettingSvg } from 'assets/settings.svg';
 import { ReactComponent as SearchSvg } from 'assets/search.svg';
@@ -8,17 +7,15 @@ import { translateWord, getCulture } from 'application/Translate';
 import WordHtml, { getWordUrl } from 'application/WordHtml/WordHtml';
 import { SearchItem } from '../Models/SearchItem';
 import './Search.scss';
-import { RootState } from 'core/Store';
-import { DictActions } from 'application/DictRedux';
 import { loadWordsAsync } from 'application/Load';
 import AutoCompleteInput from 'components/AutoCompleteInput';
 import CloseButton from 'components/CloseButton/CloseButton';
 import type { IWordHtmlRef } from 'application/WordHtml/WordHtml';
+import { useDict } from '../DictContext';
 
 const Search: React.FC = () => {
-    const dispatch = useDispatch();
-    const searchItems = useSelector((state: RootState) => state.dict.searchItems ?? []);
-    const allLanguages = useSelector((state: RootState) => state.dict.languages.filter((p: Language) => p.isUsed));
+    const { searchItems, languages: contextLanguages, updateSearchItems, loadSearchItems, toggleSetting } = useDict();
+    const allLanguages = React.useMemo(() => contextLanguages.filter((p: Language) => p.isUsed), [contextLanguages]);
 
     const wordHtmlRef = React.useRef<IWordHtmlRef>(null);
     const typeInputRef = React.useRef<any>(null);
@@ -30,8 +27,8 @@ const Search: React.FC = () => {
     const [options, setOptions] = React.useState<Array<string>>([]);
 
     React.useEffect(() => {
-        dispatch(DictActions.LoadSearchItems() as any);
-    }, [dispatch]);
+        loadSearchItems();
+    }, [loadSearchItems]);
 
     const handleTranslateWord = React.useCallback(async (text: string | null = null) => {
         if (text == null) {
@@ -67,8 +64,8 @@ const Search: React.FC = () => {
         //save the word
         setInputValue('');
         setOptions([]);
-        await dispatch(DictActions.UpdateSearchItem(updatedSearchItems) as any);
-    }, [inputValue, currentLanguage, allLanguages, searchItems, dispatch]);
+        await updateSearchItems(updatedSearchItems);
+    }, [inputValue, currentLanguage, allLanguages, searchItems, updateSearchItems]);
 
     const deleteWord = React.useCallback((id: string) => {
         const updatedSearchItems = [...searchItems];
@@ -76,8 +73,8 @@ const Search: React.FC = () => {
         if (itemIndex > -1) {
             updatedSearchItems.splice(itemIndex, 1);
         }
-        dispatch(DictActions.UpdateSearchItem(updatedSearchItems) as any);
-    }, [searchItems, dispatch]);
+        updateSearchItems(updatedSearchItems);
+    }, [searchItems, updateSearchItems]);
 
     const onInputValueChanged = React.useCallback((value: string) => {
         setInputValue(value);
@@ -123,10 +120,6 @@ const Search: React.FC = () => {
         }
         wordHtmlRef.current?.open();
     }, [getCurrentLanguageByCulture]);
-
-    const toggleSetting = React.useCallback(() => {
-        dispatch(DictActions.ToggleSetting() as any);
-    }, [dispatch]);
 
     const renderWord = React.useCallback((text: string, culture: string, item: SearchItem) => {
         if (culture === 'zh' && SearchItem.isPhrase(item.words)) {

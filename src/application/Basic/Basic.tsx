@@ -1,7 +1,6 @@
 import * as React from 'react';
 import './Basic.scss';
-import { RootState } from 'core/Store';
-import { useSelector } from 'react-redux';
+import { useDict } from '../DictContext';
 import Mousetrap from 'mousetrap';
 
 export interface IBasicProps {
@@ -10,7 +9,7 @@ export interface IBasicProps {
 }
 
 const Basic: React.FC<IBasicProps> = ({ searching, setting }) => {
-    const isSettingOpened = useSelector((state: RootState) => state.dict.isSettingOpened);
+    const { isSettingOpened } = useDict();
 
     React.useEffect(() => {
         const { ipcRenderer } = window.require('electron');

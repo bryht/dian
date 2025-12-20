@@ -1,34 +1,30 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import Modal from 'components/Modal';
 import { Language } from 'application/Models/Language';
 import { SearchItem } from 'application/Models/SearchItem';
 import { Filter, File } from 'core/Utils/File';
-import { DictActions } from 'application/DictRedux';
-import { RootState } from 'core/Store';
 import type { IModalRef } from 'components/Modal';
+import { useDict } from '../DictContext';
 
 const Config: React.FC = () => {
-    const dispatch = useDispatch();
-    const initialLanguages = useSelector((state: RootState) => state.dict.languages);
-    const searchItems = useSelector((state: RootState) => state.dict.searchItems ?? []);
+    const { languages: initialLanguages, searchItems, updateSearchItems, updateLanguages, loadLanguages, toggleSetting } = useDict();
 
     const modalRef = React.useRef<IModalRef>(null);
     const [languages, setLanguages] = React.useState<Array<Language>>(initialLanguages);
 
     React.useEffect(() => {
-        dispatch(DictActions.LoadLanguages() as any);
-    }, [dispatch]);
+        loadLanguages();
+    }, [loadLanguages]);
 
     React.useEffect(() => {
         setLanguages(initialLanguages);
     }, [initialLanguages]);
 
     const openSetting = React.useCallback(async () => {
-        await dispatch(DictActions.LoadLanguages() as any);
+        await loadLanguages();
         modalRef.current?.openModal();
-    }, [dispatch]);
+    }, [loadLanguages]);
 
     const deleteSearchItems = React.useCallback(async () => {
         if (!searchItems || searchItems.length === 0) {
@@ -37,10 +33,10 @@ const Config: React.FC = () => {
         }
         
         if (window.confirm(`Are you sure you want to delete all ${searchItems.length} search history items? This action cannot be undone.`)) {
-            dispatch(DictActions.UpdateSearchItem([]) as any);
-            await dispatch(DictActions.ToggleSetting() as any);
+            updateSearchItems([]);
+            await toggleSetting();
         }
-    }, [dispatch, searchItems]);
+    }, [updateSearchItems, toggleSetting, searchItems]);
 
     const exportWords = React.useCallback(async () => {
         if (!searchItems || searchItems.length === 0) {
@@ -60,7 +56,7 @@ const Config: React.FC = () => {
             
             if (filteredItems.length === 0) {
                 alert(`All ${searchItems.length} items are phrases and cannot be exported. Only individual words can be exported.`);
-                await dispatch(DictActions.ToggleSetting() as any);
+                await toggleSetting();
                 return;
             }
             
@@ -76,24 +72,24 @@ const Config: React.FC = () => {
                 alert(`Failed to export words: ${result.error || 'Unknown error'}`);
             }
             
-            await dispatch(DictActions.ToggleSetting() as any);
+            await toggleSetting();
         } catch (error) {
             console.error('Error exporting words:', error);
             alert(`An error occurred while exporting: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
-    }, [searchItems, dispatch]);
+    }, [searchItems, toggleSetting]);
 
     const openHowToUse = React.useCallback(async () => {
         try {
             const { ipcRenderer } = window.require('electron');
             const url = 'https://bryht.github.io/dian';
             await ipcRenderer.invoke('open-external-url', url);
-            await dispatch(DictActions.ToggleSetting() as any);
+            await toggleSetting();
         } catch (error) {
             console.error('Error opening external URL:', error);
             alert('Failed to open documentation. Please visit https://bryht.github.io/dian manually.');
         }
-    }, [dispatch]);
+    }, [toggleSetting]);
 
     const onUsedLanguageChange = React.useCallback((culture: string, newIsUsed: boolean) => {
         setLanguages(prevLanguages => {
@@ -126,19 +122,19 @@ const Config: React.FC = () => {
     }, []);
 
     const saveConfig = React.useCallback(async () => {
-        await dispatch(DictActions.UpdateLanguages(languages) as any);
+        await updateLanguages(languages);
         modalRef.current?.closeModal();
-    }, [languages, dispatch]);
+    }, [languages, updateLanguages]);
 
     const resetConfig = React.useCallback(async () => {
-        await dispatch(DictActions.UpdateLanguages([]) as any);
-        await dispatch(DictActions.LoadLanguages() as any);
+        await updateLanguages([]);
+        await loadLanguages();
         modalRef.current?.closeModal();
-    }, [dispatch]);
+    }, [updateLanguages, loadLanguages]);
 
     const modalClosed = React.useCallback(async () => {
-        await dispatch(DictActions.ToggleSetting() as any);
-    }, [dispatch]);
+        await toggleSetting();
+    }, [toggleSetting]);
 
 
     const selectedLanguage = languages.find(p => p.isSelected);
