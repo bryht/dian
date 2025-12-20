@@ -14,9 +14,9 @@
 I am using React & TypeScript Electron Bootstrap Electron-Builder, if you are interesting, just make a pr, we will have a look.
 ###  Basic commands can help you to start the project.
 - Node v14.19.0
-- Install package ```yarn install```
-- dev ```yarn start``` 
-- package ```yarn run package``` 
+- Install package ```npm install```
+- dev ```npm start``` 
+- package ```npm run package``` 
 
 ***
 ## Thanks
