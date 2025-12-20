@@ -54,3 +54,15 @@ $setting-width: 130px;
     animation-name: sidebar-in;
     animation-duration: 0.5s;
 }
+
+.version-badge {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #999;
+    background-color: transparent;
+    padding: 4px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+}

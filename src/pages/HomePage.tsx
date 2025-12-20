@@ -72,6 +72,7 @@ const HomePageContent: React.FC = () => {
             <div id="sidebar" className="sidebar">
                 <Config />
             </div>
+            <div className="version-badge">v{__APP_VERSION__}</div>
         </div>
     );
 };
