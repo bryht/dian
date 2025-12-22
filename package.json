@@ -39,6 +39,7 @@
     }
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.11.0",
     "@cliqz/adblocker-electron": "^1.33.0",
     "@electron/remote": "^2.1.2",
     "bootstrap": "^5.3.3",
