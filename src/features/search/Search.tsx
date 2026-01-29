@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import { Language, languages, SearchItem } from '../../models';
+import { Language, languages, SearchItem } from '../../types';
 import { ReactComponent as SettingSvg } from 'assets/settings.svg';
 import { ReactComponent as SearchSvg } from 'assets/search.svg';
 import { translateWord, getCulture } from '../../services';

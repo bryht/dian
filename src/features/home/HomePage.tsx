@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Config from '../features/config/Config';
-import Search from '../features/search/Search';
-import { DictProvider, useDict } from '../context';
+import Config from '../config/Config';
+import Search from '../search/Search';
+import { DictProvider, useDict } from '../../context';
 import Mousetrap from 'mousetrap';
 import './HomePage.scss';
 

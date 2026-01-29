@@ -2,7 +2,7 @@
   "name": "dian",
   "version": "0.7.6",
   "private": true,
-  "main": "main.cjs",
+  "main": "electron/main.cjs",
   "description": "a dictionary app",
   "homepage": ".",
   "author": {
@@ -15,7 +15,7 @@
     "artifactName": "${productName}_Setup_${os}_${arch}.${ext}",
     "files": [
       "build/**/*",
-      "main.cjs"
+      "electron/**/*"
     ],
     "publish": [
       {

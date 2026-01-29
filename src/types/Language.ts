@@ -50,67 +50,17 @@ const languages: Array<Language> = [
         isUsed: false,
         detailHideFilters: [],
         detailHideTop: 160,
-        detailLink: 'https://www.google.com/search?q={{word}}'
+        detailLink: 'https://en.dict.naver.com/#/search?query={{word}}'
     },
     {
         culture: 'ja',
-        cultureFull: 'ja-JA',
+        cultureFull: 'ja-JP',
         cultureName: '日本語',
         isSelected: false,
         isUsed: false,
         detailHideFilters: [],
         detailHideTop: 160,
-        detailLink: 'https://www.google.com/search?q={{word}}'
-    },
-    {
-        culture: 'ru',
-        cultureFull: 'ru-RU',
-        cultureName: 'Pусский',
-        isSelected: false,
-        isUsed: false,
-        detailHideFilters: [],
-        detailHideTop: 160,
-        detailLink: 'https://en.openrussian.org/ru/{{word}}'
-    },
-    {
-        culture: 'es',
-        cultureFull: 'es-ES',
-        cultureName: 'Español',
-        isSelected: false,
-        isUsed: false,
-        detailHideFilters: [],
-        detailHideTop: 160,
-        detailLink: 'https://www.collinsdictionary.com/dictionary/spanish-english/{{word}}'
-    },
-    {
-        culture: 'pt',
-        cultureFull: 'pt-PT',
-        cultureName: 'Português',
-        isSelected: false,
-        isUsed: false,
-        detailHideFilters: [],
-        detailHideTop: 160,
-        detailLink: 'https://www.collinsdictionary.com/dictionary/portuguese-english/{{word}}'
-    },
-    {
-        culture: 'it',
-        cultureFull: 'it-IT',
-        cultureName: 'Italiano',
-        isSelected: false,
-        isUsed: false,
-        detailHideFilters: [],
-        detailHideTop: 160,
-        detailLink: 'https://www.collinsdictionary.com/dictionary/italian-english/{{word}}'
-    },
-    {
-        culture: 'fr',
-        cultureFull: 'fr-FR',
-        cultureName: 'Français',
-        isSelected: false,
-        isUsed: false,
-        detailHideFilters: [],
-        detailHideTop: 160,
-        detailLink: 'https://www.collinsdictionary.com/dictionary/french-english/{{word}}'
+        detailLink: 'https://jisho.org/search/{{word}}'
     },
     {
         culture: 'de',
@@ -120,13 +70,58 @@ const languages: Array<Language> = [
         isUsed: false,
         detailHideFilters: [],
         detailHideTop: 160,
-        detailLink: 'https://www.collinsdictionary.com/dictionary/german-english/{{word}}'
+        detailLink: 'https://www.duden.de/suchen/dudenonline/{{word}}'
+    },
+    {
+        culture: 'fr',
+        cultureFull: 'fr-FR',
+        cultureName: 'Français',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://www.larousse.fr/dictionnaires/francais/{{word}}'
+    },
+    {
+        culture: 'it',
+        cultureFull: 'it-IT',
+        cultureName: 'Italiano',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://www.grandidizionari.it/Dizionario_Italiano/parola/{{word}}.aspx'
+    },
+    {
+        culture: 'es',
+        cultureFull: 'es-ES',
+        cultureName: 'Español',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://www.wordreference.com/definicion/{{word}}'
+    },
+    {
+        culture: 'ru',
+        cultureFull: 'ru-RU',
+        cultureName: 'Pусский',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://dic.academic.ru/searchall.php?SWord={{word}}&stype='
+    },
+    {
+        culture: 'pt',
+        cultureFull: 'pt-PT',
+        cultureName: 'Português',
+        isSelected: false,
+        isUsed: false,
+        detailHideFilters: [],
+        detailHideTop: 160,
+        detailLink: 'https://dicionario.priberam.org/{{word}}'
     }
 ];
 
-export {
-    languages,
-    Language
-}
-
-
+export { Language, languages };

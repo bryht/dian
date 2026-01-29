@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
 import Modal from '../../components/Modal';
-import { Language, SearchItem } from '../../models';
+import { Language, SearchItem } from '../../types';
 import { Filter, File } from '../../utils';
 import type { IModalRef } from '../../components/Modal';
 import { useDict } from '../../context';

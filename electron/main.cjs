@@ -194,7 +194,7 @@ async function createWindow() {
         win.webContents.openDevTools();
     } else {
         win.loadURL(url.format({
-            pathname: path.join(__dirname, '/build/index.html'),
+            pathname: path.join(__dirname, '../build/index.html'),
             protocol: 'file:',
             slashes: true
         }));
@@ -202,7 +202,7 @@ async function createWindow() {
     }
     win.on("closed", () => win = null)
 
-    appIcon = new Tray(__dirname + '/build/icon.png');
+    appIcon = new Tray(__dirname + '/../build/icon.png');
     appIcon.setToolTip('This is Dian');
     appIcon.addListener("click", () => win.show());
     var contextMenu = Menu.buildFromTemplate([
@@ -240,5 +240,3 @@ app.on("activate", () => {
     if (win === null)
         createWindow()
 })
-
-

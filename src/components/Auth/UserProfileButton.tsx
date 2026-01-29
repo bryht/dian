@@ -5,6 +5,7 @@ import './UserProfileButton.scss';
 const UserProfileButton: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth0();
   const [showDetails, setShowDetails] = React.useState(false);
+  const [imageError, setImageError] = React.useState(false);
 
   if (!isAuthenticated || !user) {
     return null;
@@ -12,6 +13,19 @@ const UserProfileButton: React.FC = () => {
 
   const handleLogout = () => {
     logout({ logoutParams: { returnTo: window.location.origin } });
+  };
+
+  const renderAvatar = () => {
+    if (user.picture && !imageError) {
+      return (
+        <img 
+          src={user.picture} 
+          alt={user.name || 'User'} 
+          onError={() => setImageError(true)}
+        />
+      );
+    }
+    return <span>{user.name?.charAt(0).toUpperCase() || 'U'}</span>;
   };
 
   return (
@@ -22,11 +36,7 @@ const UserProfileButton: React.FC = () => {
         onClick={() => setShowDetails(!showDetails)}
       >
         <div className="user-avatar-small">
-          {user.picture ? (
-            <img src={user.picture} alt={user.name || 'User'} />
-          ) : (
-            <span>{user.name?.charAt(0).toUpperCase() || 'U'}</span>
-          )}
+          {renderAvatar()}
         </div>
         <span className="user-name-text">{user.name || 'User'}</span>
       </button>

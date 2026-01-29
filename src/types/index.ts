@@ -1,4 +1,4 @@
-// Barrel export for Models
+// Barrel export for Types
 export { Language, languages } from './Language';
 export { SearchItem } from './SearchItem';
 export { WordItem } from './WordItem';
