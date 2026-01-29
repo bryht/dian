@@ -1,0 +1,39 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Book shadow -->
+  <path d="M20 18 L180 18 L180 185 L20 185 Z" fill="black" fill-opacity="0.15" transform="translate(5, 5)"/>
+  
+  <!-- Book back cover (dark) -->
+  <path d="M15 12 L175 12 L175 180 L15 180 Z" fill="#4A3A6B"/>
+  
+  <!-- Book pages (cream/white stack) -->
+  <path d="M19 16 L171 16 L171 176 L19 176 Z" fill="#F5F0E6"/>
+  <line x1="22" y1="16" x2="22" y2="176" stroke="#E0D9CC" stroke-width="1.5"/>
+  <line x1="26" y1="16" x2="26" y2="176" stroke="#E8E2D6" stroke-width="1.5"/>
+  <line x1="30" y1="16" x2="30" y2="176" stroke="#E0D9CC" stroke-width="1.5"/>
+  
+  <!-- Book front cover -->
+  <rect x="32" y="10" width="153" height="175" rx="4" fill="url(#cover_gradient)"/>
+  
+  <!-- Book spine highlight -->
+  <rect x="32" y="10" width="12" height="175" fill="white" fill-opacity="0.15"/>
+  
+  <!-- Cover embossed detail - dictionary label -->
+  <rect x="55" y="55" width="110" height="55" rx="3" fill="white" fill-opacity="0.1" stroke="white" stroke-opacity="0.3" stroke-width="1.5"/>
+  
+  <!-- Text on cover -->
+  <text x="110" y="92" font-family="Georgia, serif" font-size="28" font-weight="bold" fill="white" fill-opacity="0.9" text-anchor="middle">DIAN</text>
+  
+  <!-- Decorative lines on cover -->
+  <line x1="60" y1="130" x2="160" y2="130" stroke="white" stroke-opacity="0.4" stroke-width="3"/>
+  <line x1="75" y1="150" x2="145" y2="150" stroke="white" stroke-opacity="0.3" stroke-width="2"/>
+  
+  <!-- Bookmark ribbon -->
+  <path d="M150 10 L150 -15 L160 -2 L170 -15 L170 10" fill="#F5576C"/>
+  
+  <defs>
+    <linearGradient id="cover_gradient" x1="32" y1="10" x2="185" y2="185" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5A9C"/>
+      <stop offset="1" stop-color="#5D3A6E"/>
+    </linearGradient>
+  </defs>
+</svg>
