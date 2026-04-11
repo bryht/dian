@@ -1,8 +1,12 @@
 import { test, expect, _electron as electron } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
 import path from 'path';
+import fs from 'fs';
 
 const ROOT = path.resolve(__dirname, '../..');
+const SCREENSHOTS = path.join(__dirname, 'screenshots');
+
+fs.mkdirSync(SCREENSHOTS, { recursive: true });
 
 async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {
   const app = await electron.launch({
@@ -21,9 +25,10 @@ async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {
 // ── App launch ────────────────────────────────────────────────────────────────
 
 test('app launches and shows a window', async () => {
-  const { app } = await launchApp();
+  const { app, page } = await launchApp();
   const windows = app.windows();
   expect(windows.length).toBeGreaterThan(0);
+  await page.screenshot({ path: path.join(SCREENSHOTS, '01-app-launch.png'), fullPage: true });
   await app.close();
 });
 
@@ -32,7 +37,6 @@ test('window has correct title', async () => {
   const title = await app.evaluate(({ BrowserWindow }) =>
     BrowserWindow.getAllWindows()[0].getTitle()
   );
-  // Electron sets title from package.json name or index.html <title>
   expect(title).toBeTruthy();
   await app.close();
 });
@@ -41,12 +45,10 @@ test('window has correct title', async () => {
 
 test('login page renders when not authenticated', async () => {
   const { app, page } = await launchApp();
-
-  // App briefly shows "Loading..." then transitions to the login page
   await page.waitForTimeout(1500);
+  await page.screenshot({ path: path.join(SCREENSHOTS, '02-login-page.png'), fullPage: true });
 
   const body = await page.textContent('body');
-  // Should show either the loading screen or the login page — not a blank/error screen
   expect(body).toBeTruthy();
   expect(body!.length).toBeGreaterThan(0);
   await app.close();
@@ -56,9 +58,9 @@ test('login page has a login button', async () => {
   const { app, page } = await launchApp();
   await page.waitForTimeout(1500);
 
-  // The LoginPage renders a button to trigger Auth0 login
   const loginBtn = page.locator('button').first();
   await expect(loginBtn).toBeVisible({ timeout: 5000 });
+  await page.screenshot({ path: path.join(SCREENSHOTS, '03-login-button.png'), fullPage: true });
   await app.close();
 });
 
@@ -76,6 +78,7 @@ test('login page shows app name "Dian"', async () => {
 test('root element is mounted', async () => {
   const { app, page } = await launchApp();
   await page.waitForTimeout(500);
+  await page.screenshot({ path: path.join(SCREENSHOTS, '04-root-mounted.png'), fullPage: true });
 
   const root = page.locator('#root');
   await expect(root).toBeAttached();
@@ -88,8 +91,8 @@ test('page has no uncaught JS errors on load', async () => {
 
   page.on('pageerror', (err) => errors.push(err.message));
   await page.waitForTimeout(2000);
+  await page.screenshot({ path: path.join(SCREENSHOTS, '05-no-errors.png'), fullPage: true });
 
-  // Filter out known non-critical Auth0 network errors in test env
   const critical = errors.filter(
     (e) =>
       !e.includes('Failed to fetch') &&
