@@ -17,7 +17,12 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: [
-        'src/components/Auth/**',
+        'src/components/**',
+        'src/features/**',
+        'src/context/**',
+        'src/services/**',
+        'src/utils/**',
+        'src/types/**',
         'src/auth0-config.ts',
         'src/App.tsx',
       ],
