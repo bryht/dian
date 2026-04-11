@@ -72,7 +72,7 @@
     "sass": "^1.83.0",
     "sharp": "^0.34.5",
     "typescript": "^5.7.2",
-    "vite": "^6.0.5",
+    "vite": "^6.4.2",
     "vite-plugin-svgr": "^4.3.0",
     "wait-on": "^8.0.1"
   },
