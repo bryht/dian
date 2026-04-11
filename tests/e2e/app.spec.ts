@@ -1,4 +1,4 @@
-import { test, expect, _electron as electron } from '@playwright/test';
+import { test as base, expect, _electron as electron } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
@@ -7,6 +7,11 @@ const ROOT = path.resolve(__dirname, '../..');
 const SCREENSHOTS = path.join(__dirname, 'screenshots');
 
 fs.mkdirSync(SCREENSHOTS, { recursive: true });
+
+// Skip all Playwright E2E tests when SKIP_E2E=1 or SKIP_PLAYWRIGHT=1 is set.
+// This lets CI or local runs execute only fast unit tests when needed.
+const skipE2E = process.env.SKIP_E2E === '1' || process.env.SKIP_PLAYWRIGHT === '1';
+const test = skipE2E ? base.skip : base;
 
 async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {
   const app = await electron.launch({
