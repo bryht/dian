@@ -130,7 +130,7 @@ const Search: React.FC = () => {
 
     return (
         <div className="d-flex flex-column">
-            <div className="sticky-top d-flex mb-1 flex-column w-100 bg-white">
+            <div className="sticky-top d-flex mb-2 flex-column w-100 bg-white search-header">
                 <div className="input-group">
                     <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{currentLanguage.cultureName}</button>
                     <ul className="dropdown-menu">
