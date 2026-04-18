@@ -189,7 +189,7 @@ async function createWindow() {
     blocker.enableBlockingInSession(session.defaultSession);
 
     // and load the index.html of the app.
-    if (electronIsDev) {
+    if (electronIsDev && !process.env.ELECTRON_TEST) {
         win.loadURL('http://localhost:5173/')
         win.webContents.openDevTools();
     } else {
