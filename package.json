@@ -71,7 +71,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "^4.1.4",
     "concurrently": "^9.1.0",
-    "electron": "^33.2.1",
+    "electron": "^41.2.1",
     "electron-builder": "^25.1.8",
     "jsdom": "^29.0.2",
     "png-to-ico": "^3.0.1",
