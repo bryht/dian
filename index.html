@@ -5,8 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dian · Dictionary & Translator</title>
   <meta name="description" content="Dian — a beautiful dictionary and translation app for Windows and macOS. Translate words and phrases across multiple languages instantly.">
-  <link rel="icon" type="image/png" href="/favicon.ico">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dian · Dictionary & Translator">
+  <meta property="og:description" content="A beautiful dictionary and translation app for Windows and macOS. Translate words and phrases across multiple languages instantly.">
+  <meta property="og:url" content="https://dian.bryht.net">
+  <meta property="og:image" content="https://dian.bryht.net/imgs/1.gif">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Dian · Dictionary & Translator">
+  <meta name="twitter:description" content="A beautiful dictionary and translation app for Windows and macOS.">
+  <meta name="twitter:image" content="https://dian.bryht.net/imgs/1.gif">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://dian.bryht.net">
+
+  <!-- Favicon: inline SVG -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23c7923e'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='22' font-weight='700' fill='white'>D</text></svg>">
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Dian",
+    "applicationCategory": "DictionaryApplication",
+    "operatingSystem": ["Windows", "macOS"],
+    "description": "A dictionary app that translates words and phrases across multiple languages at once — with hotkeys, auto-complete, and a clean, distraction-free interface.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "license": "https://opensource.org/licenses/MIT",
+    "url": "https://dian.bryht.net"
+  }
+  </script>
+
   <style>
     :root {
       --bg: #fdfbf7;
@@ -31,6 +73,27 @@
       --max-width: 1100px;
     }
 
+    /* ── Dark mode ── */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1b1814;
+        --bg-alt: #242019;
+        --text: #ede8dc;
+        --text-secondary: #b5aa96;
+        --text-muted: #7a7062;
+        --accent: #d4a04a;
+        --accent-hover: #e0b55e;
+        --accent-light: #2d2618;
+        --border: #3a3328;
+        --card-bg: #221e17;
+        --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+        --shadow-md: 0 4px 24px rgba(0,0,0,0.3);
+        --shadow-lg: 0 12px 40px rgba(0,0,0,0.4);
+      }
+      .cta-banner { background: linear-gradient(135deg, #3d3220 0%, #1b1814 100%); }
+      .cta-banner .btn-outline { color: rgba(237,232,220,0.85); border-color: rgba(237,232,220,0.25); }
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
@@ -43,6 +106,18 @@
       overflow-x: hidden;
     }
 
+    /* ── Skip link ── */
+    .skip-link {
+      position: absolute; top: -100px; left: 1rem; z-index: 200;
+      background: var(--accent); color: #fff; padding: 8px 16px;
+      border-radius: var(--radius-sm); font-weight: 600; text-decoration: none;
+      transition: top 0.2s;
+    }
+    .skip-link:focus { top: 8px; }
+
+    /* ── Focus styles ── */
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
     /* ── Nav ── */
     nav {
       position: sticky; top: 0; z-index: 100;
@@ -50,6 +125,9 @@
       backdrop-filter: blur(16px) saturate(180%);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
+    }
+    @media (prefers-color-scheme: dark) {
+      nav { background: rgba(27,24,20,0.85); }
     }
     .nav-inner {
       max-width: var(--max-width); margin: 0 auto;
@@ -69,6 +147,33 @@
       font-weight: 600; transition: background 0.2s, transform 0.2s;
     }
     .nav-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+    /* ── Hamburger menu (CSS-only) ── */
+    #menu-toggle { display: none; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; z-index: 101; }
+    .hamburger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--text); border-radius: 2px; transition: all 0.3s;
+    }
+    #menu-toggle:checked + .hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    #menu-toggle:checked + .hamburger span:nth-child(2) { opacity: 0; }
+    #menu-toggle:checked + .hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    @media (max-width: 600px) {
+      .hamburger { display: flex; }
+      .nav-links {
+        position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
+        background: var(--bg); flex-direction: column; gap: 0;
+        align-items: stretch; padding: 1.5rem 2rem;
+        transform: translateX(100%); transition: transform 0.3s ease;
+        overflow-y: auto;
+      }
+      .nav-links a {
+        padding: 14px 0; border-bottom: 1px solid var(--border);
+        font-size: 1.05rem;
+      }
+      .nav-links .nav-cta { text-align: center; margin-top: 1rem; padding: 14px 0; border-bottom: none; }
+      #menu-toggle:checked ~ .nav-links { transform: translateX(0); }
+    }
 
     /* ── Hero ── */
     .hero {
@@ -116,6 +221,21 @@
       color: var(--accent);
     }
     .trust-stat .label { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Section fade-in ── */
+    .fade-section {
+      opacity: 0; transform: translateY(24px);
+      animation: fadeUp 0.7s ease-out forwards;
+      animation-timeline: view();
+      animation-range: entry 10% cover 30%;
+    }
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Fallback for browsers without animation-timeline support */
+    @supports not (animation-timeline: view()) {
+      .fade-section { opacity: 1; transform: none; animation: none; }
+    }
 
     /* ── Section shared ── */
     section { padding: 80px 2rem; }
@@ -207,6 +327,8 @@
     .footer-links a { text-decoration: none; color: var(--text-secondary); font-size: 0.9rem; transition: color 0.2s; }
     .footer-links a:hover { color: var(--accent); }
     .footer-copy { font-size: 0.82rem; color: var(--text-muted); }
+    .footer-copy a { color: var(--accent); text-decoration: none; }
+    .footer-copy a:hover { text-decoration: underline; }
 
     /* ── CTA Banner ── */
     .cta-banner {
@@ -217,21 +339,22 @@
     .cta-banner .section-desc { color: rgba(253,251,247,0.7); margin: 0 auto 2rem; }
     .cta-banner .btn-primary { background: var(--accent); }
     .cta-banner .btn-outline { color: rgba(253,251,247,0.85); border-color: rgba(253,251,247,0.25); }
-
-    /* ── Responsive nav ── */
-    @media (max-width: 600px) {
-      .nav-links a:not(.nav-cta) { display: none; }
-      .nav-cta { padding: 6px 14px; font-size: 0.82rem; }
-    }
   </style>
 </head>
 <body>
 
+  <!-- Skip link -->
+  <a href="#main-content" class="skip-link">Skip to content</a>
+
   <!-- Nav -->
-  <nav>
+  <nav aria-label="Main navigation">
     <div class="nav-inner">
       <div class="nav-logo">Dian</div>
-      <div class="nav-links">
+      <input type="checkbox" id="menu-toggle" aria-label="Toggle navigation menu">
+      <label for="menu-toggle" class="hamburger" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </label>
+      <div class="nav-links" role="navigation" aria-label="Page sections">
         <a href="#features">Features</a>
         <a href="#demo">Demo</a>
         <a href="#shortcuts">Shortcuts</a>
@@ -241,60 +364,60 @@
   </nav>
 
   <!-- Hero -->
-  <header class="hero">
+  <header class="hero" id="main-content">
     <div class="hero-badge">✨ v0.7.6 &mdash; Free &amp; Open Source</div>
     <h1>Your words, <em>beautifully</em> translated</h1>
     <p>Dian is a dictionary app that translates words and phrases across multiple languages at once — with hotkeys, auto-complete, and a clean, distraction-free interface.</p>
     <div class="hero-buttons">
       <a href="#download-windows" class="btn btn-primary">
-        <span class="platform-icon">⊞</span> Download for Windows
+        <span class="platform-icon" aria-hidden="true">⊞</span> Download for Windows
       </a>
       <a href="#download-mac" class="btn btn-outline">
-        <span class="platform-icon">⌘</span> Download for macOS
+        <span class="platform-icon" aria-hidden="true">⌘</span> Download for macOS
       </a>
     </div>
   </header>
 
-  <div class="trust-bar">
+  <div class="trust-bar" aria-label="Key statistics">
     <div class="trust-stat"><div class="num">14</div><div class="label">Languages supported</div></div>
     <div class="trust-stat"><div class="num">10k+</div><div class="label">Total downloads</div></div>
     <div class="trust-stat"><div class="num">★</div><div class="label">Open source (MIT)</div></div>
   </div>
 
   <!-- Features -->
-  <section class="section-alt" id="features">
+  <section class="section-alt fade-section" id="features" aria-labelledby="features-heading">
     <div class="section-inner">
       <div class="section-label">Why Dian?</div>
-      <h2 class="section-title">Translate faster, learn deeper</h2>
+      <h2 class="section-title" id="features-heading">Translate faster, learn deeper</h2>
       <p class="section-desc">Built for language learners and polyglots. Dian stays out of your way so you can focus on words that matter.</p>
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">🔍</div>
+          <div class="feature-icon" aria-hidden="true">🔍</div>
           <h3>Instant search &amp; autocomplete</h3>
           <p>Start typing and Dian suggests words in real-time. Press <code style="font-family:var(--font-mono);font-size:0.85em;">Ctrl+F</code> to jump straight to the search bar.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🌐</div>
+          <div class="feature-icon" aria-hidden="true">🌐</div>
           <h3>Multi-language at once</h3>
           <p>Translate a word into <em>all</em> your configured languages simultaneously. No more tab-switching between dictionaries.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">⌨️</div>
+          <div class="feature-icon" aria-hidden="true">⌨️</div>
           <h3>Keyboard-first workflow</h3>
           <p>Navigate with <code>J</code>/<code>K</code>, minimize with <code>Esc</code>, and switch languages inline with <code>/en</code>, <code>/zh</code>, <code>/fr</code>.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">📤</div>
+          <div class="feature-icon" aria-hidden="true">📤</div>
           <h3>Export your word lists</h3>
           <p>Save and export vocabulary to CSV. Import into Quizlet, Anki, or any flashcard app for spaced repetition practice.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🔊</div>
+          <div class="feature-icon" aria-hidden="true">🔊</div>
           <h3>Text-to-speech pronunciation</h3>
           <p>Hear how words sound in any language with built-in Google TTS. Perfect your accent as you learn.</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🎨</div>
+          <div class="feature-icon" aria-hidden="true">🎨</div>
           <h3>Clean, focused design</h3>
           <p>No clutter, no ads. Dian's interface disappears so your words take center stage. Customize detail links for every language.</p>
         </div>
@@ -303,14 +426,14 @@
   </section>
 
   <!-- Demo -->
-  <section id="demo">
+  <section class="fade-section" id="demo" aria-labelledby="demo-heading">
     <div class="section-inner">
       <div class="section-label">How it works</div>
-      <h2 class="section-title">Simple, fast, intentional</h2>
+      <h2 class="section-title" id="demo-heading">Simple, fast, intentional</h2>
       <p class="section-desc">Two steps from setup to fluency. Configure your languages once, then translate everything.</p>
       <div class="demo-grid">
         <div class="demo-card">
-          <img src="/imgs/2.gif" alt="Configuring languages in Dian" loading="lazy">
+          <img src="/imgs/2.gif" alt="Configuring languages in Dian: selecting source and target languages from a list" loading="lazy">
           <div class="demo-card-body">
             <div class="demo-step">Step 1</div>
             <h3>Configure your languages</h3>
@@ -318,7 +441,7 @@
           </div>
         </div>
         <div class="demo-card">
-          <img src="/imgs/1.gif" alt="Searching and translating words in Dian" loading="lazy">
+          <img src="/imgs/1.gif" alt="Searching and translating words in Dian: typing a word and seeing multi-language translations appear" loading="lazy">
           <div class="demo-card-body">
             <div class="demo-step">Step 2</div>
             <h3>Search &amp; translate</h3>
@@ -330,13 +453,13 @@
   </section>
 
   <!-- Shortcuts -->
-  <section class="section-alt" id="shortcuts">
+  <section class="section-alt fade-section" id="shortcuts" aria-labelledby="shortcuts-heading">
     <div class="section-inner">
       <div class="section-label">Power User</div>
-      <h2 class="section-title">Keyboard shortcuts</h2>
+      <h2 class="section-title" id="shortcuts-heading">Keyboard shortcuts</h2>
       <p class="section-desc">Dian is built for speed. Master these hotkeys and translate at the speed of thought.</p>
-      <table class="hotkeys-table">
-        <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+      <table class="hotkeys-table" aria-label="Keyboard shortcuts reference">
+        <thead><tr><th scope="col">Shortcut</th><th scope="col">Action</th></tr></thead>
         <tbody>
           <tr><td><div class="hotkey-combo"><kbd>Ctrl+Shift+F</kbd></div></td><td>Open Dian globally from anywhere</td></tr>
           <tr><td><div class="hotkey-combo"><kbd>Ctrl+F</kbd></div></td><td>Jump cursor to search input</td></tr>
@@ -350,20 +473,20 @@
   </section>
 
   <!-- Download -->
-  <section id="download">
+  <section class="fade-section" id="download" aria-labelledby="download-heading">
     <div class="section-inner">
       <div class="section-label">Get Dian</div>
-      <h2 class="section-title">Download for your platform</h2>
+      <h2 class="section-title" id="download-heading">Download for your platform</h2>
       <p class="section-desc">Dian runs on Windows and macOS. Free, open source, no telemetry.</p>
       <div class="download-grid">
         <div class="download-card" id="download-windows">
-          <div class="download-icon">🪟</div>
+          <div class="download-icon" aria-hidden="true">🪟</div>
           <h3>Windows</h3>
           <div class="dl-count">Setup installer (.exe)</div>
           <a href="https://github.com/bryht/dian/releases/latest/download/Dian_Setup_win_x64.exe" class="btn btn-primary">Download for Windows</a>
         </div>
         <div class="download-card" id="download-mac">
-          <div class="download-icon">🍎</div>
+          <div class="download-icon" aria-hidden="true">🍎</div>
           <h3>macOS</h3>
           <div class="dl-count">Disk image (.dmg)</div>
           <a href="https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.dmg" class="btn btn-primary">Download for macOS</a>
@@ -373,7 +496,7 @@
   </section>
 
   <!-- CTA Banner -->
-  <div class="cta-banner">
+  <div class="cta-banner fade-section">
     <div class="section-inner">
       <h2 class="section-title">Ready to fall in love with words?</h2>
       <p class="section-desc">Dian is free and open source. Star us on GitHub, join the discussion, or contribute a PR.</p>
@@ -385,7 +508,7 @@
   </div>
 
   <!-- Footer -->
-  <footer class="footer">
+  <footer class="footer" role="contentinfo">
     <div class="footer-inner">
       <div class="footer-links">
         <a href="https://github.com/bryht/dian">GitHub</a>
@@ -394,7 +517,7 @@
         <a href="https://github.com/bryht/dian/issues">Issues</a>
         <a href="https://www.paypal.me/bryht/6">Donate</a>
       </div>
-      <p class="footer-copy">Dian &middot; Made with care by <a href="https://github.com/bryht" style="color:var(--accent);text-decoration:none;">bryht</a> &middot; Open source under MIT license</p>
+      <p class="footer-copy">Dian &middot; Made with care by <a href="https://github.com/bryht">bryht</a> &middot; <a href="https://github.com/bryht/dian">Open source</a> under MIT license</p>
     </div>
   </footer>
 
