@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dian · Dictionary & Translator</title>
+  <meta name="description" content="Dian — a beautiful dictionary and translation app for Windows and macOS. Translate words and phrases across multiple languages instantly.">
+  <link rel="icon" type="image/png" href="/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fdfbf7;
+      --bg-alt: #f5f1e8;
+      --text: #1a1814;
+      --text-secondary: #6b6255;
+      --text-muted: #9b9180;
+      --accent: #c7923e;
+      --accent-hover: #a6772e;
+      --accent-light: #faf3e4;
+      --border: #e6dfd1;
+      --card-bg: #ffffff;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+      --shadow-md: 0 4px 24px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.03);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --font-display: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      --max-width: 1100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(253,251,247,0.85);
+      backdrop-filter: blur(16px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+    }
+    .nav-inner {
+      max-width: var(--max-width); margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--text); letter-spacing: -0.01em; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      text-decoration: none; color: var(--text-secondary); font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent); color: #fff !important;
+      padding: 8px 20px; border-radius: var(--radius-sm);
+      font-weight: 600; transition: background 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: var(--max-width); margin: 0 auto;
+      padding: 100px 2rem 80px; text-align: center;
+    }
+    .hero-badge {
+      display: inline-block; background: var(--accent-light); color: var(--accent);
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.04em;
+      padding: 6px 16px; border-radius: 100px; margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-weight: 700; line-height: 1.15; letter-spacing: -0.015em;
+      color: var(--text); margin-bottom: 1.2rem;
+    }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero p {
+      font-size: 1.15rem; color: var(--text-secondary); line-height: 1.6;
+      max-width: 540px; margin: 0 auto 2.5rem;
+    }
+    .hero-buttons { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+      padding: 12px 28px; border-radius: var(--radius-sm);
+      text-decoration: none; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .btn-outline { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+    .btn .platform-icon { font-size: 1.1rem; }
+
+    /* ── Trust bar ── */
+    .trust-bar {
+      max-width: var(--max-width); margin: 0 auto; padding: 0 2rem 40px;
+      display: flex; gap: 2rem; align-items: center; justify-content: center;
+      flex-wrap: wrap;
+    }
+    .trust-stat { text-align: center; }
+    .trust-stat .num {
+      font-family: var(--font-display); font-size: 1.6rem; font-weight: 700;
+      color: var(--accent);
+    }
+    .trust-stat .label { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Section shared ── */
+    section { padding: 80px 2rem; }
+    .section-alt { background: var(--bg-alt); }
+    .section-inner { max-width: var(--max-width); margin: 0 auto; }
+    .section-label {
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700; line-height: 1.25; letter-spacing: -0.01em;
+      color: var(--text); margin-bottom: 1rem;
+    }
+    .section-desc { color: var(--text-secondary); font-size: 1.05rem; max-width: 600px; margin-bottom: 2.5rem; line-height: 1.6; }
+
+    /* ── Features grid ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 28px 24px;
+      box-shadow: var(--shadow-sm); transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .feature-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: var(--radius-sm);
+      background: var(--accent-light); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1rem;
+    }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text); }
+    .feature-card p { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.55; }
+
+    /* ── Demo GIFs ── */
+    .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+    @media (max-width: 768px) { .demo-grid { grid-template-columns: 1fr; } }
+    .demo-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md);
+    }
+    .demo-card img { width: 100%; display: block; }
+    .demo-card-body { padding: 1.25rem 1.5rem; }
+    .demo-card-body h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .demo-card-body p { font-size: 0.85rem; color: var(--text-secondary); }
+    .demo-step { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); font-weight: 500; letter-spacing: 0.05em; }
+
+    /* ── Hotkeys ── */
+    .hotkeys-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+    .hotkeys-table td, .hotkeys-table th { padding: 14px 20px; text-align: left; }
+    .hotkeys-table th { background: var(--bg-alt); font-size: 0.78rem; font-weight: 600; letter-spacing: 0.05em; color: var(--text-muted); text-transform: uppercase; }
+    .hotkeys-table td { border-top: 1px solid var(--border); font-size: 0.92rem; }
+    .hotkeys-table kbd {
+      display: inline-block; background: var(--bg-alt); border: 1px solid var(--border);
+      border-radius: 4px; padding: 3px 8px;
+      font-family: var(--font-mono); font-size: 0.8rem; color: var(--text);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .hotkey-combo { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+
+    /* ── Download cards ── */
+    .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 640px) { .download-grid { grid-template-columns: 1fr; } }
+    .download-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 32px 28px;
+      text-align: center; box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .download-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+    .download-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .download-card h3 { font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem; }
+    .download-card .dl-count { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem; }
+    .download-card .btn { width: 100%; justify-content: center; }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border); background: var(--bg-alt);
+      padding: 48px 2rem; text-align: center;
+    }
+    .footer-inner { max-width: var(--max-width); margin: 0 auto; }
+    .footer-links { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .footer-links a { text-decoration: none; color: var(--text-secondary); font-size: 0.9rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-copy { font-size: 0.82rem; color: var(--text-muted); }
+
+    /* ── CTA Banner ── */
+    .cta-banner {
+      background: linear-gradient(135deg, #2d2618 0%, #1a1814 100%);
+      color: #fdfbf7; text-align: center; padding: 64px 2rem;
+    }
+    .cta-banner .section-title { color: #fdfbf7; }
+    .cta-banner .section-desc { color: rgba(253,251,247,0.7); margin: 0 auto 2rem; }
+    .cta-banner .btn-primary { background: var(--accent); }
+    .cta-banner .btn-outline { color: rgba(253,251,247,0.85); border-color: rgba(253,251,247,0.25); }
+
+    /* ── Responsive nav ── */
+    @media (max-width: 600px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+      .nav-cta { padding: 6px 14px; font-size: 0.82rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">Dian</div>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#demo">Demo</a>
+        <a href="#shortcuts">Shortcuts</a>
+        <a href="#download" class="nav-cta">Download</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-badge">✨ v0.7.6 &mdash; Free &amp; Open Source</div>
+    <h1>Your words, <em>beautifully</em> translated</h1>
+    <p>Dian is a dictionary app that translates words and phrases across multiple languages at once — with hotkeys, auto-complete, and a clean, distraction-free interface.</p>
+    <div class="hero-buttons">
+      <a href="#download-windows" class="btn btn-primary">
+        <span class="platform-icon">⊞</span> Download for Windows
+      </a>
+      <a href="#download-mac" class="btn btn-outline">
+        <span class="platform-icon">⌘</span> Download for macOS
+      </a>
+    </div>
+  </header>
+
+  <div class="trust-bar">
+    <div class="trust-stat"><div class="num">14</div><div class="label">Languages supported</div></div>
+    <div class="trust-stat"><div class="num">10k+</div><div class="label">Total downloads</div></div>
+    <div class="trust-stat"><div class="num">★</div><div class="label">Open source (MIT)</div></div>
+  </div>
+
+  <!-- Features -->
+  <section class="section-alt" id="features">
+    <div class="section-inner">
+      <div class="section-label">Why Dian?</div>
+      <h2 class="section-title">Translate faster, learn deeper</h2>
+      <p class="section-desc">Built for language learners and polyglots. Dian stays out of your way so you can focus on words that matter.</p>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Instant search &amp; autocomplete</h3>
+          <p>Start typing and Dian suggests words in real-time. Press <code style="font-family:var(--font-mono);font-size:0.85em;">Ctrl+F</code> to jump straight to the search bar.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Multi-language at once</h3>
+          <p>Translate a word into <em>all</em> your configured languages simultaneously. No more tab-switching between dictionaries.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⌨️</div>
+          <h3>Keyboard-first workflow</h3>
+          <p>Navigate with <code>J</code>/<code>K</code>, minimize with <code>Esc</code>, and switch languages inline with <code>/en</code>, <code>/zh</code>, <code>/fr</code>.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📤</div>
+          <h3>Export your word lists</h3>
+          <p>Save and export vocabulary to CSV. Import into Quizlet, Anki, or any flashcard app for spaced repetition practice.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔊</div>
+          <h3>Text-to-speech pronunciation</h3>
+          <p>Hear how words sound in any language with built-in Google TTS. Perfect your accent as you learn.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎨</div>
+          <h3>Clean, focused design</h3>
+          <p>No clutter, no ads. Dian's interface disappears so your words take center stage. Customize detail links for every language.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo -->
+  <section id="demo">
+    <div class="section-inner">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">Simple, fast, intentional</h2>
+      <p class="section-desc">Two steps from setup to fluency. Configure your languages once, then translate everything.</p>
+      <div class="demo-grid">
+        <div class="demo-card">
+          <img src="/imgs/2.gif" alt="Configuring languages in Dian" loading="lazy">
+          <div class="demo-card-body">
+            <div class="demo-step">Step 1</div>
+            <h3>Configure your languages</h3>
+            <p>Pick the languages you know and the ones you're learning. Set custom detail links for deeper lookups.</p>
+          </div>
+        </div>
+        <div class="demo-card">
+          <img src="/imgs/1.gif" alt="Searching and translating words in Dian" loading="lazy">
+          <div class="demo-card-body">
+            <div class="demo-step">Step 2</div>
+            <h3>Search &amp; translate</h3>
+            <p>Type a word or phrase — Dian translates it into every configured language and saves your history.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shortcuts -->
+  <section class="section-alt" id="shortcuts">
+    <div class="section-inner">
+      <div class="section-label">Power User</div>
+      <h2 class="section-title">Keyboard shortcuts</h2>
+      <p class="section-desc">Dian is built for speed. Master these hotkeys and translate at the speed of thought.</p>
+      <table class="hotkeys-table">
+        <thead><tr><th>Shortcut</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><div class="hotkey-combo"><kbd>Ctrl+Shift+F</kbd></div></td><td>Open Dian globally from anywhere</td></tr>
+          <tr><td><div class="hotkey-combo"><kbd>Ctrl+F</kbd></div></td><td>Jump cursor to search input</td></tr>
+          <tr><td><div class="hotkey-combo"><kbd>Esc</kbd></div></td><td>Minimize Dian to tray</td></tr>
+          <tr><td><div class="hotkey-combo"><kbd>/en</kbd> <kbd>/zh</kbd> <kbd>/fr</kbd> <kbd>/de</kbd> &hellip;</div></td><td>Switch input language inline (ISO 639-1 codes)</td></tr>
+          <tr><td><div class="hotkey-combo"><kbd>Shift+J</kbd></div></td><td>Scroll word list down</td></tr>
+          <tr><td><div class="hotkey-combo"><kbd>Shift+K</kbd></div></td><td>Scroll word list up</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Download -->
+  <section id="download">
+    <div class="section-inner">
+      <div class="section-label">Get Dian</div>
+      <h2 class="section-title">Download for your platform</h2>
+      <p class="section-desc">Dian runs on Windows and macOS. Free, open source, no telemetry.</p>
+      <div class="download-grid">
+        <div class="download-card" id="download-windows">
+          <div class="download-icon">🪟</div>
+          <h3>Windows</h3>
+          <div class="dl-count">Setup installer (.exe)</div>
+          <a href="https://github.com/bryht/dian/releases/latest/download/Dian_Setup_win_x64.exe" class="btn btn-primary">Download for Windows</a>
+        </div>
+        <div class="download-card" id="download-mac">
+          <div class="download-icon">🍎</div>
+          <h3>macOS</h3>
+          <div class="dl-count">Disk image (.dmg)</div>
+          <a href="https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.dmg" class="btn btn-primary">Download for macOS</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <div class="section-inner">
+      <h2 class="section-title">Ready to fall in love with words?</h2>
+      <p class="section-desc">Dian is free and open source. Star us on GitHub, join the discussion, or contribute a PR.</p>
+      <div class="hero-buttons">
+        <a href="https://github.com/bryht/dian" class="btn btn-outline" style="color:#fdfbf7;border-color:rgba(253,251,247,0.25);">⭐ Star on GitHub</a>
+        <a href="https://github.com/bryht/dian/discussions" class="btn btn-outline" style="color:#fdfbf7;border-color:rgba(253,251,247,0.25);">💬 Join Discussion</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="https://github.com/bryht/dian">GitHub</a>
+        <a href="https://github.com/bryht/dian/releases">Releases</a>
+        <a href="https://github.com/bryht/dian/discussions">Discussions</a>
+        <a href="https://github.com/bryht/dian/issues">Issues</a>
+        <a href="https://www.paypal.me/bryht/6">Donate</a>
+      </div>
+      <p class="footer-copy">Dian &middot; Made with care by <a href="https://github.com/bryht" style="color:var(--accent);text-decoration:none;">bryht</a> &middot; Open source under MIT license</p>
+    </div>
+  </footer>
+
+</body>
+</html>
