@@ -35,7 +35,7 @@
   }
   </script>
 
-  <link rel="icon" type="image/png" href="/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
@@ -119,6 +119,15 @@
     }
     .skip-link:focus { top: 8px; }
 
+    /* ── Screen-reader only ── */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+    }
+
+    /* ── Scroll margin for sticky nav ── */
+    #features, #demo, #shortcuts, #download { scroll-margin-top: 80px; }
+
     /* ── Scroll Progress Bar ── */
     .scroll-progress {
       position: fixed; top: 0; left: 0; height: 3px; z-index: 200;
@@ -195,13 +204,13 @@
 
     /* Mobile nav drawer */
     .nav-drawer {
-      display: none; position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
+      visibility: hidden; position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
       background: var(--bg); z-index: 99; padding: 2rem;
       flex-direction: column; gap: 1.5rem; align-items: center; justify-content: center;
       opacity: 0; transform: translateY(-10px);
-      transition: opacity 0.3s, transform 0.3s;
+      transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
     }
-    .nav-drawer.open { display: flex; opacity: 1; transform: translateY(0); }
+    .nav-drawer.open { visibility: visible; opacity: 1; transform: translateY(0); }
     .nav-drawer a {
       font-size: 1.2rem; font-weight: 600; color: var(--text);
       text-decoration: none; padding: 0.75rem 0;
@@ -224,7 +233,7 @@
       font-weight: 700; line-height: 1.15; letter-spacing: -0.015em;
       color: var(--text); margin-bottom: 1.2rem;
     }
-    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero h1 em { font-style: italic; color: var(--accent-hover); }
     .hero p {
       font-size: 1.15rem; color: var(--text-secondary); line-height: 1.6;
       max-width: 540px; margin: 0 auto 2.5rem;
@@ -417,6 +426,8 @@
       .cta-banner::before { animation: none; }
     }
 
+    .cta-banner .btn-outline { color: rgba(253,251,247,0.85); border-color: rgba(253,251,247,0.25); }
+
     /* ── Back to top ── */
     .back-to-top {
       position: fixed; bottom: 2rem; right: 2rem; z-index: 90;
@@ -433,7 +444,7 @@
     .back-to-top:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
     /* ── Responsive nav ── */
-    @media (max-width: 700px) {
+    @media (max-width: 768px) {
       .nav-links a:not(.nav-cta):not(.theme-toggle) { display: none; }
       .nav-hamburger { display: flex; }
       .nav-cta { padding: 6px 14px; font-size: 0.82rem; }
@@ -453,10 +464,10 @@
         <a href="#features">Features</a>
         <a href="#demo">Demo</a>
         <a href="#shortcuts">Shortcuts</a>
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
         <a href="#download" class="nav-cta">Download</a>
       </div>
-      <button class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false">
+      <button type="button" class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -487,9 +498,9 @@
     </header>
 
     <div class="trust-bar reveal">
-      <div class="trust-stat"><div class="num" data-count="14">0</div><div class="label">Languages supported</div></div>
-      <div class="trust-stat"><div class="num" data-count="10000" data-suffix="+">0</div><div class="label">Total downloads</div></div>
-      <div class="trust-stat"><div class="num">★</div><div class="label">Open source (MIT)</div></div>
+      <div class="trust-stat"><div class="num" data-count="14" aria-hidden="true">0</div><div class="label">Languages supported<span class="sr-only">: 14</span></div></div>
+      <div class="trust-stat"><div class="num" data-count="10000" data-suffix="+" aria-hidden="true">0</div><div class="label">Total downloads<span class="sr-only">: 10,000+</span></div></div>
+      <div class="trust-stat"><div class="num" aria-hidden="true">&#9733;</div><div class="label">Open source (MIT)</div></div>
     </div>
 
     <!-- Features -->
@@ -611,8 +622,8 @@
         <h2 class="section-title">Ready to fall in love with words?</h2>
         <p class="section-desc">Dian is free and open source. Star us on GitHub, join the discussion, or contribute a PR.</p>
         <div class="hero-buttons">
-          <a href="https://github.com/bryht/dian" class="btn btn-outline" style="color:#fdfbf7;border-color:rgba(253,251,247,0.25);">⭐ Star on GitHub</a>
-          <a href="https://github.com/bryht/dian/discussions" class="btn btn-outline" style="color:#fdfbf7;border-color:rgba(253,251,247,0.25);">💬 Join Discussion</a>
+          <a href="https://github.com/bryht/dian" class="btn btn-outline">⭐ Star on GitHub</a>
+          <a href="https://github.com/bryht/dian/discussions" class="btn btn-outline">💬 Join Discussion</a>
         </div>
       </div>
     </div>
@@ -633,25 +644,25 @@
   </footer>
 
   <!-- Back to top -->
-  <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">↑</button>
+  <button type="button" class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></button>
 
   <script>
     // ── Progressive enhancement: all JS is additive ──
 
     // Scroll progress bar
     (function() {
-      var bar = document.getElementById('scrollProgress');
+      const bar = document.getElementById('scrollProgress');
       if (!bar) return;
       window.addEventListener('scroll', function() {
-        var scrolled = window.scrollY;
-        var height = document.documentElement.scrollHeight - window.innerHeight;
+        const scrolled = window.scrollY;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
         bar.style.width = height > 0 ? (scrolled / height * 100) + '%' : '0%';
       }, { passive: true });
     })();
 
     // Back to top button
     (function() {
-      var btn = document.getElementById('backToTop');
+      const btn = document.getElementById('backToTop');
       if (!btn) return;
       window.addEventListener('scroll', function() {
         btn.classList.toggle('visible', window.scrollY > 500);
@@ -668,7 +679,7 @@
         document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('visible'); });
         return;
       }
-      var observer = new IntersectionObserver(function(entries) {
+      const observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting) {
             entry.target.classList.add('visible');
@@ -682,21 +693,21 @@
     // Trust bar number counter
     (function() {
       if (!('IntersectionObserver' in window)) return;
-      var nums = document.querySelectorAll('.trust-stat .num[data-count]');
-      var observed = false;
-      var observer = new IntersectionObserver(function(entries) {
+      const nums = document.querySelectorAll('.trust-stat .num[data-count]');
+      let observed = false;
+      const observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           if (entry.isIntersecting && !observed) {
             observed = true;
             nums.forEach(function(el) {
-              var target = parseInt(el.getAttribute('data-count'), 10);
-              var suffix = el.getAttribute('data-suffix') || '';
-              var duration = 1200;
-              var start = performance.now();
+              const target = parseInt(el.getAttribute('data-count'), 10);
+              const suffix = el.getAttribute('data-suffix') || '';
+              const duration = 1200;
+              const start = performance.now();
               function tick(now) {
-                var progress = Math.min((now - start) / duration, 1);
-                var eased = 1 - Math.pow(1 - progress, 3);
-                var val = Math.round(eased * target);
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const val = Math.round(eased * target);
                 el.textContent = (target >= 1000 ? val.toLocaleString() : val) + suffix;
                 if (progress < 1) requestAnimationFrame(tick);
               }
@@ -706,25 +717,25 @@
           }
         });
       }, { threshold: 0.5 });
-      var bar = document.querySelector('.trust-bar');
+      const bar = document.querySelector('.trust-bar');
       if (bar) observer.observe(bar);
     })();
 
     // OS detection for download cards
     (function() {
-      var ua = navigator.userAgent || navigator.platform || '';
-      var isMac = /Mac|iPod|iPhone|iPad/.test(ua);
-      var winCard = document.getElementById('download-windows');
-      var macCard = document.getElementById('download-mac');
+      const ua = navigator.userAgent || navigator.platform || '';
+      const isMac = /Mac|iPod|iPhone|iPad/.test(ua);
+      const winCard = document.getElementById('download-windows');
+      const macCard = document.getElementById('download-mac');
       if (isMac && macCard) {
         macCard.classList.add('recommended');
-        var badge = document.createElement('div');
+        const badge = document.createElement('div');
         badge.className = 'recommended-badge';
         badge.textContent = 'RECOMMENDED';
         macCard.prepend(badge);
       } else if (winCard) {
         winCard.classList.add('recommended');
-        var badge = document.createElement('div');
+        const badge = document.createElement('div');
         badge.className = 'recommended-badge';
         badge.textContent = 'RECOMMENDED';
         winCard.prepend(badge);
@@ -733,16 +744,16 @@
 
     // Theme toggle
     (function() {
-      var toggle = document.getElementById('themeToggle');
-      var html = document.documentElement;
-      var stored = localStorage.getItem('dian-theme');
+      const toggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      const stored = localStorage.getItem('dian-theme');
       if (stored) {
         html.setAttribute('data-theme', stored);
         toggle.textContent = stored === 'dark' ? '☀️' : '🌙';
       }
       toggle.addEventListener('click', function() {
-        var current = html.getAttribute('data-theme');
-        var next = current === 'dark' ? 'light' : 'dark';
+        const current = html.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
         if (next === 'light') {
           html.removeAttribute('data-theme');
           localStorage.removeItem('dian-theme');
@@ -757,15 +768,20 @@
 
     // Mobile hamburger menu
     (function() {
-      var hamburger = document.getElementById('navHamburger');
-      var drawer = document.getElementById('navDrawer');
+      const hamburger = document.getElementById('navHamburger');
+      const drawer = document.getElementById('navDrawer');
       if (!hamburger || !drawer) return;
       hamburger.addEventListener('click', function() {
-        var isOpen = drawer.classList.contains('open');
+        const isOpen = drawer.classList.contains('open');
         drawer.classList.toggle('open');
         hamburger.classList.toggle('active');
         hamburger.setAttribute('aria-expanded', !isOpen);
         hamburger.setAttribute('aria-label', isOpen ? 'Open menu' : 'Close menu');
+        if (!isOpen) {
+          // Focus first link when opening
+          const firstLink = drawer.querySelector('a');
+          if (firstLink) firstLink.focus();
+        }
       });
       // Close drawer on link click
       drawer.querySelectorAll('a').forEach(function(link) {
@@ -775,6 +791,16 @@
           hamburger.setAttribute('aria-expanded', 'false');
           hamburger.setAttribute('aria-label', 'Open menu');
         });
+      });
+      // Close drawer on Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && drawer.classList.contains('open')) {
+          drawer.classList.remove('open');
+          hamburger.classList.remove('active');
+          hamburger.setAttribute('aria-expanded', 'false');
+          hamburger.setAttribute('aria-label', 'Open menu');
+          hamburger.focus();
+        }
       });
     })();
   </script>
