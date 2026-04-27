@@ -35,7 +35,7 @@
   }
   </script>
 
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <!-- No favicon file deployed yet; link removed to avoid 404 -->
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
@@ -454,7 +454,7 @@
 <body>
 
   <a href="#main" class="skip-link">Skip to content</a>
-  <div class="scroll-progress" id="scrollProgress" role="progressbar" aria-label="Scroll progress"></div>
+  <div class="scroll-progress" id="scrollProgress" role="progressbar" aria-label="Scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
 
   <!-- Nav -->
   <nav role="navigation" aria-label="Main navigation">
@@ -464,7 +464,7 @@
         <a href="#features">Features</a>
         <a href="#demo">Demo</a>
         <a href="#shortcuts">Shortcuts</a>
-        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">🌙</button>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" aria-pressed="false" title="Toggle dark mode">🌙</button>
         <a href="#download" class="nav-cta">Download</a>
       </div>
       <button type="button" class="nav-hamburger" id="navHamburger" aria-label="Open menu" aria-expanded="false" aria-controls="navDrawer">
@@ -474,7 +474,7 @@
   </nav>
 
   <!-- Mobile drawer -->
-  <div class="nav-drawer" id="navDrawer" role="dialog" aria-label="Mobile navigation">
+  <div class="nav-drawer" id="navDrawer" role="dialog" aria-modal="true" aria-label="Mobile navigation">
     <a href="#features">Features</a>
     <a href="#demo">Demo</a>
     <a href="#shortcuts">Shortcuts</a>
@@ -484,15 +484,15 @@
   <main id="main">
     <!-- Hero -->
     <header class="hero reveal">
-      <div class="hero-badge">✨ v0.7.6 &mdash; Free &amp; Open Source</div>
+      <div class="hero-badge"><span aria-hidden="true">✨</span> v0.7.6 &mdash; Free &amp; Open Source</div>
       <h1>Your words, <em>beautifully</em> translated</h1>
       <p>Dian is a dictionary app that translates words and phrases across multiple languages at once — with hotkeys, auto-complete, and a clean, distraction-free interface.</p>
       <div class="hero-buttons">
         <a href="#download-windows" class="btn btn-primary">
-          <span class="platform-icon">⊞</span> Download for Windows
+          <span class="platform-icon" aria-hidden="true">⊞</span> Download for Windows
         </a>
         <a href="#download-mac" class="btn btn-outline">
-          <span class="platform-icon">⌘</span> Download for macOS
+          <span class="platform-icon" aria-hidden="true">⌘</span> Download for macOS
         </a>
       </div>
     </header>
@@ -511,32 +511,32 @@
         <p class="section-desc reveal">Built for language learners and polyglots. Dian stays out of your way so you can focus on words that matter.</p>
         <div class="features-grid">
           <div class="feature-card reveal reveal-delay-1">
-            <div class="feature-icon">🔍</div>
+            <div class="feature-icon" aria-hidden="true">🔍</div>
             <h3>Instant search &amp; autocomplete</h3>
             <p>Start typing and Dian suggests words in real-time. Press <code>Ctrl+F</code> to jump straight to the search bar.</p>
           </div>
           <div class="feature-card reveal reveal-delay-2">
-            <div class="feature-icon">🌐</div>
+            <div class="feature-icon" aria-hidden="true">🌐</div>
             <h3>Multi-language at once</h3>
             <p>Translate a word into <em>all</em> your configured languages simultaneously. No more tab-switching between dictionaries.</p>
           </div>
           <div class="feature-card reveal reveal-delay-3">
-            <div class="feature-icon">⌨️</div>
+            <div class="feature-icon" aria-hidden="true">⌨️</div>
             <h3>Keyboard-first workflow</h3>
             <p>Navigate with <code>J</code>/<code>K</code>, minimize with <code>Esc</code>, and switch languages inline with <code>/en</code>, <code>/zh</code>, <code>/fr</code>.</p>
           </div>
           <div class="feature-card reveal reveal-delay-4">
-            <div class="feature-icon">📤</div>
+            <div class="feature-icon" aria-hidden="true">📤</div>
             <h3>Export your word lists</h3>
             <p>Save and export vocabulary to CSV. Import into Quizlet, Anki, or any flashcard app for spaced repetition practice.</p>
           </div>
           <div class="feature-card reveal reveal-delay-5">
-            <div class="feature-icon">🔊</div>
+            <div class="feature-icon" aria-hidden="true">🔊</div>
             <h3>Text-to-speech pronunciation</h3>
             <p>Hear how words sound in any language with built-in Google TTS. Perfect your accent as you learn.</p>
           </div>
           <div class="feature-card reveal reveal-delay-1">
-            <div class="feature-icon">🎨</div>
+            <div class="feature-icon" aria-hidden="true">🎨</div>
             <h3>Clean, focused design</h3>
             <p>No clutter, no ads. Dian's interface disappears so your words take center stage. Customize detail links for every language.</p>
           </div>
@@ -601,13 +601,13 @@
         <p class="section-desc reveal">Dian runs on Windows and macOS. Free, open source, no telemetry.</p>
         <div class="download-grid">
           <div class="download-card reveal reveal-delay-1" id="download-windows">
-            <div class="download-icon">🪟</div>
+            <div class="download-icon" aria-hidden="true">🪟</div>
             <h3>Windows</h3>
             <div class="dl-count">Setup installer (.exe)</div>
             <a href="https://github.com/bryht/dian/releases/latest/download/Dian_Setup_win_x64.exe" class="btn btn-primary">Download for Windows</a>
           </div>
           <div class="download-card reveal reveal-delay-2" id="download-mac">
-            <div class="download-icon">🍎</div>
+            <div class="download-icon" aria-hidden="true">🍎</div>
             <h3>macOS</h3>
             <div class="dl-count">Disk image (.dmg)</div>
             <a href="https://github.com/bryht/dian/releases/latest/download/Dian_Setup_mac.dmg" class="btn btn-primary">Download for macOS</a>
@@ -656,7 +656,9 @@
       window.addEventListener('scroll', function() {
         const scrolled = window.scrollY;
         const height = document.documentElement.scrollHeight - window.innerHeight;
-        bar.style.width = height > 0 ? (scrolled / height * 100) + '%' : '0%';
+        const pct = height > 0 ? (scrolled / height * 100) : 0;
+        bar.style.width = pct + '%';
+        bar.setAttribute('aria-valuenow', Math.round(pct));
       }, { passive: true });
     })();
 
@@ -750,6 +752,7 @@
       if (stored) {
         html.setAttribute('data-theme', stored);
         toggle.textContent = stored === 'dark' ? '☀️' : '🌙';
+        toggle.setAttribute('aria-pressed', stored === 'dark' ? 'true' : 'false');
       }
       toggle.addEventListener('click', function() {
         const current = html.getAttribute('data-theme');
@@ -758,10 +761,12 @@
           html.removeAttribute('data-theme');
           localStorage.removeItem('dian-theme');
           toggle.textContent = '🌙';
+          toggle.setAttribute('aria-pressed', 'false');
         } else {
           html.setAttribute('data-theme', 'dark');
           localStorage.setItem('dian-theme', 'dark');
           toggle.textContent = '☀️';
+          toggle.setAttribute('aria-pressed', 'true');
         }
       });
     })();
@@ -771,34 +776,40 @@
       const hamburger = document.getElementById('navHamburger');
       const drawer = document.getElementById('navDrawer');
       if (!hamburger || !drawer) return;
+      const body = document.body;
+      function openDrawer() {
+        drawer.classList.add('open');
+        hamburger.classList.add('active');
+        hamburger.setAttribute('aria-expanded', 'true');
+        hamburger.setAttribute('aria-label', 'Close menu');
+        body.style.overflow = 'hidden';
+        const firstLink = drawer.querySelector('a');
+        if (firstLink) firstLink.focus();
+      }
+      function closeDrawer() {
+        drawer.classList.remove('open');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Open menu');
+        body.style.overflow = '';
+      }
       hamburger.addEventListener('click', function() {
-        const isOpen = drawer.classList.contains('open');
-        drawer.classList.toggle('open');
-        hamburger.classList.toggle('active');
-        hamburger.setAttribute('aria-expanded', !isOpen);
-        hamburger.setAttribute('aria-label', isOpen ? 'Open menu' : 'Close menu');
-        if (!isOpen) {
-          // Focus first link when opening
-          const firstLink = drawer.querySelector('a');
-          if (firstLink) firstLink.focus();
+        if (drawer.classList.contains('open')) {
+          closeDrawer();
+        } else {
+          openDrawer();
         }
       });
       // Close drawer on link click
       drawer.querySelectorAll('a').forEach(function(link) {
         link.addEventListener('click', function() {
-          drawer.classList.remove('open');
-          hamburger.classList.remove('active');
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.setAttribute('aria-label', 'Open menu');
+          closeDrawer();
         });
       });
       // Close drawer on Escape
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && drawer.classList.contains('open')) {
-          drawer.classList.remove('open');
-          hamburger.classList.remove('active');
-          hamburger.setAttribute('aria-expanded', 'false');
-          hamburger.setAttribute('aria-label', 'Open menu');
+          closeDrawer();
           hamburger.focus();
         }
       });
