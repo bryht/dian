@@ -441,13 +441,12 @@
       background: conic-gradient(from 0deg, transparent, var(--accent), transparent, transparent);
       animation: cta-rotate 8s linear infinite;
       opacity: 0.06;
+      pointer-events: none;
     }
     @keyframes cta-rotate { 100% { transform: rotate(360deg); } }
     @media (prefers-reduced-motion: reduce) {
       .cta-banner::before { animation: none; }
     }
-
-    .cta-banner .btn-outline { color: rgba(253,251,247,0.85); border-color: rgba(253,251,247,0.25); }
 
     /* ── Back to top ── */
     .back-to-top {
