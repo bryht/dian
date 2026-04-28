@@ -88,6 +88,27 @@
       --code-bg: #2a2520;
     }
 
+    /* Light theme: explicit override when user chooses light on a dark-preference OS */
+    [data-theme="light"] {
+      --bg: #fdfbf7;
+      --bg-alt: #f5f1e8;
+      --text: #1a1814;
+      --text-secondary: #6b6255;
+      --text-muted: #9b9180;
+      --accent: #c7923e;
+      --accent-hover: #a6772e;
+      --accent-light: #faf3e4;
+      --border: #e6dfd1;
+      --card-bg: #ffffff;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.03);
+      --shadow-md: 0 4px 24px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.03);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.03);
+      --nav-bg: rgba(253,251,247,0.85);
+      --progress-bg: var(--accent);
+      --hero-gradient: none;
+      --code-bg: #f5f1e8;
+    }
+
     @media (prefers-color-scheme: dark) {
       :root:not([data-theme]) {
         --bg: #1a1814;
@@ -339,7 +360,7 @@
       transition: box-shadow 0.3s;
     }
     .demo-card:hover { box-shadow: var(--shadow-lg); }
-    .demo-card img { width: 100%; display: block; }
+    .demo-card img { width: 100%; display: block; object-fit: contain; background: var(--bg-alt); }
     .demo-card-body { padding: 1.25rem 1.5rem; }
     .demo-card-body h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.3rem; }
     .demo-card-body p { font-size: 0.85rem; color: var(--text-secondary); }
@@ -753,18 +774,21 @@
         html.setAttribute('data-theme', stored);
         toggle.textContent = stored === 'dark' ? '☀️' : '🌙';
         toggle.setAttribute('aria-pressed', stored === 'dark' ? 'true' : 'false');
+      } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // System prefers dark but no explicit choice stored yet — keep in sync
+        html.setAttribute('data-theme', 'dark');
+        toggle.textContent = '☀️';
+        toggle.setAttribute('aria-pressed', 'true');
       }
       toggle.addEventListener('click', function() {
         const current = html.getAttribute('data-theme');
         const next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('dian-theme', next);
         if (next === 'light') {
-          html.removeAttribute('data-theme');
-          localStorage.removeItem('dian-theme');
           toggle.textContent = '🌙';
           toggle.setAttribute('aria-pressed', 'false');
         } else {
-          html.setAttribute('data-theme', 'dark');
-          localStorage.setItem('dian-theme', 'dark');
           toggle.textContent = '☀️';
           toggle.setAttribute('aria-pressed', 'true');
         }
