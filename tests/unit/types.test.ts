@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { SearchItem } from '../../src/types/SearchItem';
 import { WordItem } from '../../src/types/WordItem';
-import { Language, languages } from '../../src/types/Language';
+import { languages } from '../../src/types/Language';
 
 describe('SearchItem', () => {
   it('has default empty words array', () => {
@@ -67,47 +67,28 @@ describe('WordItem', () => {
   });
 });
 
-describe('Language', () => {
-  it('has default values', () => {
-    const lang = new Language();
-    expect(lang.isSelected).toBe(false);
-    expect(lang.isUsed).toBe(false);
-    expect(lang.detailLink).toBe('');
-    expect(lang.detailHideTop).toBe(0);
-    expect(lang.detailHideFilters).toEqual([]);
-  });
-});
-
 describe('languages array', () => {
-  it('contains 11 language definitions', () => {
-    expect(languages).toHaveLength(11);
+  it('contains 14 language definitions', () => {
+    expect(languages).toHaveLength(14);
   });
 
-  it('has English as the first and selected language', () => {
-    expect(languages[0].culture).toBe('en');
-    expect(languages[0].isSelected).toBe(true);
+  it('has English as the first language with isUsed=true', () => {
+    expect(languages[0].code).toBe('en');
     expect(languages[0].isUsed).toBe(true);
   });
 
   it('all languages have required fields', () => {
     for (const lang of languages) {
-      expect(lang.culture).toBeTruthy();
-      expect(lang.cultureFull).toBeTruthy();
-      expect(lang.cultureName).toBeTruthy();
+      expect(lang.code).toBeTruthy();
+      expect(lang.name).toBeTruthy();
+      expect(lang.native).toBeTruthy();
       expect(lang.detailLink).toBeTruthy();
-      expect(typeof lang.detailHideTop).toBe('number');
     }
   });
 
-  it('all detail links contain {{word}} placeholder', () => {
+  it('all detail links contain {word} placeholder', () => {
     for (const lang of languages) {
-      expect(lang.detailLink).toContain('{{word}}');
+      expect(lang.detailLink).toContain('{word}');
     }
-  });
-
-  it('has exactly 3 languages with isUsed=true by default', () => {
-    const used = languages.filter(l => l.isUsed);
-    expect(used.length).toBe(3);
-    expect(used.map(l => l.culture)).toEqual(['en', 'nl', 'zh']);
   });
 });

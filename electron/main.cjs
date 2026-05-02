@@ -15,7 +15,7 @@ const autoUpdater = require("electron-updater").autoUpdater;
 // electron-is-dev is now ESM only, use app.isPackaged instead
 const electronIsDev = !app.isPackaged;
 const { promises } = require('fs');
-const { ElectronBlocker, fullLists } = require('@cliqz/adblocker-electron');
+const { ElectronBlocker, fullLists } = require('@ghostery/adblocker-electron');
 const googleTTS = require('google-tts-api');
 const { exec } = require('child_process');
 const https = require('https');

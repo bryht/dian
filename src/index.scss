@@ -1,44 +1,81 @@
-// Your variable overrides - must be defined before importing Bootstrap
-$success: #fafcf3;
-$primary: #61abf1;
-$h6-font-size: 12px;
-$input-focus-box-shadow: none;
-$input-box-shadow: none;
-$btn-focus-width: 0;
-$btn-close-focus-shadow: none;
-$btn-focus-box-shadow: none;
+/* Dian — editorial dictionary aesthetic
+   Warm paper light theme, deep ink dark theme, ochre accent. */
 
-// Import Bootstrap with custom variables
-@use "bootstrap/scss/bootstrap" with (
-  $primary: $primary,
-  $success: $success,
-  $h6-font-size: $h6-font-size,
-  $input-focus-box-shadow: $input-focus-box-shadow,
-  $input-box-shadow: $input-box-shadow,
-  $btn-focus-width: $btn-focus-width,
-  $btn-close-focus-shadow: $btn-close-focus-shadow,
-  $btn-focus-box-shadow: $btn-focus-box-shadow
-);
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500;1,8..60,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@600&display=swap');
 
-// scroll bar style
+:root {
+  --serif: 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --noto: 'Noto Serif SC', 'Source Han Serif', 'Songti SC', serif;
+}
+
+/* ── Light (warm paper) ────────────────────────────────────── */
+.dian-light {
+  --paper:        #FAF7F2;
+  --paper-2:      #F3EEE5;
+  --paper-3:      #ECE5D8;
+  --rule:         #E4DBC9;
+  --rule-strong:  #C9BDA4;
+  --ink:          #1F1B16;
+  --ink-2:        #4A4339;
+  --ink-3:        #8A7E6C;
+  --accent:       #B8722D;
+  --accent-soft:  #E8D2B0;
+  --accent-ink:   #6B3F12;
+  --highlight:    #F2E2A8;
+  --shadow:       0 1px 0 rgba(31,27,22,0.04), 0 8px 24px rgba(31,27,22,0.06);
+  --shadow-lg:    0 20px 60px rgba(31,27,22,0.18);
+}
+
+/* ── Dark (deep ink) ───────────────────────────────────────── */
+.dian-dark {
+  --paper:        #14110D;
+  --paper-2:      #1C1814;
+  --paper-3:      #25201A;
+  --rule:         #2E2820;
+  --rule-strong:  #463E32;
+  --ink:          #F2EADB;
+  --ink-2:        #BFB39B;
+  --ink-3:        #8A7E68;
+  --accent:       #E0A35E;
+  --accent-soft:  #4A331A;
+  --accent-ink:   #F4D8A7;
+  --highlight:    #6B5A28;
+  --shadow:       0 1px 0 rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.4);
+  --shadow-lg:    0 20px 60px rgba(0,0,0,0.6);
+}
+
+/* baseline */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+input, textarea { font: inherit; color: inherit; background: none; border: 0; outline: 0; }
+input::placeholder { color: var(--ink-3); }
+
+::selection { background: var(--highlight); color: var(--ink); }
+
+/* scrollbar */
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #d0d4d8;
+  background: var(--rule-strong);
   border-radius: 2px;
-
-  &:hover {
-    background: #b0b5ba;
-  }
 }
-
-body {
-  background-color: #ffffff;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-3);
 }

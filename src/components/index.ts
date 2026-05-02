@@ -1,5 +1,9 @@
 // Barrel export for Components
-export { default as Modal } from './Modal';
-export { default as WordDisplay } from './WordDisplay/WordHtml';
-export { default as AutoCompleteInput } from './AutoCompleteInput/AutoCompleteInput';
-export { default as CloseButton } from './CloseButton/CloseButton';
+export { DianMark, DianWordmark, DianLockup } from './Logo';
+export { Sidebar } from './Sidebar';
+export { SearchBar } from './SearchBar';
+export { TranslationCard, iconBtnStyle } from './TranslationCard';
+export { Icon } from './Icons';
+export { Kbd } from './Kbd';
+export { ViewHeader } from './ViewHeader';
+export { SectionLabel } from './SectionLabel';

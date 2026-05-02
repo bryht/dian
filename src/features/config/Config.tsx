@@ -1,203 +1,137 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import Modal from '../../components/Modal';
-import { Language, SearchItem } from '../../types';
-import { Filter, File } from '../../utils';
-import type { IModalRef } from '../../components/Modal';
 import { useDict } from '../../context';
-import { UserProfileButton } from '../../components/Auth';
+import { ViewHeader } from '../../components/ViewHeader';
+import { SectionLabel } from '../../components/SectionLabel';
+import { Icon } from '../../components/Icons';
 
 const Config: React.FC = () => {
-    const { languages: initialLanguages, searchItems, updateSearchItems, updateLanguages, loadLanguages, toggleSetting } = useDict();
+  const { languages, updateLanguages, loadLanguages } = useDict();
 
-    const modalRef = React.useRef<IModalRef>(null);
-    const [languages, setLanguages] = React.useState<Array<Language>>(initialLanguages);
-
-    React.useEffect(() => {
-        loadLanguages();
-    }, [loadLanguages]);
-
-    React.useEffect(() => {
-        setLanguages(initialLanguages);
-    }, [initialLanguages]);
-
-    const openSetting = React.useCallback(async () => {
-        await loadLanguages();
-        modalRef.current?.openModal();
-    }, [loadLanguages]);
-
-    const deleteSearchItems = React.useCallback(async () => {
-        if (!searchItems || searchItems.length === 0) {
-            alert('No search history to delete.');
-            return;
-        }
-
-        if (window.confirm(`Are you sure you want to delete all ${searchItems.length} search history items? This action cannot be undone.`)) {
-            updateSearchItems([]);
-            await toggleSetting();
-        }
-    }, [updateSearchItems, toggleSetting, searchItems]);
-
-    const exportWords = React.useCallback(async () => {
-        if (!searchItems || searchItems.length === 0) {
-            alert('No search history available to export. Please search for some words first.');
-            return;
-        }
-
-        try {
-            const { ipcRenderer } = window.require('electron');
-            const fileName = await File.openFile('SaveWords', 'WordList', Filter.csv);
-
-            if (!fileName) {
-                return;
-            }
-
-            const filteredItems = searchItems.filter(element => !SearchItem.isPhrase(element.words));
-
-            if (filteredItems.length === 0) {
-                alert(`All ${searchItems.length} items are phrases and cannot be exported. Only individual words can be exported.`);
-                await toggleSetting();
-                return;
-            }
-
-            const csvData = filteredItems
-                .map(element => element.words.map(x => x.text).join(";"))
-                .join("\r\n") + "\r\n";
-
-            const result = await ipcRenderer.invoke('export-words', { fileName, csvData });
-
-            if (result.success) {
-                alert(`Successfully exported ${filteredItems.length} word(s) to:\n${fileName}`);
-            } else {
-                alert(`Failed to export words: ${result.error || 'Unknown error'}`);
-            }
-
-            await toggleSetting();
-        } catch (error) {
-            console.error('Error exporting words:', error);
-            alert(`An error occurred while exporting: ${error instanceof Error ? error.message : 'Unknown error'}`);
-        }
-    }, [searchItems, toggleSetting]);
-
-    const openHowToUse = React.useCallback(async () => {
-        try {
-            const { ipcRenderer } = window.require('electron');
-            const url = 'https://bryht.github.io/dian';
-            await ipcRenderer.invoke('open-external-url', url);
-            await toggleSetting();
-        } catch (error) {
-            console.error('Error opening external URL:', error);
-            alert('Failed to open documentation. Please visit https://bryht.github.io/dian manually.');
-        }
-    }, [toggleSetting]);
-
-    const onUsedLanguageChange = React.useCallback((culture: string, newIsUsed: boolean) => {
-        setLanguages(prevLanguages => {
-            // Check if we would have at least 2 languages after this change
-            const activeLanguagesCount = prevLanguages.filter(p =>
-                p.culture === culture ? newIsUsed : p.isUsed
-            ).length;
-
-            if (activeLanguagesCount < 2) {
-                alert('Please select at least 2 languages.');
-                return prevLanguages;
-            }
-
-            return prevLanguages.map(item =>
-                item.culture === culture
-                    ? { ...item, isUsed: newIsUsed }
-                    : item
-            );
-        });
-    }, []);
-
-    const onLanguageDetailLinkChanged = React.useCallback((culture: string, value: string) => {
-        setLanguages(prevLanguages => {
-            return prevLanguages.map(item => ({
-                ...item,
-                isSelected: item.culture === culture,
-                detailLink: item.culture === culture ? value : item.detailLink
-            }));
-        });
-    }, []);
-
-    const saveConfig = React.useCallback(async () => {
-        await updateLanguages(languages);
-        modalRef.current?.closeModal();
-    }, [languages, updateLanguages]);
-
-    const resetConfig = React.useCallback(async () => {
-        await updateLanguages([]);
-        await loadLanguages();
-        modalRef.current?.closeModal();
-    }, [updateLanguages, loadLanguages]);
-
-    const modalClosed = React.useCallback(async () => {
-        await toggleSetting();
-    }, [toggleSetting]);
-
-
-    const selectedLanguage = languages.find(p => p.isSelected);
-
-    if (!selectedLanguage) {
-        return null;
-    }
-
-    return (
-        <>
-            <UserProfileButton />
-            <hr />
-            <div className="btn-group-vertical">
-
-                <button type="button" className="btn btn-outline-secondary" onClick={openSetting}>
-                    Setting
-                </button>
-                <button type="button" className="btn btn-outline-secondary" onClick={exportWords}>
-                    Export
-                </button>
-                <button type="button" className="btn btn-outline-danger" onClick={deleteSearchItems}>
-                    ClearAll
-                </button>
-                <button type="button" className="btn btn-outline-secondary" onClick={openHowToUse}>
-                    Document
-                </button>
-
-                <Modal ref={modalRef} onModalClosed={modalClosed}>
-                    <h5>Configure Languages and Dictionary Links</h5>
-                    <div className="d-flex flex-wrap">
-                        {
-                            languages.map(l =>
-                                l.isUsed ?
-                                    <div key={l.culture} className="input-group mb-1">
-                                        <div className="input-group-text">
-                                            <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onChange={e => onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
-                                                <label className="form-check-label">{l.cultureName}</label>
-                                            </div>
-                                        </div>
-                                        <input type="text" className="form-control" onChange={e => onLanguageDetailLinkChanged(l.culture, e.target.value)} value={l.detailLink}></input>
-                                    </div>
-                                    :
-                                    <div key={l.culture} className="m-1">
-                                        <div className="input-group-text">
-                                            <div className="form-check form-switch">
-                                                <input className="form-check-input" type="checkbox" onChange={e => onUsedLanguageChange(l.culture, e.currentTarget.checked)} checked={l.isUsed}></input>
-                                                <label className="form-check-label">{l.cultureName}</label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                            )
-                        }
-                    </div>
-                    <div className="d-flex justify-content-end">
-                        <button type="button" onClick={resetConfig} className="btn btn-secondary m-2 align-self-end">Reset</button>
-                        <button type="button" onClick={saveConfig} className="btn btn-secondary m-2 align-self-end">Save</button>
-                    </div>
-                </Modal>
-            </div>
-        </>
+  const toggleLang = React.useCallback((code: string) => {
+    const updated = languages.map(l =>
+      l.code === code ? { ...l, isUsed: !l.isUsed } : l
     );
+    // Ensure at least 2 languages remain active
+    const activeCount = updated.filter(l => l.isUsed).length;
+    if (activeCount < 2) {
+      alert('Please select at least 2 languages.');
+      return;
+    }
+    updateLanguages(updated);
+  }, [languages, updateLanguages]);
+
+  const handleDetailLinkChange = React.useCallback((code: string, value: string) => {
+    const updated = languages.map(l =>
+      l.code === code ? { ...l, detailLink: value } : l
+    );
+    updateLanguages(updated);
+  }, [languages, updateLanguages]);
+
+  const activeLangs = languages.filter(l => l.isUsed);
+
+  return (
+    <div style={{ padding: '24px 40px 60px' }}>
+      <ViewHeader title="Settings" subtitle="Languages and detail links" />
+
+      <div style={{ marginTop: 24 }}>
+        <SectionLabel>Configured languages</SectionLabel>
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8,
+          marginTop: 10,
+        }}>
+          {languages.map(l => {
+            const on = l.isUsed;
+            return (
+              <button key={l.code} onClick={() => toggleLang(l.code)} style={{
+                display: 'grid', gridTemplateColumns: 'auto 1fr auto', gap: 12,
+                alignItems: 'center',
+                padding: '10px 12px', borderRadius: 8,
+                background: on ? 'var(--paper-2)' : 'transparent',
+                border: '1px solid ' + (on ? 'var(--rule-strong)' : 'var(--rule)'),
+                textAlign: 'left',
+              }}>
+                <span style={{
+                  width: 18, height: 18, borderRadius: 4,
+                  border: '1.5px solid ' + (on ? 'var(--accent)' : 'var(--rule-strong)'),
+                  background: on ? 'var(--accent)' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'white',
+                }}>
+                  {on && <Icon.check s={11} />}
+                </span>
+                <span>
+                  <div style={{ fontFamily: 'var(--serif)', fontSize: 15, color: 'var(--ink)' }}>{l.name}</div>
+                  <div style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 12, color: 'var(--ink-3)' }}>{l.native}</div>
+                </span>
+                <span style={{
+                  fontFamily: 'var(--mono)', fontSize: 10.5, fontWeight: 600,
+                  color: 'var(--ink-3)', letterSpacing: '0.1em', textTransform: 'uppercase',
+                }}>{l.code}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div style={{ marginTop: 32 }}>
+        <SectionLabel>Detail links</SectionLabel>
+        <div style={{
+          fontFamily: 'var(--serif)', fontStyle: 'italic',
+          fontSize: 12.5, color: 'var(--ink-3)', marginTop: 4, marginBottom: 12,
+        }}>
+          Use <code style={{ fontFamily: 'var(--mono)', fontSize: 11.5, background: 'var(--paper-2)', padding: '1px 5px', borderRadius: 3 }}>{'{word}'}</code> as a placeholder. Click any word's link icon to open in a browser.
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {activeLangs.map(l => (
+            <div key={l.code} style={{
+              display: 'grid', gridTemplateColumns: '120px 1fr',
+              alignItems: 'center', gap: 10,
+              padding: '8px 12px',
+              background: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
+              borderRadius: 8,
+            }}>
+              <div>
+                <div style={{ fontFamily: 'var(--serif)', fontSize: 13, color: 'var(--ink)' }}>{l.name}</div>
+                <div style={{ fontFamily: 'var(--mono)', fontSize: 10.5, color: 'var(--ink-3)' }}>{l.code}</div>
+              </div>
+              <input
+                value={l.detailLink}
+                onChange={e => handleDetailLinkChange(l.code, e.target.value)}
+                placeholder="https://example.com/?q={word}"
+                style={{
+                  fontFamily: 'var(--mono)', fontSize: 12,
+                  color: 'var(--ink-2)',
+                  padding: '6px 10px',
+                  background: 'var(--paper)',
+                  border: '1px solid var(--rule)',
+                  borderRadius: 6,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginTop: 32 }}>
+        <SectionLabel>About</SectionLabel>
+        <div style={{
+          marginTop: 10, padding: '14px 16px',
+          background: 'var(--paper-2)', borderRadius: 8,
+          border: '1px solid var(--rule)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        }}>
+          <div>
+            <div style={{ fontFamily: 'var(--serif)', fontWeight: 600, fontSize: 14 }}>Dian v0.7.6</div>
+            <div style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontSize: 12, color: 'var(--ink-3)' }}>
+              Free & open source · MIT
+            </div>
+          </div>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>github.com/bryht/dian</span>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default Config;

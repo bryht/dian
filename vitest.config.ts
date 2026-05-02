@@ -14,6 +14,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './tests/unit/setup.ts',
     include: ['tests/unit/**/*.test.{ts,tsx}'],
+    maxForks: 4,
+    execArgv: process.version < 'v22.12.0' ? ['--experimental-require-module'] : [],
     coverage: {
       provider: 'v8',
       include: [
@@ -23,7 +25,6 @@ export default defineConfig({
         'src/services/**',
         'src/utils/**',
         'src/types/**',
-        'src/auth0-config.ts',
         'src/App.tsx',
       ],
       reporter: ['text', 'text-summary', 'html'],

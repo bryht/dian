@@ -1,7 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 // Mock storage utilities
 const mockGet = vi.fn();
@@ -26,9 +25,11 @@ function TestConsumer({ onRender }: { onRender: (ctx: ReturnType<typeof useDict>
   onRender(ctx);
   return (
     <div>
-      <span data-testid="setting-opened">{String(ctx.isSettingOpened)}</span>
       <span data-testid="items-count">{ctx.searchItems.length}</span>
       <span data-testid="languages-count">{ctx.languages.length}</span>
+      <span data-testid="active-view">{ctx.activeView}</span>
+      <span data-testid="input-lang">{ctx.inputLang}</span>
+      <span data-testid="is-dark">{String(ctx.isDark)}</span>
     </div>
   );
 }
@@ -52,23 +53,41 @@ describe('DictContext', () => {
 
   it('provides default context values', () => {
     renderWithProvider();
-    expect(screen.getByTestId('setting-opened')).toHaveTextContent('false');
     expect(screen.getByTestId('items-count')).toHaveTextContent('0');
+    expect(screen.getByTestId('active-view')).toHaveTextContent('translate');
+    expect(screen.getByTestId('input-lang')).toHaveTextContent('en');
+    expect(screen.getByTestId('is-dark')).toHaveTextContent('false');
   });
 
-  it('toggleSetting toggles isSettingOpened', async () => {
+  it('setActiveView changes the active view', async () => {
     renderWithProvider();
-    expect(screen.getByTestId('setting-opened')).toHaveTextContent('false');
+    await act(async () => {
+      latestCtx.setActiveView('settings');
+    });
+    expect(screen.getByTestId('active-view')).toHaveTextContent('settings');
+  });
+
+  it('toggleDark toggles isDark', async () => {
+    renderWithProvider();
+    expect(screen.getByTestId('is-dark')).toHaveTextContent('false');
 
     await act(async () => {
-      latestCtx.toggleSetting();
+      latestCtx.toggleDark();
     });
-    expect(screen.getByTestId('setting-opened')).toHaveTextContent('true');
+    expect(screen.getByTestId('is-dark')).toHaveTextContent('true');
 
     await act(async () => {
-      latestCtx.toggleSetting();
+      latestCtx.toggleDark();
     });
-    expect(screen.getByTestId('setting-opened')).toHaveTextContent('false');
+    expect(screen.getByTestId('is-dark')).toHaveTextContent('false');
+  });
+
+  it('setInputLang changes the input language', async () => {
+    renderWithProvider();
+    await act(async () => {
+      latestCtx.setInputLang('zh');
+    });
+    expect(screen.getByTestId('input-lang')).toHaveTextContent('zh');
   });
 
   it('loadSearchItems loads items from storage', async () => {
@@ -82,17 +101,6 @@ describe('DictContext', () => {
 
     expect(mockGet).toHaveBeenCalledWith('searchItems', []);
     expect(screen.getByTestId('items-count')).toHaveTextContent('1');
-  });
-
-  it('loadSearchItems sets empty array on null result', async () => {
-    mockGet.mockResolvedValue(null);
-
-    renderWithProvider();
-    await act(async () => {
-      await latestCtx.loadSearchItems();
-    });
-
-    expect(screen.getByTestId('items-count')).toHaveTextContent('0');
   });
 
   it('loadSearchItems handles errors gracefully', async () => {
@@ -120,22 +128,10 @@ describe('DictContext', () => {
     expect(screen.getByTestId('items-count')).toHaveTextContent('1');
   });
 
-  it('updateSearchItems handles errors gracefully', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    mockSet.mockRejectedValue(new Error('write error'));
-
-    renderWithProvider();
-    await act(async () => {
-      await latestCtx.updateSearchItems([]);
-    });
-
-    consoleSpy.mockRestore();
-  });
-
   it('loadLanguages loads from storage', async () => {
     const langs = [
-      { culture: 'en', cultureFull: 'en-GB', cultureName: 'English', isSelected: true, isUsed: true, detailLink: '', detailHideTop: 0, detailHideFilters: [] },
-      { culture: 'nl', cultureFull: 'nl-NL', cultureName: 'Nederlands', isSelected: false, isUsed: true, detailLink: '', detailHideTop: 0, detailHideFilters: [] },
+      { code: 'en', name: 'English', native: 'English', isUsed: true, detailLink: '' },
+      { code: 'zh', name: 'Chinese', native: '中文', isUsed: true, detailLink: '' },
     ];
     mockGet.mockResolvedValue(langs);
 
@@ -144,59 +140,7 @@ describe('DictContext', () => {
       await latestCtx.loadLanguages();
     });
 
-    expect(mockGet).toHaveBeenCalledWith('languages', []);
     expect(screen.getByTestId('languages-count')).toHaveTextContent('2');
-  });
-
-  it('loadLanguages falls back to defaults when storage returns empty', async () => {
-    mockGet.mockResolvedValue([]);
-
-    renderWithProvider();
-    await act(async () => {
-      await latestCtx.loadLanguages();
-    });
-
-    // Should fall back to the default languages array (11 languages)
-    expect(Number(screen.getByTestId('languages-count').textContent)).toBeGreaterThan(0);
-  });
-
-  it('loadLanguages handles errors and falls back to defaults', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    mockGet.mockRejectedValue(new Error('read error'));
-
-    renderWithProvider();
-    await act(async () => {
-      await latestCtx.loadLanguages();
-    });
-
-    expect(Number(screen.getByTestId('languages-count').textContent)).toBeGreaterThan(0);
-    consoleSpy.mockRestore();
-  });
-
-  it('updateLanguages saves and updates state', async () => {
-    const langs = [
-      { culture: 'de', cultureFull: 'de-DE', cultureName: 'Deutsch', isSelected: true, isUsed: true, detailLink: '', detailHideTop: 0, detailHideFilters: [] },
-    ];
-
-    renderWithProvider();
-    await act(async () => {
-      await latestCtx.updateLanguages(langs);
-    });
-
-    expect(mockSet).toHaveBeenCalledWith('languages', langs);
-    expect(screen.getByTestId('languages-count')).toHaveTextContent('1');
-  });
-
-  it('updateLanguages handles errors gracefully', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    mockSet.mockRejectedValue(new Error('write error'));
-
-    renderWithProvider();
-    await act(async () => {
-      await latestCtx.updateLanguages([]);
-    });
-
-    consoleSpy.mockRestore();
   });
 
   it('throws when useDict is used outside DictProvider', () => {

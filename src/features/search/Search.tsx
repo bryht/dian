@@ -1,192 +1,245 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from 'react';
-import { Language, languages, SearchItem } from '../../types';
-import { ReactComponent as SettingSvg } from 'assets/settings.svg';
-import { ReactComponent as SearchSvg } from 'assets/search.svg';
+import { Language, SearchItem } from '../../types';
+import { SearchBar } from '../../components/SearchBar';
+import { TranslationCard } from '../../components/TranslationCard';
+import { Kbd } from '../../components/Kbd';
+import { DianLockup } from '../../components/Logo';
 import { translateWord, getCulture } from '../../services';
-import WordHtml, { getWordUrl } from '../../components/WordDisplay/WordHtml';
-import './Search.scss';
 import { loadWordsAsync } from '../../services';
-import AutoCompleteInput from '../../components/AutoCompleteInput';
-import CloseButton from '../../components/CloseButton/CloseButton';
-import type { IWordHtmlRef } from '../../components/WordDisplay/WordHtml';
 import { useDict } from '../../context';
 
-const Search: React.FC = () => {
-    const { searchItems, languages: contextLanguages, updateSearchItems, loadSearchItems, toggleSetting } = useDict();
-    const allLanguages = React.useMemo(() => contextLanguages.filter((p: Language) => p.isUsed), [contextLanguages]);
+interface SearchProps {
+  submitFromSummon: string | null;
+  onSummonConsumed: () => void;
+}
 
-    const wordHtmlRef = React.useRef<IWordHtmlRef>(null);
-    const typeInputRef = React.useRef<any>(null);
+const Search: React.FC<SearchProps> = ({ submitFromSummon, onSummonConsumed }) => {
+  const { searchItems, languages: contextLanguages, updateSearchItems, inputLang, setInputLang } = useDict();
+  const allLanguages = React.useMemo(() => contextLanguages.filter((p: Language) => p.isUsed), [contextLanguages]);
+  const langByCode = React.useMemo(() => Object.fromEntries(contextLanguages.map(l => [l.code, l])), [contextLanguages]);
 
-    const [inputValue, setInputValue] = React.useState('');
-    const [typedValue, setTypedValue] = React.useState('');
-    const [currentLanguage, setCurrentLanguage] = React.useState<Language>(languages[0]);
-    const [wordUrl, setWordUrl] = React.useState('');
-    const [options, setOptions] = React.useState<Array<string>>([]);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [query, setQuery] = React.useState('');
+  const [lastSubmitted, setLastSubmitted] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [options, setOptions] = React.useState<string[]>([]);
 
-    React.useEffect(() => {
-        loadSearchItems();
-    }, [loadSearchItems]);
+  // Detect /xx prefix for inline language switching
+  const liveInputLang = React.useMemo(() => {
+    const m = query.match(/^\/(\w{2,3})\s/);
+    if (m && langByCode[m[1]]) return m[1];
+    return inputLang;
+  }, [query, inputLang, langByCode]);
 
-    const handleTranslateWord = React.useCallback(async (text: string | null = null) => {
-        if (text == null) {
-            text = inputValue;
-        }
-        if (!text) {
-            return;
-        }
-        let searchItem = new SearchItem();
-        //translate
-        for (let index = 0; index < allLanguages.length; index++) {
-            const element = allLanguages[index];
-            if (element.culture === currentLanguage.culture) {
-                searchItem.words.push({ culture: element.culture, text });
-            } else {
-                var value = await translateWord(currentLanguage.culture, element.culture, text);
-                searchItem.words.push({ culture: element.culture, text: value.toLowerCase() })
-            }
-        }
+  const cleanedQuery = query.replace(/^\/\w{2,3}\s/, '');
 
-        //play sound
-        const { ipcRenderer } = window.require('electron');
-        ipcRenderer.send('play-audio', { culture: currentLanguage.culture, value: text })
+  // Handle submit
+  const submit = React.useCallback(async (rawWord?: string) => {
+    const w = (rawWord ?? cleanedQuery).trim();
+    if (!w) return;
+    setLastSubmitted(w);
 
-        //replace the list - create a copy to avoid mutating Redux state
-        const updatedSearchItems = [...searchItems];
-        const itemIndex = updatedSearchItems.findIndex(x => SearchItem.getId(x.words) === SearchItem.getId(searchItem.words));
-        if (itemIndex > -1) {
-            updatedSearchItems.splice(itemIndex, 1);
-        }
-        updatedSearchItems.unshift(searchItem);
+    let searchItem = new SearchItem();
+    for (const element of allLanguages) {
+      if (element.code === liveInputLang) {
+        searchItem.words.push({ culture: element.code, text: w });
+      } else {
+        const value = await translateWord(liveInputLang, element.code, w);
+        searchItem.words.push({ culture: element.code, text: value.toLowerCase() });
+      }
+    }
 
-        //save the word
-        setInputValue('');
-        setOptions([]);
-        await updateSearchItems(updatedSearchItems);
-    }, [inputValue, currentLanguage, allLanguages, searchItems, updateSearchItems]);
+    // Play sound
+    try {
+      const { ipcRenderer } = window.require('electron');
+      ipcRenderer.send('play-audio', { culture: liveInputLang, value: w });
+    } catch (e) { /* ignore in browser */ }
 
-    const deleteWord = React.useCallback((id: string) => {
-        const updatedSearchItems = [...searchItems];
-        const itemIndex = updatedSearchItems.findIndex(x => SearchItem.getId(x.words) === id);
-        if (itemIndex > -1) {
-            updatedSearchItems.splice(itemIndex, 1);
-        }
-        updateSearchItems(updatedSearchItems);
-    }, [searchItems, updateSearchItems]);
+    // Update history
+    const updatedSearchItems = [...searchItems];
+    const itemIndex = updatedSearchItems.findIndex(x => SearchItem.getId(x.words) === SearchItem.getId(searchItem.words));
+    if (itemIndex > -1) {
+      updatedSearchItems.splice(itemIndex, 1);
+    }
+    updatedSearchItems.unshift(searchItem);
+    await updateSearchItems(updatedSearchItems);
 
-    const onInputValueChanged = React.useCallback((value: string) => {
-        setInputValue(value);
-    }, []);
+    // Update input lang if switched
+    if (liveInputLang !== inputLang) {
+      setInputLang(liveInputLang);
+    }
+    setQuery('');
+    setOptions([]);
+  }, [cleanedQuery, liveInputLang, allLanguages, searchItems, updateSearchItems, inputLang, setInputLang]);
 
-    const onTypedValueChanged = React.useCallback(async (value: string) => {
-        let detected = await getCulture(value);
-        let culture = (detected && ['de', 'en', 'es', 'fr', 'it', 'ja', 'ko', 'nl', 'pt', 'ru', 'zh'].includes(detected)) ? detected : currentLanguage.culture;
+  // Handle submit from summon overlay
+  React.useEffect(() => {
+    if (submitFromSummon) {
+      setLastSubmitted(submitFromSummon);
+      submit(submitFromSummon);
+      onSummonConsumed();
+    }
+  }, [submitFromSummon, submit, onSummonConsumed]);
 
-        const splits = ['/', '\\', ',', '-'];
-        splits.forEach(split => {
-            if (value.includes(split)) {
-                var cultures = allLanguages.map(x => x.culture);
-                var inputCulture = value.split(split)[1];
-                var findCulture = cultures.find(x => x === inputCulture);
-                if (findCulture) {
-                    value = value.split(split)[0];
-                    culture = findCulture;
-                }
-            }
-        });
-        const newOptions = await loadWordsAsync(culture, value, 6);
-        const newLanguage = getCurrentLanguageByCulture(culture) ?? currentLanguage;
-        setOptions(newOptions ?? []);
-        setTypedValue(value);
-        setInputValue(value);
-        setCurrentLanguage(newLanguage);
-    }, [currentLanguage, allLanguages]);
+  // Autocomplete suggestions
+  React.useEffect(() => {
+    if (!cleanedQuery) {
+      setOptions([]);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      const newOptions = await loadWordsAsync(liveInputLang, cleanedQuery, 6);
+      if (!cancelled) setOptions(newOptions ?? []);
+    })();
+    return () => { cancelled = true; };
+  }, [cleanedQuery, liveInputLang]);
 
-    const changeCurrentLanguage = React.useCallback((language: Language) => {
-        setCurrentLanguage(language);
-    }, []);
+  const onPickSuggestion = React.useCallback((s: string) => {
+    setQuery(s);
+    setTimeout(() => submit(s), 30);
+  }, [submit]);
 
-    const getCurrentLanguageByCulture = React.useCallback((culture: string | null | undefined) => {
-        return allLanguages.find(x => x.culture === culture);
-    }, [allLanguages]);
+  const speak = React.useCallback((text: string, code: string) => {
+    try {
+      const { ipcRenderer } = window.require('electron');
+      ipcRenderer.send('play-audio', { culture: code, value: text });
+    } catch (e) { /* ignore */ }
+  }, []);
 
-    const showWordDetail = React.useCallback((culture: string, value: string) => {
-        let lang = getCurrentLanguageByCulture(culture);
-        if (lang) {
-            const url = getWordUrl(value, lang.detailLink);
-            setWordUrl(url);
-        }
-        wordHtmlRef.current?.open();
-    }, [getCurrentLanguageByCulture]);
-
-    const renderWord = React.useCallback((text: string, culture: string, item: SearchItem) => {
-        if (culture === 'zh' && SearchItem.isPhrase(item.words)) {
-            return text;
-        } else {
-            return text.split(' ').map(w => <span key={w} onClick={() => showWordDetail(culture, w)}>{w}&nbsp;</span>)
-        }
-    }, [showWordDetail]);
-
-    return (
-        <div className="d-flex flex-column">
-            <div className="sticky-top d-flex mb-2 flex-column w-100 bg-white search-header">
-                <div className="input-group">
-                    <button className="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">{currentLanguage.cultureName}</button>
-                    <ul className="dropdown-menu">
-                        {
-                            allLanguages.map(l => <li key={l.culture}><a className="dropdown-item" href="#" onClick={() => changeCurrentLanguage(l)}>{l.cultureName}&nbsp;&nbsp;(/{l.culture})</a></li>)
-                        }
-                    </ul>
-                    <AutoCompleteInput
-                        id="word"
-                        ref={typeInputRef}
-                        options={options}
-                        placeholder="Command/Ctrl+F"
-                        className="auto-complete"
-                        inputClassName="auto-complete-input-class-name"
-                        listClassName="auto-complete-list-class-name"
-                        onTypedValueChanged={onTypedValueChanged}
-                        onInputValueChanged={onInputValueChanged}
-                        onKeyDown={(key: string) => {
-                            if (key === "Enter") {
-                                handleTranslateWord();
-                            }
-                            if (key === "Escape") { 
-                                typeInputRef.current?.blur(); 
-                            }
-                        }}
-                        inputValue={inputValue}
-                    />
-                    <div className="input-group-append">
-                        <button className="btn btn-outline-secondary" type="button" onClick={() => handleTranslateWord()}>
-                            <SearchSvg />
-                        </button>
-                        <button className="btn btn-outline-secondary" type="button" onClick={toggleSetting} >
-                            <SettingSvg />
-                        </button>
-                    </div>
-                </div>
-            </div >
-
-            <ul className="translate-list">
-                {
-                    searchItems.map(item => (
-                        <li key={SearchItem.getId(item.words)} className={`translate-list-item ${SearchItem.isPhrase(item.words) && 'bg-success is-phrase'}`}>
-                            <CloseButton className="list-item-close" close={() => deleteWord(SearchItem.getId(item.words))}></CloseButton>
-                            <div className="translate-list-item-words">
-                                {item.words.map(x =>
-                                    <div key={`${x.culture}-${x.text}`} >
-                                        <div className="word">{renderWord(x.text, x.culture, item)}</div>
-                                        <span className="culture">{x.culture}</span>
-                                    </div>)}
-                            </div>
-                        </li>))
-                }
-            </ul>
-            <WordHtml ref={wordHtmlRef} url={wordUrl} hideTop={currentLanguage.detailHideTop} />
-        </div >
+  const openLink = React.useCallback((code: string) => {
+    const lang = contextLanguages.find(l => l.code === code);
+    if (!lang?.detailLink) return;
+    const cacheEntry = searchItems.find(item =>
+      item.words.some(w => w.culture === lastSubmitted.split(' ')[0] && w.text.toLowerCase() === lastSubmitted.toLowerCase())
     );
+    const word = cacheEntry?.words.find(w => w.culture === code)?.text || lastSubmitted;
+    const url = lang.detailLink.replace('{word}', encodeURIComponent(word));
+    try {
+      const { ipcRenderer } = window.require('electron');
+      ipcRenderer.invoke('open-external-url', url);
+    } catch (e) {
+      window.open(url, '_blank');
+    }
+  }, [contextLanguages, lastSubmitted, searchItems]);
+
+  // Empty state
+  if (!lastSubmitted) {
+    return (
+      <div style={{ padding: '48px 56px 0' }}>
+        <SearchBar
+          value={query}
+          onChange={setQuery}
+          onSubmit={() => submit()}
+          inputLang={liveInputLang}
+          suggestions={options}
+          onPickSuggestion={onPickSuggestion}
+          inputRef={inputRef}
+        />
+        <EmptyState onTryWord={(w) => { setLastSubmitted(w); submit(w); }} />
+      </div>
+    );
+  }
+
+  // Find the current search result
+  const currentResult = searchItems.find(item =>
+    item.words[0]?.text.toLowerCase() === lastSubmitted.toLowerCase()
+  ) || searchItems[0];
+
+  return (
+    <div style={{ padding: '0 40px 60px' }}>
+      <div style={{ padding: '24px 40px 0' }}>
+        <SearchBar
+          value={query}
+          onChange={setQuery}
+          onSubmit={() => submit()}
+          inputLang={liveInputLang}
+          suggestions={options}
+          onPickSuggestion={onPickSuggestion}
+          inputRef={inputRef}
+        />
+      </div>
+      <div style={{ marginTop: 24 }}>
+        <div style={{
+          display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
+          marginBottom: 14,
+        }}>
+          <div style={{
+            fontFamily: 'var(--serif)', fontStyle: 'italic',
+            fontSize: 12, color: 'var(--ink-3)',
+          }}>
+            translating <span style={{ color: 'var(--ink-2)', fontStyle: 'normal' }}>{lastSubmitted}</span> into {allLanguages.length} languages
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--ink-3)', display: 'flex', gap: 6, alignItems: 'center' }}>
+            <Kbd>J</Kbd> <Kbd>K</Kbd> to scroll
+          </div>
+        </div>
+        {currentResult && currentResult.words.map(wordItem => {
+          const lang = langByCode[wordItem.culture];
+          if (!lang) return null;
+          return (
+            <TranslationCard
+              key={wordItem.culture}
+              lang={{ code: lang.code, name: lang.name, native: lang.native }}
+              entry={{ word: wordItem.text }}
+              onSpeak={() => speak(wordItem.text, wordItem.culture)}
+              onLink={() => openLink(wordItem.culture)}
+              loading={loading}
+            />
+          );
+        })}
+        <div style={{ borderTop: '1px solid var(--rule)' }} />
+      </div>
+    </div>
+  );
 };
+
+function EmptyState({ onTryWord }: { onTryWord: (word: string) => void }) {
+  return (
+    <div style={{
+      maxWidth: 560, margin: '40px auto 0', textAlign: 'left',
+    }}>
+      <div style={{
+        fontFamily: 'var(--serif)', fontStyle: 'italic',
+        fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase',
+        color: 'var(--ink-3)', marginBottom: 12,
+      }}>welcome to dian</div>
+      <h1 style={{
+        fontFamily: 'var(--serif)', fontWeight: 600,
+        fontSize: 38, lineHeight: 1.1, letterSpacing: '-0.02em',
+        margin: 0, color: 'var(--ink)',
+        textWrap: 'balance',
+      }}>
+        Your words, <em style={{ color: 'var(--accent)' }}>beautifully</em> translated.
+      </h1>
+      <p style={{
+        fontFamily: 'var(--serif)', fontSize: 16, lineHeight: 1.6,
+        color: 'var(--ink-2)', marginTop: 14, textWrap: 'pretty',
+      }}>
+        Type any word above. Dian translates it into all your configured languages
+        at once. Press <Kbd>⌘</Kbd><span style={{ margin: '0 4px' }} /> <Kbd>F</Kbd> to focus search;
+        prefix with <Kbd mono>/zh</Kbd>, <Kbd mono>/fr</Kbd>, <Kbd mono>/ja</Kbd> to switch input language.
+      </p>
+      <div style={{
+        marginTop: 28,
+        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10,
+      }}>
+        {['serendipity', 'wander', 'good morning', 'ephemeral'].map(w => (
+          <button key={w} onClick={() => onTryWord(w)} style={{
+            textAlign: 'left',
+            padding: '12px 14px',
+            background: 'var(--paper-2)',
+            border: '1px solid var(--rule)',
+            borderRadius: 8,
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          }}>
+            <span style={{ fontFamily: 'var(--serif)', fontSize: 16, color: 'var(--ink)' }}>{w}</span>
+            <span style={{ color: 'var(--ink-3)', fontSize: 11 }}>try →</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default Search;

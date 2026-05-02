@@ -1,4 +1,5 @@
 // Barrel export for Types
-export { Language, languages } from './Language';
+export type { Language } from './Language';
+export { languages } from './Language';
 export { SearchItem } from './SearchItem';
 export { WordItem } from './WordItem';

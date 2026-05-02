@@ -1,5 +1,4 @@
-
 export class WordItem {
-    culture: string = '';
-    text: string = '';
+  culture: string = '';
+  text: string = '';
 }

@@ -37,11 +37,4 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
   },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function'],
-      }
-    }
-  }
 })
