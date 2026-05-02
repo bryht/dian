@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\bryht\\\\Desktop\\\\Github\\\\dian\" -Recurse -Directory -Depth 2)",
+      "Bash(Select-Object FullName)",
+      "Bash(Sort-Object)"
+    ]
+  }
+}

@@ -14,7 +14,36 @@ interface SearchBarProps {
 
 export function SearchBar({ value, onChange, onSubmit, inputLang, suggestions, onPickSuggestion, inputRef }: SearchBarProps) {
   const [focused, setFocused] = React.useState(false);
+  const [highlightedIndex, setHighlightedIndex] = React.useState(-1);
   const showSugg = focused && suggestions.length > 0 && value.length > 0;
+  const visibleSuggestions = suggestions.slice(0, 5);
+
+  const handleKeyDown = React.useCallback((e: React.KeyboardEvent) => {
+    if (!showSugg) {
+      if (e.key === 'Enter') onSubmit();
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightedIndex(prev => (prev + 1) % visibleSuggestions.length);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedIndex(prev => prev <= 0 ? visibleSuggestions.length - 1 : prev - 1);
+    } else if (e.key === 'Enter') {
+      if (highlightedIndex >= 0 && highlightedIndex < visibleSuggestions.length) {
+        onPickSuggestion(visibleSuggestions[highlightedIndex]);
+      } else {
+        onSubmit();
+      }
+    } else if (e.key === 'Escape') {
+      setHighlightedIndex(-1);
+    }
+  }, [showSugg, visibleSuggestions, highlightedIndex, onPickSuggestion, onSubmit]);
+
+  // Reset highlight when suggestions change
+  React.useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [suggestions]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -35,12 +64,13 @@ export function SearchBar({ value, onChange, onSubmit, inputLang, suggestions, o
           letterSpacing: '0.04em', textTransform: 'uppercase',
         }}>{inputLang}</span>
         <input
+          id="word"
           ref={inputRef}
           value={value}
           onChange={e => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 120)}
-          onKeyDown={e => { if (e.key === 'Enter') onSubmit(); }}
+          onKeyDown={handleKeyDown}
           placeholder="Type a word or phrase…  /en /zh /fr to switch input"
           style={{
             flex: 1, fontSize: 17, fontFamily: 'var(--serif)',
@@ -58,13 +88,19 @@ export function SearchBar({ value, onChange, onSubmit, inputLang, suggestions, o
           borderRadius: 8, boxShadow: 'var(--shadow)',
           zIndex: 10, overflow: 'hidden',
         }}>
-          {suggestions.slice(0, 5).map((s, i) => (
-            <button key={i} onMouseDown={() => onPickSuggestion(s)} style={{
-              display: 'block', width: '100%', textAlign: 'left',
-              padding: '8px 14px', fontSize: 14, fontFamily: 'var(--serif)',
-              color: 'var(--ink)',
-              borderBottom: i < suggestions.length - 1 ? '1px solid var(--rule)' : 'none',
-            }}>
+          {visibleSuggestions.map((s, i) => (
+            <button
+              key={i}
+              onMouseDown={() => onPickSuggestion(s)}
+              onMouseEnter={() => setHighlightedIndex(i)}
+              style={{
+                display: 'block', width: '100%', textAlign: 'left',
+                padding: '8px 14px', fontSize: 14, fontFamily: 'var(--serif)',
+                color: 'var(--ink)',
+                background: i === highlightedIndex ? 'var(--accent-soft)' : 'transparent',
+                borderBottom: i < visibleSuggestions.length - 1 ? '1px solid var(--rule)' : 'none',
+              }}
+            >
               {s}
             </button>
           ))}

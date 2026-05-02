@@ -30,10 +30,7 @@ const HomePageContent: React.FC = () => {
     const handleInputMessage = (_event: any, message: any) => {
       if (message === 'focus') {
         const word = document.querySelector('#word') as HTMLInputElement;
-        if (word) {
-          word.focus();
-          word.value = '';
-        }
+        if (word) word.focus();
       }
     };
 
@@ -43,10 +40,7 @@ const HomePageContent: React.FC = () => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'f') {
         e.preventDefault();
         const word = document.querySelector('#word') as HTMLInputElement;
-        if (word) {
-          word.focus();
-          word.value = '';
-        }
+        if (word) word.focus();
       } else if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'f') {
         e.preventDefault();
         setSummonOpen(true);

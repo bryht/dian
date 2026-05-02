@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Language, SearchItem } from '../../types';
 import { SearchBar } from '../../components/SearchBar';
 import { TranslationCard } from '../../components/TranslationCard';
+import { WebViewModal } from '../../components/WebViewModal';
 import { Kbd } from '../../components/Kbd';
 import { DianLockup } from '../../components/Logo';
 import { translateWord, getCulture } from '../../services';
@@ -14,7 +15,7 @@ interface SearchProps {
 }
 
 const Search: React.FC<SearchProps> = ({ submitFromSummon, onSummonConsumed }) => {
-  const { searchItems, languages: contextLanguages, updateSearchItems, inputLang, setInputLang } = useDict();
+  const { searchItems, languages: contextLanguages, updateSearchItems, inputLang, setInputLang, lookupWord, setLookupWord } = useDict();
   const allLanguages = React.useMemo(() => contextLanguages.filter((p: Language) => p.isUsed), [contextLanguages]);
   const langByCode = React.useMemo(() => Object.fromEntries(contextLanguages.map(l => [l.code, l])), [contextLanguages]);
 
@@ -23,15 +24,18 @@ const Search: React.FC<SearchProps> = ({ submitFromSummon, onSummonConsumed }) =
   const [lastSubmitted, setLastSubmitted] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [options, setOptions] = React.useState<string[]>([]);
+  const [webViewUrl, setWebViewUrl] = React.useState<string | null>(null);
 
   // Detect /xx prefix for inline language switching
-  const liveInputLang = React.useMemo(() => {
-    const m = query.match(/^\/(\w{2,3})\s/);
-    if (m && langByCode[m[1]]) return m[1];
-    return inputLang;
-  }, [query, inputLang, langByCode]);
+  // Supports both "/nl word" (prefix+space+word) and just "/nl" (prefix only)
+  const prefixMatch = React.useMemo(() => {
+    const m = query.match(/^\/(\w{2,3})(?:\s(.*)|$)/);
+    if (m && langByCode[m[1]]) return { lang: m[1], rest: m[2] || '' };
+    return null;
+  }, [query, langByCode]);
 
-  const cleanedQuery = query.replace(/^\/\w{2,3}\s/, '');
+  const liveInputLang = prefixMatch ? prefixMatch.lang : inputLang;
+  const cleanedQuery = prefixMatch ? prefixMatch.rest : query;
 
   // Handle submit
   const submit = React.useCallback(async (rawWord?: string) => {
@@ -81,6 +85,24 @@ const Search: React.FC<SearchProps> = ({ submitFromSummon, onSummonConsumed }) =
     }
   }, [submitFromSummon, submit, onSummonConsumed]);
 
+  // Handle lookup from history click
+  React.useEffect(() => {
+    if (lookupWord) {
+      setLastSubmitted(lookupWord);
+      submit(lookupWord);
+      setLookupWord(null);
+    }
+  }, [lookupWord, submit, setLookupWord]);
+
+  // Close webview modal on Escape
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && webViewUrl) setWebViewUrl(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [webViewUrl]);
+
   // Autocomplete suggestions
   React.useEffect(() => {
     if (!cleanedQuery) {
@@ -115,12 +137,7 @@ const Search: React.FC<SearchProps> = ({ submitFromSummon, onSummonConsumed }) =
     );
     const word = cacheEntry?.words.find(w => w.culture === code)?.text || lastSubmitted;
     const url = lang.detailLink.replace('{word}', encodeURIComponent(word));
-    try {
-      const { ipcRenderer } = window.require('electron');
-      ipcRenderer.invoke('open-external-url', url);
-    } catch (e) {
-      window.open(url, '_blank');
-    }
+    setWebViewUrl(url);
   }, [contextLanguages, lastSubmitted, searchItems]);
 
   // Empty state
@@ -137,6 +154,7 @@ const Search: React.FC<SearchProps> = ({ submitFromSummon, onSummonConsumed }) =
           inputRef={inputRef}
         />
         <EmptyState onTryWord={(w) => { setLastSubmitted(w); submit(w); }} />
+        <WebViewModal url={webViewUrl} onClose={() => setWebViewUrl(null)} />
       </div>
     );
   }
@@ -190,6 +208,7 @@ const Search: React.FC<SearchProps> = ({ submitFromSummon, onSummonConsumed }) =
         })}
         <div style={{ borderTop: '1px solid var(--rule)' }} />
       </div>
+      <WebViewModal url={webViewUrl} onClose={() => setWebViewUrl(null)} />
     </div>
   );
 };

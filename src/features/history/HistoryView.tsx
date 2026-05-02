@@ -12,7 +12,7 @@ function timeAgo(ts: number) {
 }
 
 const HistoryView: React.FC = () => {
-  const { searchItems, setActiveView } = useDict();
+  const { searchItems, setActiveView, setLookupWord } = useDict();
 
   const grouped = React.useMemo(() => {
     const byDay: Record<string, typeof searchItems> = {};
@@ -25,11 +25,9 @@ const HistoryView: React.FC = () => {
   }, [searchItems]);
 
   const handlePick = React.useCallback((word: string) => {
+    setLookupWord(word);
     setActiveView('translate');
-    // The search component will handle this via a custom event
-    const ev = new CustomEvent('dian:searchword', { detail: word });
-    window.dispatchEvent(ev);
-  }, [setActiveView]);
+  }, [setActiveView, setLookupWord]);
 
   return (
     <div style={{ padding: '24px 40px' }}>

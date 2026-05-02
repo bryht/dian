@@ -2,6 +2,7 @@
   "name": "dian",
   "version": "0.7.6",
   "private": true,
+  "type": "module",
   "main": "electron/main.cjs",
   "description": "a dictionary app",
   "homepage": ".",

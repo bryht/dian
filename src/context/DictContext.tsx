@@ -13,6 +13,8 @@ interface DictContextValue {
   setInputLang: (lang: string) => void;
   isDark: boolean;
   toggleDark: () => void;
+  lookupWord: string | null;
+  setLookupWord: (word: string | null) => void;
   updateSearchItems: (items: SearchItem[]) => Promise<void>;
   updateLanguages: (items: Language[]) => Promise<void>;
   loadSearchItems: () => Promise<void>;
@@ -27,6 +29,7 @@ export const DictProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [languageList, setLanguageList] = React.useState<Language[]>([]);
   const [inputLang, setInputLang] = React.useState('en');
   const [isDark, setIsDark] = React.useState(false);
+  const [lookupWord, setLookupWord] = React.useState<string | null>(null);
 
   const toggleDark = React.useCallback(() => {
     setIsDark(prev => !prev);
@@ -85,6 +88,8 @@ export const DictProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setInputLang,
     isDark,
     toggleDark,
+    lookupWord,
+    setLookupWord,
     updateSearchItems,
     updateLanguages,
     loadSearchItems,
@@ -96,6 +101,7 @@ export const DictProvider: React.FC<{ children: React.ReactNode }> = ({ children
     inputLang,
     isDark,
     toggleDark,
+    lookupWord,
     updateSearchItems,
     updateLanguages,
     loadSearchItems,
